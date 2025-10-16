@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'Formula Font';
+    src: url('fonts/Formula1-Display-Regular.otf') format('otf'),
+         url('fonts/Formula1-Bold.otf') format('otf'),
+         url('fonts/Formula1-Wide.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Titllium Web';
+    src: url('fonts/TitilliumWeb-Regular.ttf') format('ttf'),
+         url('fonts/TitilliumWeb-Bold.ttf') format('ttf'),
+         url('fonts/TitilliumWeb-Light.ttf') format('ttf');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
