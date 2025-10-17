@@ -201,3 +201,30 @@
     margin: 0;
 }
 
+/* Quick Links Section */
+.quick-links-section {
+    margin-bottom: 3rem;
+    overflow-x: auto;
+}
+
+.links-items {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.links-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.links-icon {
+    font-size: 0.8rem;
+    color: #666;
+}
