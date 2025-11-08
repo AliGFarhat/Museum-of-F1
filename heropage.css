@@ -262,9 +262,11 @@ li {
 .featured-image {
     width: 75px;
     height: 100%;
-    background-color: #ddd;
     border-radius: 8px;
     flex-shrink: 0;
+    object-fit: cover;
+    object-position: center;
+    display: block;
 }
 
 .featured-content {
