@@ -166,18 +166,14 @@ body::after {
     fill: #ef0001;
 }
 
-/* Class to trigger rotation */
-#settings-cog.rotate {
-    transform: rotate(180deg);
-}
- 
 li {
     font-family: 'Titillium Web';
 }
 
 /* Dropdown Menu */
 .dropdown-menu {
-    display: none; /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
     position: absolute;
     top: 100%;
     right: 0;
@@ -186,11 +182,14 @@ li {
     border-radius: 4px;
     padding: 0.5rem;
     z-index: 100;
-    min-width: 150px;
+    min-width: 160px;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .dropdown-menu.show {
     display: block; /* Show the dropdown */
+    opacity: 1;
+    visibility: visible;
 }
 
 .dropdown-menu button {

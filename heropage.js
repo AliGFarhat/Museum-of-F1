@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginRegisterBtn = document.getElementById('login-register-btn');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
+    let currentRotation = 0; // Variable to track rotation
+
     if (settingsCog) {
         settingsCog.addEventListener('click', () => {
-            // Animate the cog
-            settingsCog.classList.add('rotate');
-            setTimeout(() => {
-                settingsCog.classList.remove('rotate');
-            }, 500); // This duration should match the CSS transition duration
-
+            // Increment rotation and apply it
+            currentRotation += 180;
+            settingsCog.style.transform = `rotate(${currentRotation}deg)`;
+            
             // Toggle the dropdown
             dropdown.classList.toggle('show');
         });
