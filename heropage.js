@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show modal when login/register button is clicked
     if (loginRegisterBtn) {
         loginRegisterBtn.addEventListener('click', () => {
-            loginModal.style.display = 'block';
+            loginModal.classList.add('show-modal');
             dropdown.classList.remove('show'); // Hide dropdown after opening modal
         });
     }
@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide modal when close button is clicked
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', () => {
-            loginModal.style.display = 'none';
+            loginModal.classList.remove('show-modal');
         });
     }
 
     // Hide modal if user clicks outside of the modal content
     window.addEventListener('click', (event) => {
         if (event.target == loginModal) {
-            loginModal.style.display = 'none';
+            loginModal.classList.remove('show-modal');
         }
     });
 });

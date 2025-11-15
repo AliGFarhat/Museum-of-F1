@@ -9,7 +9,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="absolute inset-0 z-20" style="position:absolute; inset:0; z-index:20; pointer-events:none; background:linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%)"></div>
+        <div class="absolute inset-0 z-20" style="position:absolute; inset:0; z-index:20; pointer-events:none; background:linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%)"></div>
         <div class="header-content">
 
             <div class="logo">
@@ -22,7 +22,7 @@
 
             <nav class="navigation">
                 <ul class="links">
-                    <li><a href="#">Home</a></li>
+                    <li><a href="heropage.html">Home</a></li>
                     <li><a href="#">History</a></li>
                     <li><a href="#">Drivers</a></li>
                     <li><a href="#">Teams</a></li>
@@ -35,7 +35,9 @@
                     <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.22,5.72C8.63,5.96,8.1,6.29,7.6,6.67L5.21,5.71C4.99,5.62,4.74,5.69,4.62,5.92L2.7,9.24 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C4.82,11.69,4.8,12.01,4.8,12.33c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.38,2.91 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.48-0.41l0.38-2.91c0.59-0.24,1.12-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
                 </svg>
                 <div id="settings-dropdown" class="dropdown-menu">
-                    <button id="login-register-btn">Login / Register</button>
+                    <div class="dropdown-content-wrapper">
+                        <button id="login-register-btn">Login / Register</button>
+                    </div>
                 </div>
             </div>
             
@@ -57,13 +59,13 @@
                 <div class="featured">
                     <img class="featured-image" src="images/featured-1.jpg" alt="Featured Article 1">
                     <div class="featured-content">
-                        <h3>Verstappen explains 'unexpected' Q1 exit in Sao Paulo</h3>
+                        <p>Verstappen explains 'unexpected' Q1 exit in Sao Paulo</p>
                     </div>
                 </div>
                 <div class="featured">
                     <img class="featured-image" src="images/featured-2.jpg" alt="Featured Article 2">
                     <div class="featured-content">
-                        <h3>HIGHLIGHTS</h3>
+                        <h3 style="color: #d6176f;">HIGHLIGHTS</h3>
                         <p>Watch the Qualifying action as Norris claims Sao Paulo
                             GP pole</p>
                     </div>
@@ -71,20 +73,20 @@
                 <div class="featured">
                     <img class="featured-image" src="images/featured-3.jpg" alt="Featured Article 3">
                     <div class="featured-content">
-                        <h3>FACTS AND STATS</h3>
+                        <h3 style="color: #d6176f;">FACTS AND STATS</h3>
                         <p>Q1 exit for Verstappen for first time in four years</p>
                     </div>
                 </div>
                 <div class="featured">
                     <img class="featured-image" src="images/featured-4.jpg" alt="Featured Article 4">
                     <div class="featured-content">
-                        <h3>Bortoleto misses out on Sao Paulo Qualifying after Sprint crash</h3>
+                        <p>Bortoleto misses out on Sao Paulo Qualifying after Sprint crash</p>
                     </div>
                 </div>
                 <div class="featured">
                     <img class="featured-image" src="images/featured-5.jpg" alt="Featured Article 5">
                     <div class="featured-content">
-                        <h3>WATCH: The moment Verstappen is knocked out in Q1 at Interlagos</h3>
+                        <h3 style="color: #d6176f;">WATCH</h3> <p>The moment Verstappen is knocked out in Q1 at Interlagos</p>
                     </div>
                 </div>
             </div>
@@ -99,26 +101,24 @@
 
                 <div class="spotlight-left">
                     <div class="spotlight-large-image">
+                        <img src="images/spotlight-large.jpg" alt="Spotlight Title Image">
                         <div class="spotlight-left-text">
-                            <h3>Spotlight Title</h3>
-                            <p>Spotlight description text</p>
+                            <h3>The Last Few Races for the WDC</h3>
                         </div>
                     </div>
                 </div>
 
                 <div class="spotlight-middle">
-                    <div class="spotlight-small-image"></div>
+                    <div class="spotlight-small-image"><img src="images/max-sao-paolo.avif"></div>
                     <div class="spotlight-text">
-                        <h4>Placeholder 1</h4>
-                        <p>Description text</p>
+                        <h4>From the Pits to the Podium</h4>
                     </div>
                 </div>
 
                 <div class="spotlight-right">
-                    <div class="spotlight-small-image"></div>
+                    <div class="spotlight-small-image"><img src="images/fia.avif"></div>
                     <div class="spotlight-text">
-                        <h4>Placeholder 2</h4>
-                        <p>Description text</p>
+                        <h4>The FIA Regulations Discussed for the 2026 Seasson</h4>
                     </div>
                 </div>
 
@@ -131,26 +131,24 @@
             <div class="spotlight-grid spotlight-grid-flipped">
 
                 <div class="spotlight-left">
-                    <div class="spotlight-small-image"></div>
+                    <div class="spotlight-small-image"><img src="images/audi.jpg"></div>
                     <div class="spotlight-text">
-                        <h4>Placeholder 3</h4>
-                        <p>Description text</p>
+                        <h4>2026 Audi Livery Revealed</h4>
                     </div>
                 </div>
 
                 <div class="spotlight-middle">
-                    <div class="spotlight-small-image"></div>
+                    <div class="spotlight-small-image"><img src="images/cadillac.jpeg"></img></div>
                     <div class="spotlight-text">
-                        <h4>Placeholder 4</h4>
-                        <p>Description text</p>
+                        <h4>Sergio Perez Cadillac Testing</h4>
                     </div>
                 </div>
 
                 <div class="spotlight-right">
                     <div class="spotlight-large-image">
+                        <img src="images/piastri-penalty.avif" alt="Spotlight Title Image">
                         <div class="spotlight-left-text">
-                            <h3>Spotlight Title</h3>
-                            <p>Spotlight description text</p>
+                            <h3>Did Piastri Deserve His Penalty in Sao Paolo?</h3>
                         </div>
                     </div>
                 </div>
@@ -191,7 +189,7 @@
             <h2 class="section-title">2025 SEASON</h2>
             <div class="feedback-section">
                 <div class="feedback-left">
-                    <h3>HELP SHAPE THE F1 WEBSITE</h3>
+                    <h3>HELP SHAPE THE WEBSITE</h3>
                     <p>Take a few minutes to tell us what you think</p>
                 </div>
                 <div class="feedback-right">
