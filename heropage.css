@@ -53,6 +53,11 @@ body {
     overflow-x: hidden;
 }
 
+a {
+    text-decoration: none;
+    color: black;
+}
+
 /* Debug: Vertical Center Line */
 body::before {
     content: '';
@@ -181,8 +186,8 @@ li {
     opacity: 0;
     visibility: hidden;
     position: absolute;
-    top: 100%;
-    right: 0;
+    top: calc(100% + 30px); /* Position it below the cog with a 10px gap */
+    right: -10px; /* Adjust to align as needed */
     background: none;
     border: none;
     border-radius: 4px;
@@ -191,7 +196,6 @@ li {
     min-width: 160px;
     transition: opacity 0.3s ease, visibility 0.3s ease;
     overflow: hidden; /* To contain the pseudo-element */
-    position: relative; /* For pseudo-element positioning */
 }
 
 .dropdown-menu.show {
@@ -221,7 +225,7 @@ li {
 .dropdown-content-wrapper {
     background-color: #000000;
     padding: 0.5rem;
-    border-radius: 2px; /* Slightly smaller than parent to show the 'border' */
+    border-radius: 5px; /* Slightly smaller than parent to show the 'border' */
     transition: background-color 0.3s ease;
 }
 
@@ -243,6 +247,10 @@ li {
     background-color: #ef0001; /* Red hover for the entire content area */
 }
 
+.modal-open {
+    overflow: hidden; /* Prevent background from scrolling when modal is open */
+}
+
 .dropdown-menu:hover button {
     transform: translateY(-2px); /* Moves the button up slightly on hover */
 }
@@ -257,10 +265,12 @@ li {
     z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+    width: 100vw;
+    height: 100vh;
     background-color: rgba(0,0,0,0.6);
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Vertical center */
+    justify-content: center; /* Horizontal center */
 }
 
 .modal.show-modal {
@@ -268,17 +278,27 @@ li {
     visibility: visible;
 }
 
+.modal.show-modal .modal-content {
+    /* This transform will be animated on show */
+    transform: scale(1);
+    opacity: 1;
+}
+
 .modal-content {
     background-color: #1a1a22;
     color: #fff;
-    margin: 15% auto;
     padding: 2rem;
     border: 1px solid #888;
     width: 80%;
     max-width: 400px;
     border-radius: 8px;
-    position: relative;
+    position: relative; /* For child element positioning like the close button */
     font-family: 'Titillium Web';
+    transform: scale(0.9); /* Start slightly smaller for the animation */
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-height: 90vh; /* Prevent modal from being too tall on small screens */
+    overflow-y: auto; /* Allow scrolling within the modal if content overflows */
 }
 
 .close-btn {
@@ -587,6 +607,15 @@ li {
     height: 100%;
     object-fit: cover; /* Ensures the image covers the container, maintaining aspect ratio */
     object-position: center; /* Centers the image within the container */
+    transition: transform 0.2s ease-in-out;
+}
+
+.spotlight-large-image:hover {
+    cursor: pointer;
+}
+
+.spotlight-large-image:hover img {
+    transform: scale(1.1);
 }
 
 .spotlight-small-image {
@@ -603,6 +632,19 @@ li {
     height: 100%;
     object-fit: cover; /* Ensures the image covers the container */
     object-position: center; /* Centers the image */
+    transition: transform 0.2s ease-in-out;
+}
+
+.spotlight-left:hover,
+.spotlight-middle:hover, 
+.spotlight-right:hover {
+    cursor: pointer;
+}
+
+.spotlight-left:hover .spotlight-small-image img,
+.spotlight-middle:hover .spotlight-small-image img, 
+.spotlight-right:hover .spotlight-small-image img {
+    transform: scale(1.1);
 }
 
 .spotlight-left-text {
@@ -635,6 +677,13 @@ li {
     margin: 0;
 }
 
+.spotlight-large-image:hover .spotlight-left-text h3,
+.spotlight-left:hover .spotlight-text h4,
+.spotlight-middle:hover .spotlight-text h4, 
+.spotlight-right:hover .spotlight-text h4 {
+    text-decoration: underline;
+}
+
 .spotlight-left-text p {
     color: #fff;
     font-size: 0.9rem;
@@ -663,19 +712,34 @@ li {
 
 .links-items {
     display: flex;
-    gap: 2rem;
+    gap: 3rem;
+    justify-content: center;
     padding: 1rem 0;
+    font-family: 'Formula Font';
 }
 
 .links-item {
     display: flex;
-    align-items: center;
+    width: 100%; /* Ensure the container takes full width */
+    justify-content: space-between; /* Pushes text left and icon right */
+    align-items: center; /* Vertically centers the text and icon */
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #fff;
-    border-radius: 20px;
+    padding: 1rem 2rem;
+    background-color: #c2c4f5;
+    border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     white-space: nowrap;
+    transition: opacity 0.2s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.links-item:hover {
+    opacity: 0.8; /* Dims the button on hover */
+}
+
+.links-item:active {
+    transform: translateY(2px); /* Moves the button down to "sink" it */
+    box-shadow: 0 0 2px rgba(0,0,0,0.1); /* Reduces shadow for a pressed look */
+    opacity: 0.9; /* Slightly less dim than hover when active */
 }
 
 .links-icon {

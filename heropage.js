@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginRegisterBtn) {
         loginRegisterBtn.addEventListener('click', () => {
             loginModal.classList.add('show-modal');
+            document.body.classList.add('modal-open'); // Prevent body scroll
             dropdown.classList.remove('show'); // Hide dropdown after opening modal
         });
     }
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', () => {
             loginModal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open'); // Allow body scroll
         });
     }
 
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (event) => {
         if (event.target == loginModal) {
             loginModal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open'); // Allow body scroll
         }
     });
 });
