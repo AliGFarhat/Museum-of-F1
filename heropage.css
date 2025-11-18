@@ -381,6 +381,10 @@ li {
     overflow: hidden;
 }
 
+.hero-left:hover{
+    cursor: pointer;
+}
+
 .hero-left .hero-pic {
     width: 100%;
     height: 100%;
@@ -412,7 +416,12 @@ li {
     border-radius: 10px;
     position: relative;
     z-index: 0;
-    transform: scale(1.01);
+    transform: scale(1.02); /* Slightly larger to begin with */
+    transition: transform 0.2s ease-in-out; /* Animation for the zoom effect */
+}
+
+.hero-left:hover .hero-pic img {
+    transform: scale(1.1); /* Zoom in on hover */
 }
 
 .hero-text {
@@ -426,6 +435,15 @@ li {
     z-index: 2;
     font-family: 'Formula Font';
     text-shadow: #000000;
+}
+
+.hero-left:hover .hero-text {
+    text-decoration: underline;
+}
+
+.hero-text:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .hero-right {
@@ -447,16 +465,34 @@ li {
     display: flex;
     gap: 1rem;
     align-items: stretch;
+    position: relative; /* Needed for the pseudo-element positioning */
+}
+
+.featured:hover p {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .featured-image {
     width: 75px;
     height: 100%;
     border-radius: 8px;
-    flex-shrink: 0;
     object-fit: cover;
     object-position: center;
+    flex-shrink: 0;
     display: block;
+    transition: transform 0.2s ease-in-out;
+}
+
+.featured-image-container {
+    width: 75px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.featured:hover .featured-image {
+    transform: scale(1.1); /* Zoom in on hover */
 }
 
 .featured-content {
