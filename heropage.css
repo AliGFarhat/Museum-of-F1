@@ -51,37 +51,12 @@
 body {
     background-color: #000000;
     overflow-x: hidden;
+    overflow-y: scroll; /* Always show vertical scrollbar to prevent layout shift */
 }
 
 a {
     text-decoration: none;
     color: black;
-}
-
-/* Debug: Vertical Center Line */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 2px;
-    background-color: red;
-    z-index: 9999;
-    pointer-events: none;
-}
-
-/* Debug: Horizontal Center Line */
-body::after {
-    content: '';
-    position: fixed;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: red;
-    z-index: 9999;
-    pointer-events: none;
 }
 
 /* Top Section (Nav Bar) */
