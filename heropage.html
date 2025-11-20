@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+~<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -189,8 +189,11 @@
                     <p>Take a few minutes to tell us what you think</p>
                 </div>
                 <div class="feedback-right">
-                    <input type="email" placeholder="INPUT EMAIL" class="email-input">
-                    <textarea placeholder="TELL ME WHAT I CAN IMPROVE ON THE WEBSITE" class="feedback"></textarea>
+                    <form id="feedback-form">
+                        <input type="email" name="email" placeholder="INPUT EMAIL" class="email-input" required>
+                        <textarea name="feedback" placeholder="TELL ME WHAT I CAN IMPROVE ON THE WEBSITE" class="feedback" required></textarea>
+                        <button type="submit" class="send-feedback-btn">SEND</button>
+                    </form>
                 </div>
             </div>
          </section>

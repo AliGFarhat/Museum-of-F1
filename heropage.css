@@ -840,3 +840,29 @@ li {
 		transform: rotate(1turn);
 	}
 }
+
+.send-feedback-btn {
+    background-color: #e10600; /* F1 red color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 30px;
+    margin-right: 20px;
+    font-family: 'Formula Font';
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-end; /* Aligns button to the right */
+}
+
+.send-feedback-btn:hover {
+    background-color: #d6176f; /* A slightly different shade on hover */
+}
+
+/* Styles for the new feedback form */
+#feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Adds space between form elements */
+}

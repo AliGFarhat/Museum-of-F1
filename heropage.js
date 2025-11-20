@@ -42,4 +42,34 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('modal-open'); // Allow body scroll
         }
     });
+
+    // Handle Feedback Form Submission
+    const feedbackForm = document.getElementById('feedback-form');
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission (page reload)
+
+            const email = event.target.email.value;
+            const feedback = event.target.feedback.value;
+            const sendButton = event.target.querySelector('.send-feedback-btn');
+
+            sendButton.textContent = 'SENDING...';
+            sendButton.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:3000/send-feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, feedback }),
+                });
+
+                alert(await response.text()); // Show success/error message from server
+            } catch (error) {
+                alert('An error occurred. Please try again later.');
+            }
+            sendButton.textContent = 'SEND';
+            sendButton.disabled = false;
+            feedbackForm.reset(); // Clear the form
+        });
+    }
 });
