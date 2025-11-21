@@ -892,8 +892,9 @@ li {
 }
 
 .app-store-buttons {
-    width: 200px;
-    height: 40px;
+    padding-top: 3px;
+    width: 7.625rem; /* 122px */
+    height: 2.625rem; /* 42px */
     background-color: var(--background-black);
     border-radius: 10px;
     border: 1px solid var(--color-white);
@@ -925,8 +926,8 @@ li {
 }
 
 .social-icon svg {
-    width: 90%;
-    height: 90%;
+    width: 80%;
+    height: 80%;
 }
 
 .display-mode-btn {
