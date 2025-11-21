@@ -818,6 +818,8 @@ li {
     border-radius: 4px;
     font-size: 1rem;
     font-family: 'Formula Font';
+    background-color: var(--ui-grey-dark);
+    color: var(--color-white);
 }
 
 .feedback {
@@ -827,18 +829,24 @@ li {
     overflow-y: auto; /* Show a scrollbar if content exceeds max-height */
 }
 
+.email-input::placeholder,
+.feedback::placeholder {
+    color: var(--color-white);
+}
+
 /* Footer */
 .footer {
     background-color: var(--background-footer);
     color: var(--color-white);
     padding: 2rem;
+    border-top: 0.125rem solid var(--color-f1-red); /* 2px red top border */
     position: relative; /* This will contain the ::after pseudo-element */
 }
 
 .footer::after {
     content: '';
     position: absolute;
-    top: -50px; /* Position it from the top of the footer */
+    top: -57px; /* Position it from the top of the footer */
     left: calc(2rem - 0.9375rem); /* Start 15px (0.9375rem) further left */
     width: calc(100% - 2rem + 0.9375rem); /* Stretch to fill from the new start point */
     height: 100px; /* Adjust height as needed */
