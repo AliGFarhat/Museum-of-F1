@@ -940,21 +940,6 @@ a {
     padding-right: 0.75px;
 }
 
-.display-mode-btn {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background-color: var(--color-black);
-    color: var(--color-white);
-    border: 1px solid var(--color-white);
-    padding: 0.5rem 1rem;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    border-radius: 15px;
-    cursor: pointer;
-    font-family: 'Formula Font';
-}
-
 .display-mode-btn:hover {
     background-color: var(--color-text-dark-grey);
 }

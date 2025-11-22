@@ -72,4 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackForm.reset(); // Clear the form
         });
     }
+
+    // Handle Display Mode Menu
+    const displayModeToggle = document.getElementById('display-mode-toggle');
+    const displayModeMenu = document.getElementById('display-mode-menu');
+
+    if (displayModeToggle && displayModeMenu) {
+        displayModeToggle.addEventListener('click', () => {
+            displayModeMenu.classList.toggle('show');
+        });
+    }
 });
