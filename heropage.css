@@ -57,6 +57,7 @@
     --background-featured: #060606;
     --background-quick-links: #c2c4f5;
     --background-spotlight-placeholder: #ddd;
+    --background-spotlight-light: #f8f4f1;
 
     --ui-grey-light: #aaa;
     --ui-grey-medium: #555;
@@ -70,6 +71,92 @@
     --shadow-medium: 0px 4px 4px rgba(0,0,0,0.1);
     --shadow-strong: 0 8px 16px rgba(0,0,0,0.8);
 }
+
+/* Light Mode Color Palette */
+.light-mode {
+    --color-black: #e0e0e0; /* Swapped with white */
+    --color-white: #ffffff; /* Keep text white */
+    --color-f1-red: #e10600; 
+    --color-f1-red-hover: #d6176f;
+    --color-f1-logo-bg: #dc143c;
+
+    --color-text-grey: #888;
+    --color-text-dark-grey: #aaa;
+    --color-text-link: var(--color-black);
+    --color-text-inverted: #121212; /* New variable for dark text in light mode */
+
+    --background-content: #1e1e1e;
+    --background-featured: #2a2a2a;
+    --background-quick-links: #3a3a3a;
+    --background-spotlight-placeholder: #444;
+
+    --ui-grey-light: #555;
+    --ui-grey-medium: #888;
+    --ui-grey-dark: #ccc;
+    --ui-border-light: #444;
+}
+
+/* Keep header untouched in light mode */
+.light-mode .header {
+    background-color: #000000; /* Force original black background */
+}
+
+/* Remove hero section background in light mode */
+.light-mode .hero-section::before {
+    background-color: transparent;
+}
+
+/* Invert color for specific section titles in light mode */
+.light-mode .section-title {
+    color: var(--color-text-inverted); /* Dark color for "SPOTLIGHT" and "2025 SEASON" */
+}
+
+/* Revert app store buttons to black background in light mode */
+.light-mode .app-download-btn {
+    background-color: #000000;
+}
+
+/* Light Mode Overrides for specific elements */
+.light-mode .feedback-section {
+    background-color: #333; /* Keep original dark background */
+    color: #ffffff; /* Keep original white text */
+}
+
+.light-mode .feedback-section .feedback-left p {
+    color: #ccc; /* Keep original grey text */
+}
+
+.light-mode .email-input,
+.light-mode .feedback {
+    background-color: #ffffff; /* Pure white background */
+    color: #000000; /* Black text for readability */
+    border-color: var(--color-f1-red); /* Keep red border */
+    caret-color: #000000; /* Ensure cursor is visible */
+}
+.light-mode .email-input::placeholder,
+.light-mode .feedback::placeholder {
+    color: #000000; /* Black placeholder text */
+    opacity: 0.6; /* Make it slightly less prominent */
+}
+
+.light-mode .spotlight-text {
+    background-color: var(--background-spotlight-light);
+}
+
+.light-mode .spotlight-text h4 {
+    color: var(--color-text-inverted);
+}
+
+.light-mode .featured {
+    background-color: var(--background-spotlight-light);
+}
+
+.light-mode .featured p {
+    color: var(--color-text-inverted);
+}
+
+/* This will not override inline styles for specific h3 tags */
+
 
 * {
     margin: 0;

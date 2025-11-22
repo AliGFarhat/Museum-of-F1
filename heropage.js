@@ -74,12 +74,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle Display Mode Menu
+    // Get the state from localStorage
+    let lightMode = localStorage.getItem('lightMode'); 
+
     const displayModeToggle = document.getElementById('display-mode-toggle');
     const displayModeMenu = document.getElementById('display-mode-menu');
+    const lightModeBtn = document.getElementById('light-mode-btn');
+    const darkModeBtn = document.getElementById('dark-mode-btn');
+
+    // Function to enable light mode
+    const enableLightMode = () => {
+        document.body.classList.add('light-mode');
+        localStorage.setItem('lightMode', 'enabled');
+    };
+
+    // Function to disable light mode (revert to dark mode)
+    const disableLightMode = () => {
+        document.body.classList.remove('light-mode');
+        localStorage.setItem('lightMode', 'disabled');
+    };
+
+    // Check if light mode is enabled on page load
+    if (lightMode === 'enabled') {
+        enableLightMode();
+    }
 
     if (displayModeToggle && displayModeMenu) {
         displayModeToggle.addEventListener('click', () => {
             displayModeMenu.classList.toggle('show');
         });
     }
+
+    // Add event listeners for the theme buttons
+    if (lightModeBtn) lightModeBtn.addEventListener('click', enableLightMode); // Light button enables light mode
+    if (darkModeBtn) darkModeBtn.addEventListener('click', disableLightMode); // Dark button disables light mode (goes to dark)
+
 });
