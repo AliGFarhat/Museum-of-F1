@@ -101,9 +101,14 @@
     background-color: #000000; /* Force original black background */
 }
 
-/* Remove hero section background in light mode */
+/* Add back hero section background in light mode with new color */
 .light-mode .hero-section::before {
-    background-color: transparent;
+    background-color: var(--background-spotlight-light); /* #f8f4f1 */
+}
+
+/* Keep settings dropdown dark in light mode */
+.light-mode .dropdown-content-wrapper {
+    background-color: #000000; /* Force original black background */
 }
 
 /* Invert color for specific section titles in light mode */
