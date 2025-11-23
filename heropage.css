@@ -74,7 +74,7 @@
 
 /* Light Mode Color Palette */
 .light-mode {
-    --color-black: #e0e0e0; /* Swapped with white */
+    --color-black: #ffffff; /* Main background for light mode */
     --color-white: #ffffff; /* Keep text white */
     --color-f1-red: #e10600; 
     --color-f1-red-hover: #d6176f;
@@ -103,7 +103,7 @@
 
 /* Add back hero section background in light mode with new color */
 .light-mode .hero-section::before {
-    background-color: var(--background-spotlight-light); /* #f8f4f1 */
+    background-color: var(--background-spotlight-light); /* #f8f4f1 - This is correct */
 }
 
 /* Keep settings dropdown dark in light mode */
@@ -188,11 +188,23 @@ a {
     background-size: 3000px auto;
     background-position: center top;
     padding: 1rem, 2rem;
-    box-shadow: var(--shadow-light);
     position: relative;
     z-index: 50; /* Ensure header is above main content */
+    transition: transform 0.3s ease-in-out; /* Smooth transition for sliding */
 }
 
+.header.header-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: var(--shadow-medium); /* Add shadow when fixed */
+}
+
+/* This class was for the previous scroll effect and can be removed or repurposed */
+.header.hide-nav {
+    transform: translateY(-100%);
+}
 .header-content {
     display: flex;
     justify-content: flex-start;
