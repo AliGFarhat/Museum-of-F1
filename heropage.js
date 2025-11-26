@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('.header');
-    const mainContent = document.querySelector('.main');
+    // Find the correct content container, whether it's .main or .main-content
+    const contentContainer = document.querySelector('.main-content') || document.querySelector('.main');
     const settingsCog = document.getElementById('settings-cog');
     const dropdown = document.getElementById('settings-dropdown');
     const loginModal = document.getElementById('login-modal');
@@ -10,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRotation = 0; // Variable to track rotation
 
     // Sticky Navbar Logic
-    if (header && mainContent) {
+    if (header && contentContainer) {
         const headerOffsetTop = header.offsetTop;
         const headerHeight = header.offsetHeight;
 
@@ -19,14 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // When scrolled past the header's original position, make it fixed.
                 if (!header.classList.contains('header-fixed')) {
                     header.classList.add('header-fixed');
-                    // Add padding to the main content to prevent the layout jump.
-                    mainContent.style.paddingTop = `${headerHeight}px`;
+                    // Add padding to the content container to prevent the layout jump.
+                    contentContainer.style.paddingTop = `${headerHeight}px`;
                 }
             } else {
                 // When scrolling back up to the "magnet" point, un-fix it.
                 if (header.classList.contains('header-fixed')) {
                     header.classList.remove('header-fixed');
-                    mainContent.style.paddingTop = ''; // Remove the padding
+                    contentContainer.style.paddingTop = ''; // Remove the padding
                 }
             }
         });

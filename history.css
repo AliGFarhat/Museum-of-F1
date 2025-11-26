@@ -512,11 +512,11 @@ body {
 /* Card Text */
 .card-meta-primary {
     font-size: 14px;
-    color: #222;
+    color: var(--color-white);
     margin-bottom: 4px;
 }
 
 .card-meta-secondary {
     font-size: 13px;
-    color: #777;
+    color: var(--color-text-grey);
 }
