@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formula 1 History Wireframe</title>
+    <!-- Linking the external CSS file -->
+    <link rel="stylesheet" href="history.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="absolute inset-0 z-20" style="position:absolute; inset:0; z-index:20; pointer-events:none; background:linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%)"></div>
+        <div class="header-content">
+
+            <div class="logo">
+                <div class="'f1-logo">
+                    <a href="heropage.html">
+                        <img class="f1-logo-image" src="images/f1-logo.png" alt="F1 Logo" width="100" height="auto">
+                    </a>
+                </div>
+            </div>
+
+            <nav class="navigation">
+                <ul class="links">
+                    <li><a href="heropage.html">Home</a></li>
+                    <li><a href="history.html">History</a></li>
+                </ul>
+            </nav>
+
+            <div class="settings">
+                <div id="settings-cog"></div>
+                <div id="settings-dropdown" class="dropdown-menu">
+                    <div class="dropdown-content-wrapper">
+                        <button id="login-register-btn">Login / Register</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Filters</div>
+
+            <!-- Year Filter -->
+            <div class="filter-group">
+                <span class="filter-header">Year</span>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">2023</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">2022</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">2021</span>
+                </label>
+            </div>
+
+            <!-- Track Filter -->
+            <div class="filter-group">
+                <span class="filter-header">Track</span>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Monaco</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Monza</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Silverstone</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Spa-Francorchamps</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Suzuka</span>
+                </label>
+            </div>
+
+            <!-- Weather Filter -->
+            <div class="filter-group">
+                <span class="filter-header">Weather</span>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Dry</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Wet</span>
+                </label>
+            </div>
+
+            <!-- Type of Race Day Filter -->
+            <div class="filter-group">
+                <span class="filter-header">Type of Race Day</span>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">FP1</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">FP2</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">FP3</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Qualifying</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Sprint Race</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox"> <span class="checkbox-label">Race Day</span>
+                </label>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1 class="page-title">Formula 1 History</h1>
+                <p class="page-subtitle">Explore 15 races from the history of Formula 1</p>
+            </header>
+
+            <div class="grid">
+                <!-- Card 1 -->
+                <article class="card">
+                    <div class="image-placeholder">
+                        <span class="placeholder-text">Image</span>
+                    </div>
+                    <div class="card-meta-primary">2023 | Monaco | Race Day</div>
+                    <div class="card-meta-secondary">Monaco • dry</div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="card">
+                    <div class="image-placeholder">
+                        <span class="placeholder-text">Image</span>
+                    </div>
+                    <div class="card-meta-primary">2023 | Silverstone | Qualifying</div>
+                    <div class="card-meta-secondary">Silverstone • wet</div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="card">
+                    <div class="image-placeholder">
+                        <span class="placeholder-text">Image</span>
+                    </div>
+                    <div class="card-meta-primary">2022 | Spa-Francorchamps | Race Day</div>
+                    <div class="card-meta-secondary">Spa-Francorchamps • dry</div>
+                </article>
+
+                <!-- Card 4 -->
+                <article class="card">
+                    <div class="image-placeholder">
+                        <span class="placeholder-text">Image</span>
+                    </div>
+                    <div class="card-meta-primary">2023 | Monza | Sprint Race</div>
+                    <div class="card-meta-secondary">Monza • dry</div>
+                </article>
+
+                <!-- Card 5 -->
+                <article class="card">
+                    <div class="image-placeholder">
+                        <span class="placeholder-text">Image</span>
+                    </div>
+                    <div class="card-meta-primary">2022 | Suzuka | FP1</div>
+                    <div class="card-meta-secondary">Suzuka • wet</div>
+                </article>
+
+                 <!-- Card 6 -->
+                 <article class="card">
+                    <div class="image-placeholder">
+                        <span class="placeholder-text">Image</span>
+                    </div>
+                    <div class="card-meta-primary">2023 | Monaco | FP2</div>
+                    <div class="card-meta-secondary">Monaco • dry</div>
+                </article>
+            </div>
+        </main>
+
+    </div>
+
+    <script src="heropage.js"></script>
+      
+    <!-- Login/Register Modal -->
+    <div id="login-modal" class="modal">
+      <div class="modal-content">
+          <span id="close-modal-btn" class="close-btn">&times;</span>
+          <h2>Login</h2>
+          <form id="login-form">
+              <label for="email">Email / Username</label>
+              <input type="text" id="email" name="email" required>
+              
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required>
+              
+              <a href="#" class="forgot-password">Forgot password?</a>
+              <button type="submit" class="login-btn">Login</button>
+              <button type="button" class="register-btn">Register</button>
+          </form>
+      </div>
+    </div>
+
+</body>
+</html>

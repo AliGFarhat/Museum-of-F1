@@ -1,0 +1,553 @@
+/* Importing Custom Fonts */
+@font-face {
+    font-family: 'Formula Font';
+    src: url('fonts/Formula1-Display-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Formula Font';
+    src: url('fonts/Formula1-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Formula Font';
+    src: url('fonts/Formula1-Wide.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: expanded;
+}
+
+@font-face {
+    font-family: 'Titillium Web';
+    src: url('fonts/TitilliumWeb-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Titillium Web';
+    src: url('fonts/TitilliumWeb-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Titillium Web';
+    src: url('fonts/TitilliumWeb-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+:root {
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-f1-red: #e10600;
+    --color-f1-red-hover: #d6176f;
+    --color-f1-logo-bg: #dc143c;
+
+    --color-text-grey: #ccc;
+    --color-text-dark-grey: #666;
+    --color-text-link: var(--color-black);
+
+    --background-content: #15151d;
+    --background-featured: #060606;
+    --background-quick-links: #c2c4f5;
+    --background-spotlight-placeholder: #ddd;
+    --background-spotlight-light: #f8f4f1;
+
+    --ui-grey-light: #aaa;
+    --ui-grey-medium: #555;
+    --ui-grey-dark: #333;
+    --ui-border-light: #888;
+
+    --overlay-dark-60: rgba(0,0,0,0.6);
+    --overlay-gradient-hero: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.7)), linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%);
+    --shadow-light: 0 2px 4px rgba(255,255,255,0.1);
+    --shadow-subtle: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-medium: 0px 4px 4px rgba(0,0,0,0.1);
+    --shadow-strong: 0 8px 16px rgba(0,0,0,0.8);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-black);
+    overflow-x: hidden;
+    overflow-y: scroll; /* Always show vertical scrollbar to prevent layout shift */
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-text-link);
+}
+
+/* Top Section (Nav Bar) */
+.header {
+    background-color: var(--color-black);
+    background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width="100%25" height="100%25" viewBox="0 0 604 604" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%233c3d42"%3E%3Cpath d="M498.887 64.6914L563.251 0.324951H547.162L482.793 64.6914H498.887Z"/%3E%3Cpath d="M373.131 138.985H389.222L463.51 64.6914H447.422L373.131 138.985Z"/%3E%3Cpath d="M539.408 94.5181H507.037L398.811 202.749H431.181L539.408 94.5181Z"/%3E%3Cpath d="M502.781 94.5181H468.244L360.024 202.742H349.31L210.479 341.581H221.802L360.629 202.749H394.555L502.781 94.5181Z"/%3E%3Cpath d="M267.781 370.643L376.011 262.417H341.469L233.243 370.643H267.781Z"/%3E%3Cpath d="M90.6777 237.31L283.362 44.6238H248.82L56.1357 237.31H90.6777Z"/%3E%3Cpath d="M87.8858 112.728L200.286 0.324951H183.117L70.7139 112.728H87.8858Z"/%3E%3Cpath d="M545.048 0.324951H527.878L463.51 64.6914H480.682L545.048 0.324951Z"/%3E%3Cpath d="M0 282.12V293.438L56.1353 237.31H44.8123L0 282.12Z"/%3E%3Cpath d="M353.848 138.985H371.017L445.311 64.6914H428.139L353.848 138.985Z"/%3E%3Cpath d="M30.5937 308.631L0 339.225V355.318L46.6874 308.631H30.5937Z"/%3E%3Cpath d="M279.76 155.594H255.605L3.58594 407.605H27.7468L279.76 155.594Z"/%3E%3Cpath d="M0 180.65V196.742L65.027 131.713H48.9354L0 180.65Z"/%3E%3Cpath d="M94.9258 237.31H127.297L319.98 44.6238H287.612L94.9258 237.31Z"/%3E%3Cpath d="M0 319.943V337.113L28.4821 308.631H11.3102L0 319.943Z"/%3E%3Cpath d="M196.664 380.474L86.1133 491.025H97.4362L207.987 380.474H196.664Z"/%3E%3Cpath d="M31.2457 237.31L0 268.555V280.635L43.325 237.31H31.2457Z"/%3E%3Cpath d="M269.289 204.999H278.292L344.305 138.985H335.303L269.289 204.999Z"/%3E%3Cpath d="M151.994 341.575L218.008 275.563H209.005L142.998 341.575H151.994Z"/%3E%3Cpath d="M279.4 204.999H287.834L353.848 138.985H345.412L279.4 204.999Z"/%3E%3Cpath d="M603.206 402.161H591.889L500.253 493.797H511.569L603.206 402.161Z"/%3E%3Cpath d="M93.5768 548.891L38.1426 604.325H54.2342L109.664 548.891H93.5768Z"/%3E%3Cpath d="M558.188 382.925L604 337.113V319.943L541.022 382.925H558.188Z"/%3E%3Cpath d="M587.604 298.54H598.926L604 293.466V282.143L587.604 298.54Z"/%3E%3Cpath d="M604 339.225L560.3 382.925H576.394L604 355.318V339.225Z"/%3E%3Cpath d="M54.2343 0.324951H38.1427L19.2832 19.1844H35.3769L54.2343 0.324951Z"/%3E%3Cpath d="M88.214 0.324951H79.2115L29.6816 49.8548H38.6842L88.214 0.324951Z"/%3E%3Cpath d="M29.6817 49.8547H18.3651L0 68.2199V79.5364L29.6817 49.8547Z"/%3E%3Cpath d="M0 54.6532V66.7283L16.8736 49.8547H4.80064L0 54.6532Z"/%3E%3Cpath d="M486.686 493.797H498.761L590.397 402.161H578.324L486.686 493.797Z"/%3E%3Cpath d="M204.68 454.276L130.393 528.569H146.48L220.767 454.282H232.847L316.486 370.643H304.404L220.772 454.276H204.68Z"/%3E%3Cpath d="M314.366 434.956L144.999 604.325H161.093L330.46 434.956H314.366Z"/%3E%3Cpath d="M380.262 262.417L272.036 370.643H304.405L412.631 262.417H380.262Z"/%3E%3Cpath d="M268.638 581.3H291.277L574.037 298.54H551.398L268.638 581.3Z"/%3E%3Cpath d="M74.2936 548.891L18.8594 604.325H36.0292L91.457 548.891H74.2936Z"/%3E%3Cpath d="M375.214 545.341L525.362 395.2H508.192L358.049 545.341H375.214Z"/%3E%3Cpath d="M574.037 298.54H586.119L604 280.658V268.579L574.037 298.54Z"/%3E%3Cpath d="M317.971 370.643L234.332 454.282H245.655L329.294 370.643H317.971Z"/%3E%3Cpath d="M295.083 434.956L125.716 604.325H142.886L312.254 434.956H295.083Z"/%3E%3Cpath d="M282.737 155.594L30.7197 407.605H53.3592L305.377 155.594H282.737Z"/%3E%3Cpath d="M143.934 548.605H134.932L79.2119 604.325H88.2144L143.934 548.605Z"/%3E%3Cpath d="M223.311 581.3H206.139L183.116 604.325H200.286L223.311 581.3Z"/%3E%3Cpath d="M0 161.367V178.535L46.8216 131.713H29.6519L0 161.367Z"/%3E%3Cpath d="M527.475 395.2L377.326 545.341H393.42L543.567 395.2H527.475Z"/%3E%3Cpath d="M548.428 298.54H524.267L241.511 581.3H265.667L548.428 298.54Z"/%3E%3Cpath d="M241.511 581.3H225.423L202.4 604.325H218.49L241.511 581.3Z"/%3E%3Cpath d="M72.5486 491.025H84.628L195.179 380.474H183.1L72.5465 491.025H56.4591L0 547.487V563.576L72.5486 491.025Z"/%3E%3Cpath d="M39.792 49.8548H48.232L97.7576 0.324951H89.3219L39.792 49.8548Z"/%3E%3Cpath d="M106.06 19.9813H123.231L142.886 0.324951H125.716L106.06 19.9813Z"/%3E%3Cpath d="M54.3475 491.025H37.1756L0 528.203V545.373L54.3475 491.025Z"/%3E%3Cpath d="M604 493.574V484.573L548.05 540.523H557.052L604 493.574Z"/%3E%3Cpath d="M558.16 540.523H566.594L603.999 503.117V494.684L558.16 540.523Z"/%3E%3Cpath d="M604.001 563.576V547.487L547.162 604.325H563.254L604.001 563.576Z"/%3E%3Cpath d="M36.0293 0.324951H18.8595L0 19.1844H17.1698L36.0293 0.324951Z"/%3E%3Cpath d="M604 545.373V528.203L527.878 604.325H545.048L604 545.373Z"/%3E%3Cpath d="M418.31 545.341H406.987L348.007 604.325H359.326L418.31 545.341Z"/%3E%3Cpath d="M591.19 460.129H579.117L434.917 604.325H446.996L591.19 460.129Z"/%3E%3Cpath d="M405.502 545.341H393.42L334.44 604.325H346.518L405.502 545.341Z"/%3E%3Cpath d="M604 460.129H592.681L448.483 604.325H459.804L604 460.129Z"/%3E%3Cpath d="M125.343 19.9813H141.437L161.093 0.324951H144.999L125.343 19.9813Z"/%3E%3Cpath d="M153.473 548.605H145.04L89.3223 604.325H97.758L153.473 548.605Z"/%3E%3Cpath d="M119.916 418.579L196.914 341.575H180.826L103.822 418.579H115.269H119.916Z"/%3E%3Cpath d="M202.566 454.276H185.397L111.109 528.57H128.279L202.566 454.276Z"/%3E%3Cpath d="M527.54 225.068H515.46L379.864 360.669H391.946L527.54 225.068Z"/%3E%3Cpath d="M347.825 202.742H335.746L196.913 341.575L208.995 341.581L347.825 202.742Z"/%3E%3Cpath d="M66.0135 418.562L0 484.573V493.574L75.0097 418.562H66.0135Z"/%3E%3Cpath d="M514.867 187.952L440.58 262.246H456.667L530.961 187.952H514.867Z"/%3E%3Cpath d="M76.1219 418.562L0 494.684V503.118L84.5555 418.562H76.1219Z"/%3E%3Cpath d="M219.116 275.563L153.103 341.575H161.543L227.556 275.563H219.116Z"/%3E%3Cpath d="M178.712 341.575H161.543L84.5557 418.562L101.708 418.579L178.712 341.575Z"/%3E%3Cpath d="M328.425 19.9068H339.741L359.323 0.324951H348.007L328.425 19.9068Z"/%3E%3Cpath d="M89.9971 112.728H106.091L218.489 0.324951H202.4L89.9971 112.728Z"/%3E%3Cpath d="M324.832 110.407H336.914L446.996 0.324951H434.919L324.832 110.407Z"/%3E%3Cpath d="M338.399 110.407H349.722L459.805 0.324951H448.484L338.399 110.407Z"/%3E%3Cpath d="M314.858 19.9068H326.933L346.515 0.324951H334.44L314.858 19.9068Z"/%3E%3Cpath d="M484.268 187.952H495.584L604 79.5365V68.22L484.268 187.952Z"/%3E%3Cpath d="M438.46 262.246L512.754 187.952H495.584L421.297 262.246H438.46Z"/%3E%3Cpath d="M470.701 187.952H482.776L604 66.7284V54.6533L470.701 187.952Z"/%3E%3Cpath d="M559.591 225.087H575.685L604 196.769V180.674L559.591 225.087Z"/%3E%3Cpath d="M540.331 225.088H557.477L604 178.56V161.395L540.324 225.068H529.025L393.431 360.669H404.747L540.331 225.088Z"/%3E%3C/g%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-size: 3000px auto;
+    background-position: center top;
+    padding: 1rem, 2rem;
+    position: relative;
+    z-index: 50; /* Ensure header is above main content */
+    transition: transform 0.3s ease-in-out; /* Smooth transition for sliding */
+}
+
+.header.header-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: var(--shadow-medium); /* Add shadow when fixed */
+}
+
+/* This class was for the previous scroll effect and can be removed or repurposed */
+.header.hide-nav {
+    transform: translateY(-100%);
+}
+.header-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 1.4rem 0;
+    gap: 2rem;
+    position: relative;
+    z-index: 30;
+}
+
+.logo .f1-logo {
+    background-color: var(--color-f1-logo-bg);
+    color: var(--color-white);
+    font-weight: bold;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.navigation ul {
+    display: flex;
+    list-style: none;
+}
+
+.navigation ul li:nth-child(1) {
+    margin-right: 6.5rem;
+    margin-left: 1.5rem;
+}
+
+.navigation ul li:nth-child(2) {
+    margin-right: 6.5rem;
+}
+
+.navigation ul li:nth-child(3) {
+    margin-right: 6.5rem;
+}
+
+.navigation ul li:nth-child(4) {
+    margin-right: 0;
+}
+
+.navigation a {
+    text-decoration: none;
+    color: var(--color-white);
+    font-weight: 500;
+    /* This property makes the animation smooth */
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    display: inline-block; /* Ensures transform works correctly */
+    font-family: 'Formula Font';
+    font-size: 0.8rem;
+}
+
+.navigation a:hover {
+    color: var(--color-f1-red); /* A classic F1 red for the hover color */
+    transform: translateY(-2px); /* Moves the link up slightly */
+}
+
+.settings {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin-left: auto;
+    position: relative; /* Needed for dropdown positioning */
+}
+ 
+/* Settings Cog Icon */
+#settings-cog {
+    width: 24px;
+    height: 24px;
+    background-color: var(--color-white);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.22,5.72C8.63,5.96,8.1,6.29,7.6,6.67L5.21,5.71C4.99,5.62,4.74,5.69,4.62,5.92L2.7,9.24 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C4.82,11.69,4.8,12.01,4.8,12.33c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.38,2.91 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.48-0.41l0.38-2.91c0.59-0.24,1.12-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.22,5.72C8.63,5.96,8.1,6.29,7.6,6.67L5.21,5.71C4.99,5.62,4.74,5.69,4.62,5.92L2.7,9.24 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C4.82,11.69,4.8,12.01,4.8,12.33c0,0.32,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.38,2.91 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.48-0.41l0.38-2.91c0.59-0.24,1.12-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: transform 0.5s ease-in-out, background-color 0.3s ease; /* Animation transition */
+}
+ 
+/* Change color on hover */
+#settings-cog:hover {
+    background-color: var(--color-f1-red);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: calc(100% + 30px); /* Position it below the cog with a 10px gap */
+    right: -10px; /* Adjust to align as needed */
+    background: none;
+    border: none;
+    border-radius: 4px;
+    padding: 2px; /* This padding creates the border thickness for the glow */
+    z-index: 100;
+    min-width: 160px;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    overflow: hidden; /* To contain the pseudo-element */
+}
+
+.dropdown-menu.show {
+    display: block; /* Show the dropdown */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* The rotating gradient pseudo-element */
+.dropdown-menu.show::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(var(--color-f1-red));
+    z-index: -1;
+    animation: rotate 4s linear infinite;
+}
+
+/* Change gradient to black on hover */
+.dropdown-menu:hover::before {
+    background: conic-gradient(var(--color-black));
+}
+
+.dropdown-content-wrapper {
+    background-color: var(--color-black);
+    padding: 0.5rem;
+    border-radius: 5px; /* Slightly smaller than parent to show the 'border' */
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-menu button {
+    width: 100%;
+    padding: 0.4rem 1rem;
+    background: none;
+    border: none;
+    color: var(--color-white);
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Titillium Web';
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: transform 0.3s ease-in-out; /* Smooth transition for the pop-out effect */
+}
+
+.dropdown-menu:hover .dropdown-content-wrapper {
+    background-color: var(--color-f1-red); /* Red hover for the entire content area */
+}
+
+.modal-open {
+    overflow: hidden; /* Prevent background from scrolling when modal is open */
+}
+
+.dropdown-menu:hover button {
+    transform: translateY(-2px); /* Moves the button up slightly on hover */
+}
+
+/* Login Modal */
+.modal {
+    /* display: none; Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--overlay-dark-60);
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Vertical center */
+    justify-content: center; /* Horizontal center */
+}
+
+.modal.show-modal {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal.show-modal .modal-content {
+    /* This transform will be animated on show */
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--background-content);
+    color: var(--color-white);
+    padding: 2rem;
+    border: 1px solid var(--ui-border-light);
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+    position: relative; /* For child element positioning like the close button */
+    font-family: 'Titillium Web';
+    transform: scale(0.9); /* Start slightly smaller for the animation */
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-height: 90vh; /* Prevent modal from being too tall on small screens */
+    overflow-y: auto; /* Allow scrolling within the modal if content overflows */
+}
+
+.close-btn {
+    color: var(--ui-grey-light);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: var(--color-white);
+}
+
+#login-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--ui-grey-medium);
+    background-color: var(--ui-grey-dark);
+    color: var(--color-white);
+}
+
+#login-form .forgot-password {
+    display: block;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-grey);
+    text-align: right;
+}
+
+#login-form button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+#login-form .login-btn {
+    background-color: var(--color-f1-red);
+    color: var(--color-white);
+}
+
+#login-form .register-btn {
+    background-color: var(--ui-grey-medium);
+    color: var(--color-white);
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(1turn);
+	}
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #fff;
+    line-height: 1.5;
+}
+
+/* Layout Container */
+.container {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px;
+    gap: 60px; /* Space between sidebar and main content */
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.filter-group {
+    margin-bottom: 25px;
+}
+
+.filter-header {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    accent-color: #333;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: #555;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex-grow: 1;
+}
+
+.page-header {
+    margin-bottom: 40px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #111;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: #666;
+    font-weight: 400;
+}
+
+/* Grid System */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 Columns */
+    gap: 24px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .sidebar {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card Styles */
+.card {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Wireframe Image Placeholder Style */
+.image-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background-color: #e0e0e0;
+    border: 1px solid #333;
+    margin-bottom: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Creating the "X" for the wireframe look */
+.image-placeholder::before,
+.image-placeholder::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Diagonal lines */
+.image-placeholder::before {
+    background: linear-gradient(to top right, transparent calc(50% - 1px), #333 calc(50%), transparent calc(50% + 1px));
+}
+
+.image-placeholder::after {
+    background: linear-gradient(to bottom right, transparent calc(50% - 1px), #333 calc(50%), transparent calc(50% + 1px));
+}
+
+.placeholder-text {
+    background-color: #e0e0e0; /* Background to hide lines behind text */
+    padding: 5px 10px;
+    z-index: 1;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Card Text */
+.card-meta-primary {
+    font-size: 14px;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.card-meta-secondary {
+    font-size: 13px;
+    color: #777;
+}
