@@ -385,17 +385,17 @@ a {
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #333;
-    background-color: #fff;
+    background-color: var(--color-black);
     line-height: 1.5;
 }
 
 /* Layout Container */
-.container {
+.main {
     display: flex;
-    max-width: 1400px;
+    max-width: 1660px;
     margin: 0 auto;
-    padding: 40px;
-    gap: 60px; /* Space between sidebar and main content */
+    padding: 2rem;
+    gap: 2rem; /* Space between sidebar and main content */
 }
 
 /* Sidebar Styles */
