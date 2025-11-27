@@ -10,84 +10,131 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // This is an asynchronous function to fetch session data from the OpenF1 API.
+    // This function handles rendering the page content from the session data.
+    async function renderPage(allSessions) {
+        // Clear the main content area and rebuild its structure.
+        mainContentContainer.innerHTML = `
+            <header class="page-header">
+                <h1 class="page-title">Formula 1 History</h1>
+                <p class="page-subtitle">Explore races from the history of Formula 1</p>
+            </header>
+            <div class="grid"></div>
+        `;
+
+        // Now, select the newly created grid container.
+        const gridContainer = mainContentContainer.querySelector('.grid');
+        
+        if (!allSessions || allSessions.length === 0) {
+            gridContainer.innerHTML = '<p style="color: white;">No sessions found.</p>';
+            return;
+        }
+
+        // A helper object to map meeting names from the API to your image files.
+        const trackImages = {
+            'Monte Carlo': 'images/tracks/monaco.png',
+            'Silverstone': 'images/tracks/silverstone.png',
+            'Spa-Francorchamps': 'images/tracks/spa.png', // Location is 'Spa'
+            'Monza': 'images/tracks/monza.png', // Location is 'Monza'
+            'Suzuka': 'images/tracks/suzuka.png', // Location is 'Suzuka'
+        };
+
+        // Use a for...of loop to process sessions sequentially.
+        for (const session of allSessions) {
+            // Create the HTML for a new card.
+            const card = document.createElement('article');
+            card.className = 'card';
+
+            // Fetch weather data for this specific session
+            const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
+            let weatherCondition = 'N/A'; // Default to N/A
+
+            // Check if the response is valid JSON before parsing.
+            const contentType = weatherResponse.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const weatherData = await weatherResponse.json();
+                
+                // If we got valid data, determine if it was wet or dry.
+                if (Array.isArray(weatherData)) {
+                    const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
+                    weatherCondition = hadRain ? 'Wet' : 'Dry';
+                }
+            }
+
+            // Get the correct image path, or a default one if not found.
+            const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
+            
+            card.innerHTML = `
+                <div class="image-placeholder" style="background-image: url('${imageUrl}');"></div>
+                <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_name}</div>
+                <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
+            `;
+
+            // Add the newly created card to the grid.
+            gridContainer.appendChild(card);
+        }
+    }
+
+    // This is the main function to get and display session data.
     async function fetchAndDisplaySessions() {
-        // Show a loading message while fetching data.
+        const cacheKey = 'f1HistoryData';
+        const cacheTimestampKey = 'f1HistoryTimestamp';
+        const cacheDuration = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+
+        const cachedData = localStorage.getItem(cacheKey);
+        const cachedTimestamp = localStorage.getItem(cacheTimestampKey);
+        const now = new Date().getTime();
+
+        // If we have fresh data in the cache, use it.
+        if (cachedData && cachedTimestamp && (now - cachedTimestamp < cacheDuration)) {
+            console.log("Loading F1 history from cache.");
+            const allSessions = JSON.parse(cachedData);
+            await renderPage(allSessions);
+            return; // Exit the function
+        }
+
+        // If cache is old or doesn't exist, fetch from API.
+        console.log("Fetching fresh F1 history from API.");
         mainContentContainer.innerHTML = '<p style="color: white; font-size: 1.2rem; padding: 2rem;">Loading race history...</p>';
 
         try {
-            // Fetch data from the sessions endpoint. We can add parameters to filter.
-            // For example, let's get all race sessions from 2023.
-            // The tutorial examples use .then(), but async/await is a modern and clean way to achieve the same result.
-            const response = await fetch('https://api.openf1.org/v1/sessions?session_name=Race&year=2023');
+            const currentYear = new Date().getFullYear();
+            const startYear = 2018;
+            let allSessions = [];
 
-            // Check if the request was successful.
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // 1. Fetch all sessions for all years. This is more reliable than fetching all meetings at once.
+            const fetchPromises = [];
+            for (let year = startYear; year <= currentYear; year++) {
+                fetchPromises.push(
+                    fetch(`https://api.openf1.org/v1/sessions?year=${year}`)
+                        .then(response => response.ok ? response.json() : [])
+                );
             }
 
-            // Parse the JSON data from the response.
-            const sessions = await response.json();
+            const yearlySessions = await Promise.all(fetchPromises);
+            allSessions = yearlySessions.flat();
 
-            // Clear the main content area and rebuild its structure.
-            mainContentContainer.innerHTML = `
-                <header class="page-header">
-                    <h1 class="page-title">Formula 1 History</h1>
-                    <p class="page-subtitle">Explore races from the history of Formula 1</p>
-                </header>
-                <div class="grid"></div>
-            `;
+            // 2. Define the desired sort order for sessions within a weekend.
+            const sessionOrder = { 'Race': 1, 'Qualifying': 2, 'Sprint': 3, 'FP3': 4, 'FP2': 5, 'FP1': 6 };
 
-            // Now, select the newly created grid container.
-            const gridContainer = mainContentContainer.querySelector('.grid');
-
-            // If no sessions are found, display a message.
-            if (sessions.length === 0) {
-                gridContainer.innerHTML = '<p style="color: white;">No sessions found.</p>';
-                return;
-            }
-
-            // A helper object to map meeting names from the API to your image files.
-            // You would expand this list for all your tracks.
-            // Note: The API uses 'location' for the track name.
-            const trackImages = {
-                'Monte Carlo': 'images/tracks/monaco.png',
-                'Silverstone': 'images/tracks/silverstone.png',
-                'Spa-Francorchamps': 'images/tracks/spa.png',
-                'Monza': 'images/tracks/monza.png',
-                'Suzuka': 'images/tracks/suzuka.png',
-            };
-
-            // Loop through each session returned by the API.
-            sessions.forEach(async session => {
-                // Create the HTML for a new card.
-                const card = document.createElement('article');
-                card.className = 'card';
-
-                // Fetch weather data for this specific session
-                const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
-                const weatherData = await weatherResponse.json();
-
-                // Check if there was any rainfall during the session.
-                // The 'rainfall' property is a boolean (true/false).
-                const hadRain = weatherData.some(dataPoint => dataPoint.rainfall === true);
-                const weatherCondition = hadRain ? 'Wet' : 'Dry';
-
-                // Get the correct image path, or a default one if not found.
-                const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
-
-                card.innerHTML = `
-                    <div class="image-placeholder" style="background-image: url('${imageUrl}');"></div>
-                    <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_type}</div>
-                    <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
-                `;
-
-                // Add the newly created card to the grid.
-                gridContainer.appendChild(card);
+            // 3. Sort all sessions: primarily by date (descending), and secondarily by session type order.
+            allSessions.sort((a, b) => {
+                const dateComparison = new Date(b.date_start) - new Date(a.date_start);
+                if (dateComparison !== 0) {
+                    return dateComparison;
+                }
+                // If in the same weekend, sort by the defined session order.
+                return (sessionOrder[a.session_name] || 99) - (sessionOrder[b.session_name] || 99);
             });
 
+            // Save the freshly fetched and sorted data to the cache.
+            localStorage.setItem(cacheKey, JSON.stringify(allSessions));
+            localStorage.setItem(cacheTimestampKey, now.toString());
+            console.log("F1 history has been cached.");
+
+            // Now render the page with the new data.
+            await renderPage(allSessions);
+
         } catch (error) {
-            // If an error occurs, display it on the page.
             mainContentContainer.innerHTML = `<p style="color: red; padding: 2rem;">Failed to load race history: ${error.message}</p>`;
             console.error('Error fetching sessions:', error);
         }
