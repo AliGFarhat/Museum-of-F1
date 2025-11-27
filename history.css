@@ -636,3 +636,58 @@ body {
     padding-bottom: 1px;
     padding-right: 0.75px;
 }
+
+/* Styles for the display mode menu */
+.display-mode {
+    position: absolute; /* Position the container */
+    bottom: 0;
+    right: 0;
+}
+
+.display-mode-btn {
+    background-color: #000; /* Restored black background */
+    border: 1px solid #fff;
+    color: #fff;
+    font-family: 'Formula Font';
+    cursor: pointer;
+    padding: 10px 25px; /* Increased horizontal padding to make it wider */
+    border-radius: 15px;
+}
+
+.display-mode-menu {
+    position: absolute;
+    bottom: 50px; /* Position above the button */
+    right: 0;
+    background-color: #000; /* Matched background color */
+    border: 1px solid #fff; /* Matched border */
+    border-radius: 15px; /* Matched border-radius */
+    display: flex;
+    flex-direction: column;
+    transform: translateY(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s;
+    z-index: 10; /* Ensure menu is above other footer elements */
+    overflow: hidden; /* Ensures child elements conform to border-radius */
+}
+
+.display-mode-menu.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.mode-option {
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+}
+
+.mode-option:hover {
+    background-color: #555; /* Dark grey hover for options */
+}
+}
