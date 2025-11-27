@@ -400,13 +400,21 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
+    position: sticky; /* Changed from fixed to sticky */
+    top: 100px; /* Space for the header */
     width: 250px;
     flex-shrink: 0;
+    align-self: start; /* Aligns the sidebar to the top of the flex container */
+    height: calc(100vh - 120px); /* Adjust height to account for header and padding */
+    padding: 2rem;
+    overflow-y: auto; /* Allow sidebar to scroll if its content is too long */
+    z-index: 40;
 }
 
 .sidebar-title {
     font-size: 18px;
     font-weight: 700;
+    color: var(--color-white);
     margin-bottom: 30px;
 }
 
@@ -417,6 +425,7 @@ body {
 .filter-header {
     font-size: 14px;
     font-weight: 600;
+    color: var(--color-white);
     margin-bottom: 12px;
     display: block;
 }
@@ -438,12 +447,13 @@ body {
 
 .checkbox-label {
     font-size: 14px;
-    color: #555;
+    color: var(--ui-grey-light);
 }
 
 /* Main Content Styles */
 .main-content {
     flex-grow: 1;
+    /* margin-left is no longer needed with flexbox gap */
 }
 
 .page-header {
@@ -454,7 +464,7 @@ body {
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: #111;
+    color: var(--color-white);
 }
 
 .page-subtitle {
@@ -689,5 +699,4 @@ body {
 
 .mode-option:hover {
     background-color: #555; /* Dark grey hover for options */
-}
 }
