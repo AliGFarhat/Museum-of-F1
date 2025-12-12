@@ -36,6 +36,26 @@ document.addEventListener('DOMContentLoaded', () => {
             'Spa-Francorchamps': 'images/tracks/spa.png', // Location is 'Spa'
             'Monza': 'images/tracks/monza.png', // Location is 'Monza'
             'Suzuka': 'images/tracks/suzuka.png', // Location is 'Suzuka'
+            'Yas Marina Circuit': 'images/tracks/abudhabi.png',
+            'Yas Island': 'images/tracks/abudhabi.png',
+            'Sakhir': 'images/tracks/bahrain.png',
+            'Jeddah': 'images/tracks/saudi.png',
+            'Melbourne': 'images/tracks/australia.png',
+            'Baku': 'images/tracks/baku.png',
+            'Miami': 'images/tracks/miami.png',
+            'Imola': 'images/tracks/imola.png',
+            'Barcelona': 'images/tracks/spain.png',
+            'Montreal': 'images/tracks/canada.png',
+            'Spielberg': 'images/tracks/austria.png',
+            'Budapest': 'images/tracks/hungary.png',
+            'Zandvoort': 'images/tracks/dutch.png',
+            'Marina Bay': 'images/tracks/singapore.png',
+            'Lusail': 'images/tracks/qatar.png',
+            'Austin': 'images/tracks/usa.png',
+            'Mexico City': 'images/tracks/mexico.png',
+            'Sao Paulo': 'images/tracks/brazil.png',
+            'Las Vegas': 'images/tracks/lasvegas.png',
+            'Shanghai': 'images/tracks/china.png'
         };
 
         // Use a for...of loop to process sessions sequentially.
@@ -64,7 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
             
             card.innerHTML = `
-                <div class="image-placeholder" style="background-image: url('${imageUrl}');"></div>
+                <div class="image-placeholder">
+                    <img src="${imageUrl}" alt="${session.location}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
                 <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_name}</div>
                 <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
             `;
