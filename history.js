@@ -31,13 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // A helper object to map meeting names from the API to your image files.
         const trackImages = {
-            'Monte Carlo': 'images/tracks/monaco.png',
+            'Monaco': 'images/tracks/monaco.png',
             'Silverstone': 'images/tracks/silverstone.png',
-            'Spa-Francorchamps': 'images/tracks/spa.png', // Location is 'Spa'
-            'Monza': 'images/tracks/monza.png', // Location is 'Monza'
-            'Suzuka': 'images/tracks/suzuka.png', // Location is 'Suzuka'
+            'Spa-Francorchamps': 'images/tracks/spa.png',
+            'Monza': 'images/tracks/monza.png',
+            'Suzuka': 'images/tracks/suzuka.png',
             'Yas Marina Circuit': 'images/tracks/abudhabi.png',
-            'Yas Island': 'images/tracks/abudhabi.png',
+            'Yas Marina': 'images/tracks/abudhabi.png',
             'Sakhir': 'images/tracks/bahrain.png',
             'Jeddah': 'images/tracks/saudi.png',
             'Melbourne': 'images/tracks/australia.png',
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'Miami': 'images/tracks/miami.png',
             'Imola': 'images/tracks/imola.png',
             'Barcelona': 'images/tracks/spain.png',
-            'Montreal': 'images/tracks/canada.png',
+            'Montréal': 'images/tracks/canada.png',
             'Spielberg': 'images/tracks/austria.png',
             'Budapest': 'images/tracks/hungary.png',
             'Zandvoort': 'images/tracks/dutch.png',
@@ -53,13 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
             'Lusail': 'images/tracks/qatar.png',
             'Austin': 'images/tracks/usa.png',
             'Mexico City': 'images/tracks/mexico.png',
-            'Sao Paulo': 'images/tracks/brazil.png',
+            'São Paulo': 'images/tracks/brazil.png',
             'Las Vegas': 'images/tracks/lasvegas.png',
             'Shanghai': 'images/tracks/china.png'
         };
 
         // Use a for...of loop to process sessions sequentially.
         for (const session of allSessions) {
+            // Normalize location names if necessary
+            if (session.location === 'Yas Island') {
+                session.location = 'Yas Marina';
+            }
+
             // Create the HTML for a new card.
             const card = document.createElement('article');
             card.className = 'card';
@@ -84,8 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
             
             card.innerHTML = `
-                <div class="image-placeholder">
-                    <img src="${imageUrl}" alt="${session.location}" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                <div class="image-placeholder" style="position: relative; overflow: hidden;">
+                    <img src="${imageUrl}" alt="${session.location}" style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;">
                 </div>
                 <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_name}</div>
                 <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
