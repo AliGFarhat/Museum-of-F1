@@ -406,7 +406,7 @@ body {
     flex-shrink: 0;
     align-self: start; /* Aligns the sidebar to the top of the flex container */
     height: calc(100vh - 120px); /* Adjust height to account for header and padding */
-    padding: 2rem 2rem 2rem 0rem;
+    padding: 2rem 0rem 2rem 0rem;
     overflow-y: auto; /* Allow sidebar to scroll if its content is too long */
     z-index: 40;
 }
