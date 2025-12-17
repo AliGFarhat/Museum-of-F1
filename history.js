@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'Silverstone': 'images/tracks/silverstone.png',
             'Spa-Francorchamps': 'images/tracks/spa.png',
             'Monza': 'images/tracks/monza.png',
+
             'Suzuka': 'images/tracks/suzuka.png',
             'Yas Marina Circuit': 'images/tracks/abudhabi.png',
             'Yas Marina': 'images/tracks/abudhabi.png',
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'Baku': 'images/tracks/baku.png',
             'Miami': 'images/tracks/miami.png',
             'Imola': 'images/tracks/imola.png',
+
             'Barcelona': 'images/tracks/spain.png',
             'Montréal': 'images/tracks/canada.png',
             'Spielberg': 'images/tracks/austria.png',
@@ -58,12 +60,42 @@ document.addEventListener('DOMContentLoaded', () => {
             'Shanghai': 'images/tracks/china.png'
         };
 
+        const flagImages = {
+            'UAE': 'images/flags/uae.png',
+            'Bahrain': 'images/flags/bhr.png',
+            'Saudi Arabia': 'images/flags/sau.png',
+            'Australia': 'images/flags/aus.png',
+            'Azerbaijan': 'images/flags/aze.png',
+            'USA': 'images/flags/usa.png',
+            'Italy': 'images/flags/ita.png',
+            'Spain': 'images/flags/esp.png',
+            'Canada': 'images/flags/can.png',
+            'Austria': 'images/flags/aut.png',
+            'Hungary': 'images/flags/hun.png',
+            'Netherlands': 'images/flags/nld.png',
+            'Singapore': 'images/flags/sgp.png',
+            'Qatar': 'images/flags/qat.png',
+            'Mexico': 'images/flags/mex.png',
+            'Brazil': 'images/flags/bra.png',
+            'China': 'images/flags/chn.png',
+            'Belgium': 'images/flags/bel.png',
+            'Japan': 'images/flags/jpn.png',
+            'Monaco': 'images/flags/mco.png'
+        };
+
         // Use a for...of loop to process sessions sequentially.
         for (const session of allSessions) {
             // Normalize location names if necessary
             if (session.location === 'Yas Island') {
                 session.location = 'Yas Marina';
             }
+
+            // Determine flag image
+            let countryKey = session.country_name;
+            if (countryKey === 'United States') countryKey = 'USA';
+            if (countryKey === 'United Arab Emirates') countryKey = 'UAE';
+            
+            const countryFlag = flagImages[countryKey];
 
             // Create the HTML for a new card.
             const card = document.createElement('article');
@@ -91,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="image-placeholder" style="position: relative; overflow: hidden;">
                     <img src="${imageUrl}" alt="${session.location}" style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;">
+                     ${countryFlag ? `<img src="${countryFlag}" alt="${session.country_name} Flag" style="width: 30px; position: absolute; bottom: 15px; right: 15px;">` : ''}
                 </div>
                 <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_name}</div>
                 <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
