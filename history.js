@@ -148,7 +148,24 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const years = getUniqueValues(sessions, 'year').sort((a, b) => b - a);
         const tracks = getUniqueValues(sessions, 'location');
-        const sessionTypes = getUniqueValues(sessions, 'session_name');
+        
+        // Get all available session names from data
+        const availableSessionNames = new Set(sessions.map(s => s.session_name));
+
+        // Define the desired order and labels for sessions
+        const sessionConfig = [
+            { key: 'Practice 1', label: 'Practice 1' },
+            { key: 'Practice 2', label: 'Practice 2' },
+            { key: 'Practice 3', label: 'Practice 3' },
+            { key: 'Sprint Qualifying', label: 'Sprint Qualifying' },
+            { key: 'Sprint Shootout', label: 'Sprint Qualifying' }, // Map 2023 name to desired label
+            { key: 'Sprint', label: 'Sprint Race' },
+            { key: 'Qualifying', label: 'Qualifying' },
+            { key: 'Race', label: 'Race' }
+        ];
+
+        // Filter config to only include sessions present in data (removes "Day 1", etc.)
+        const activeSessionConfig = sessionConfig.filter(item => availableSessionNames.has(item.key));
 
         sidebar.innerHTML = `
             <div class="sidebar-title">Filters</div>
@@ -179,9 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="filter-group">
                 <span class="filter-header">Session</span>
-                ${sessionTypes.map(session => `
+                ${activeSessionConfig.map(config => `
                     <label class="checkbox-item">
-                        <input type="checkbox" value="${session}" data-filter-type="session"> <span class="checkbox-label">${session}</span>
+                        <input type="checkbox" value="${config.key}" data-filter-type="session"> <span class="checkbox-label">${config.label}</span>
                     </label>
                 `).join('')}
             </div>
@@ -223,6 +240,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cachedData && cachedTimestamp && (now - cachedTimestamp < cacheDuration)) {
             console.log("Loading F1 history from cache.");
             const allSessions = JSON.parse(cachedData);
+
+            // Normalize data immediately for cached data
+            allSessions.forEach(session => {
+                if (session.location === 'Yas Island') {
+                    session.location = 'Yas Marina';
+                }
+            });
+
             globalSessions = allSessions;
             populateSidebar(allSessions);
             await renderPage(allSessions);
@@ -258,7 +283,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // 2. Define the desired sort order for sessions within a weekend.
-            const sessionOrder = { 'Race': 1, 'Qualifying': 2, 'Sprint': 3, 'FP3': 4, 'FP2': 5, 'FP1': 6 };
+            const sessionOrder = { 
+                'Race': 1, 
+                'Qualifying': 2, 
+                'Sprint': 3, 
+                'Sprint Shootout': 4,
+                'Sprint Qualifying': 4,
+                'Practice 3': 5, 
+                'Practice 2': 6, 
+                'Practice 1': 7 
+            };
 
             // 3. Sort all sessions: primarily by date (descending), and secondarily by session type order.
             allSessions.sort((a, b) => {
