@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Select the main content area that will hold the page header and the grid.
     const mainContentContainer = document.querySelector('.main-content');
+    const sidebar = document.querySelector('.sidebar');
 
     // If the container doesn't exist, stop the script to avoid errors.
     if (!mainContentContainer) {
@@ -10,8 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    let globalSessions = []; // Store sessions globally for filtering
+
     // This function handles rendering the page content from the session data.
-    async function renderPage(allSessions) {
+    async function renderPage(allSessions, weatherFilters = []) {
         // Clear the main content area and rebuild its structure.
         mainContentContainer.innerHTML = `
             <header class="page-header">
@@ -85,11 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Use a for...of loop to process sessions sequentially.
         for (const session of allSessions) {
-            // Normalize location names if necessary
-            if (session.location === 'Yas Island') {
-                session.location = 'Yas Marina';
-            }
-
             // Determine flag image
             let countryKey = session.country_name;
             if (countryKey === 'United States') countryKey = 'USA';
@@ -101,20 +99,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('article');
             card.className = 'card';
 
-            // Fetch weather data for this specific session
-            const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
-            let weatherCondition = 'N/A'; // Default to N/A
+            // Fetch weather data for this specific session if not already cached
+            let weatherCondition = session.weatherCondition;
+            if (!weatherCondition) {
+                const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
+                weatherCondition = 'N/A'; // Default to N/A
 
-            // Check if the response is valid JSON before parsing.
-            const contentType = weatherResponse.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const weatherData = await weatherResponse.json();
-                
-                // If we got valid data, determine if it was wet or dry.
-                if (Array.isArray(weatherData)) {
-                    const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
-                    weatherCondition = hadRain ? 'Wet' : 'Dry';
+                // Check if the response is valid JSON before parsing.
+                const contentType = weatherResponse.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    const weatherData = await weatherResponse.json();
+                    
+                    // If we got valid data, determine if it was wet or dry.
+                    if (Array.isArray(weatherData)) {
+                        const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
+                        weatherCondition = hadRain ? 'Wet' : 'Dry';
+                    }
                 }
+                session.weatherCondition = weatherCondition; // Cache it
+            }
+
+            // Apply Weather Filter
+            if (weatherFilters.length > 0 && !weatherFilters.includes(weatherCondition)) {
+                continue;
             }
 
             // Get the correct image path, or a default one if not found.
@@ -134,6 +141,74 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function populateSidebar(sessions) {
+        if (!sidebar) return;
+
+        const getUniqueValues = (data, key) => [...new Set(data.map(item => item[key]))].sort();
+        
+        const years = getUniqueValues(sessions, 'year').sort((a, b) => b - a);
+        const tracks = getUniqueValues(sessions, 'location');
+        const sessionTypes = getUniqueValues(sessions, 'session_name');
+
+        sidebar.innerHTML = `
+            <div class="sidebar-title">Filters</div>
+            
+            <div class="filter-group">
+                <span class="filter-header">Year</span>
+                ${years.map(year => `
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="${year}" data-filter-type="year"> <span class="checkbox-label">${year}</span>
+                    </label>
+                `).join('')}
+            </div>
+
+            <div class="filter-group">
+                <span class="filter-header">Track</span>
+                ${tracks.map(track => `
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="${track}" data-filter-type="track"> <span class="checkbox-label">${track}</span>
+                    </label>
+                `).join('')}
+            </div>
+
+            <div class="filter-group">
+                <span class="filter-header">Weather</span>
+                <label class="checkbox-item"><input type="checkbox" value="Dry" data-filter-type="weather"> <span class="checkbox-label">Dry</span></label>
+                <label class="checkbox-item"><input type="checkbox" value="Wet" data-filter-type="weather"> <span class="checkbox-label">Wet</span></label>
+            </div>
+
+            <div class="filter-group">
+                <span class="filter-header">Session</span>
+                ${sessionTypes.map(session => `
+                    <label class="checkbox-item">
+                        <input type="checkbox" value="${session}" data-filter-type="session"> <span class="checkbox-label">${session}</span>
+                    </label>
+                `).join('')}
+            </div>
+        `;
+
+        sidebar.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', handleFilterChange);
+        });
+    }
+
+    async function handleFilterChange() {
+        const getChecked = (type) => Array.from(sidebar.querySelectorAll(`input[data-filter-type="${type}"]:checked`)).map(cb => cb.value);
+        
+        const activeYears = getChecked('year').map(Number);
+        const activeTracks = getChecked('track');
+        const activeWeather = getChecked('weather');
+        const activeSessions = getChecked('session');
+
+        const filtered = globalSessions.filter(session => {
+            return (activeYears.length === 0 || activeYears.includes(session.year)) &&
+                   (activeTracks.length === 0 || activeTracks.includes(session.location)) &&
+                   (activeSessions.length === 0 || activeSessions.includes(session.session_name));
+        });
+
+        await renderPage(filtered, activeWeather);
+    }
+
     // This is the main function to get and display session data.
     async function fetchAndDisplaySessions() {
         const cacheKey = 'f1HistoryData';
@@ -148,6 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cachedData && cachedTimestamp && (now - cachedTimestamp < cacheDuration)) {
             console.log("Loading F1 history from cache.");
             const allSessions = JSON.parse(cachedData);
+            globalSessions = allSessions;
+            populateSidebar(allSessions);
             await renderPage(allSessions);
             return; // Exit the function
         }
@@ -158,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const currentYear = new Date().getFullYear();
-            const startYear = 2018;
+            const startYear = 2023;
             let allSessions = [];
 
             // 1. Fetch all sessions for all years. This is more reliable than fetching all meetings at once.
@@ -172,6 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const yearlySessions = await Promise.all(fetchPromises);
             allSessions = yearlySessions.flat();
+
+            // Normalize data immediately
+            allSessions.forEach(session => {
+                if (session.location === 'Yas Island') {
+                    session.location = 'Yas Marina';
+                }
+            });
 
             // 2. Define the desired sort order for sessions within a weekend.
             const sessionOrder = { 'Race': 1, 'Qualifying': 2, 'Sprint': 3, 'FP3': 4, 'FP2': 5, 'FP1': 6 };
@@ -191,6 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(cacheTimestampKey, now.toString());
             console.log("F1 history has been cached.");
 
+            globalSessions = allSessions;
+            populateSidebar(allSessions);
             // Now render the page with the new data.
             await renderPage(allSessions);
 
