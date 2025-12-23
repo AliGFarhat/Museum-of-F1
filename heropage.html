@@ -306,7 +306,7 @@
       <div id="login-modal" class="modal">
         <div class="modal-content">
             <span id="close-modal-btn" class="close-btn">&times;</span>
-            <h2>Login</h2>
+            <h2 id="modalTitle">Login</h2>
             <form id="login-form">
                 <label for="email">Email / Username</label>
                 <input type="text" id="email" name="email" required>
@@ -314,11 +314,14 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
                 
-                <a href="#" class="forgot-password">Forgot password?</a>
-                <button type="submit" class="login-btn">Login</button>
-                <button type="button" class="register-btn">Register</button>
+                <button type="submit" class="login-btn" id="submitBtn">Login</button>
+                <p style="text-align: center; margin-top: 15px;">
+                    <span id="toggleText">Don't have an account? </span>
+                    <a href="#" id="toggleAction" style="color: #e10600; cursor: pointer;">Register</a>
+                </p>
             </form>
         </div>
       </div>
+    <script src="auth.js"></script>
 </body>
 </html>
