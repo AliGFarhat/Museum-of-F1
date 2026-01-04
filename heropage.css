@@ -499,6 +499,52 @@ a {
     height: 24px;
 }
 
+/* Account Modal Actions */
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.account-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Titillium Web';
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-white {
+    background-color: var(--color-white);
+    color: var(--color-black);
+    border: 1px solid var(--ui-grey-medium);
+}
+.btn-white:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-outline-red {
+    background-color: transparent;
+    color: var(--color-f1-red);
+    border: 2px solid var(--color-f1-red);
+}
+.btn-outline-red:hover {
+    background-color: rgba(225, 6, 0, 0.1);
+}
+
+.btn-red {
+    background-color: var(--color-f1-red);
+    color: var(--color-white);
+    border: none;
+}
+.btn-red:hover {
+    background-color: #b40500;
+}
+
 /* Main Content */
 .main {
     max-width: 1660px;

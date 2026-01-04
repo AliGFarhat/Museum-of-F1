@@ -11,13 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
+    
+    // Account Modal Elements
+    const accountModal = document.getElementById('account-modal');
+    const closeAccountBtn = document.getElementById('close-account-modal-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const deleteAccountBtn = document.getElementById('delete-account-btn');
+    const changeUsernameBtn = document.getElementById('change-username-btn');
 
     let isLoginMode = true;
 
     // Check if user is already logged in (persisted session)
     const storedUser = localStorage.getItem('user');
     if (storedUser && loginBtn) {
-        loginBtn.textContent = 'Logout';
+        loginBtn.textContent = 'Account';
     }
 
     // Handle Navbar Button Click (Login / Logout)
@@ -25,11 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (localStorage.getItem('user')) {
-                // User is logged in, so this acts as Logout
-                localStorage.removeItem('user');
-                loginBtn.textContent = 'Login';
-                alert('Logged out successfully');
-                window.location.reload(); // Optional: reload page to reset state
+                // User is logged in, open Account Modal
+                if (accountModal) {
+                    accountModal.classList.add('show-modal');
+                    document.body.classList.add('modal-open');
+                }
             } else {
                 // User is not logged in, open Modal
                 if (modal) modal.classList.add('show-modal');
@@ -46,10 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Close Account Modal (X button)
+    if (closeAccountBtn) {
+        closeAccountBtn.addEventListener('click', () => {
+            accountModal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open');
+        });
+    }
+
     // Close Modal (Click outside)
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open');
+        }
+        if (e.target === accountModal) {
+            accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
         }
     });
@@ -100,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         localStorage.setItem('user', JSON.stringify(data.user));
                         modal.classList.remove('show-modal');
                         document.body.classList.remove('modal-open');
-                        loginBtn.textContent = 'Logout';
+                        loginBtn.textContent = 'Account';
                         
                         // Clear inputs
                         emailInput.value = '';
@@ -142,6 +161,60 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Show Open Eye (White) - means "Click to Reveal"
                 togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+            }
+        });
+    }
+
+    // --- Account Modal Actions ---
+
+    // Logout Logic
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('user');
+            loginBtn.textContent = 'Login';
+            accountModal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open');
+            alert('Logged out successfully');
+            window.location.reload();
+        });
+    }
+
+    // Delete Account Logic
+    if (deleteAccountBtn) {
+        deleteAccountBtn.addEventListener('click', async () => {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.id) return;
+
+                try {
+                    const response = await fetch('http://localhost:5000/delete-account', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: user.id })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert(data.message);
+                        // Perform logout after deletion
+                        localStorage.removeItem('user');
+                        loginBtn.textContent = 'Login';
+                        accountModal.classList.remove('show-modal');
+                        document.body.classList.remove('modal-open');
+                        window.location.reload();
+                    } else {
+                        // Handle errors safely (avoid SyntaxError on HTML responses)
+                        try {
+                            const data = await response.json();
+                            alert(data.message || 'Failed to delete account');
+                        } catch (e) {
+                            alert('Failed to delete account. Server status: ' + response.status);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error deleting account:', error);
+                    alert('Server error occurred while deleting account.');
+                }
             }
         });
     }
