@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.reload(); // Optional: reload page to reset state
             } else {
                 // User is not logged in, open Modal
-                if (modal) modal.style.display = 'block';
+                if (modal) modal.classList.add('show-modal');
+                document.body.classList.add('modal-open');
             }
         });
     }
@@ -39,14 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close Modal (X button)
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
+            modal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open');
         });
     }
 
     // Close Modal (Click outside)
     window.addEventListener('click', (e) => {
         if (e.target === modal) {
-            modal.style.display = 'none';
+            modal.classList.remove('show-modal');
+            document.body.classList.remove('modal-open');
         }
     });
 
@@ -94,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (isLoginMode) {
                         // Login Success
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        modal.style.display = 'none';
+                        modal.classList.remove('show-modal');
+                        document.body.classList.remove('modal-open');
                         loginBtn.textContent = 'Logout';
                         
                         // Clear inputs
