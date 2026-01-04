@@ -477,6 +477,28 @@ a {
     cursor: pointer;
 }
 
+.password-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+#login-form .password-container input {
+    margin-bottom: 0;
+    padding-right: 40px; /* Make space for the eye icon */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    width: 24px;
+    height: 24px;
+}
+
 /* Main Content */
 .main {
     max-width: 1660px;
