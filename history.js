@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // This function handles rendering the page content from the session data.
     async function renderPage(allSessions, weatherFilters = []) {
+        // Pagination settings: 2 rows (approx 6 items) initially, then 6 rows (approx 18 items)
+        const INITIAL_BATCH = 6;
+        const LOAD_MORE_BATCH = 18;
+
         // Clear the main content area and rebuild its structure.
         mainContentContainer.innerHTML = `
             <header class="page-header">
@@ -22,10 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="page-subtitle">Explore races from the history of Formula 1</p>
             </header>
             <div class="grid"></div>
+            <div class="load-more-container" style="text-align: center; padding: 2rem;">
+                <button id="load-more-btn" class="btn-red" style="display: none; margin: 0 auto; padding: 10px 20px; cursor: pointer; border-radius: 4px; background-color: #e10600; color: white; border: none;">Load More</button>
+            </div>
         `;
 
         // Now, select the newly created grid container.
         const gridContainer = mainContentContainer.querySelector('.grid');
+        const loadMoreBtn = mainContentContainer.querySelector('#load-more-btn');
         
         if (!allSessions || allSessions.length === 0) {
             gridContainer.innerHTML = '<p style="color: white;">No sessions found.</p>';
@@ -86,59 +94,105 @@ document.addEventListener('DOMContentLoaded', () => {
             'Monaco': 'images/flags/mco.png'
         };
 
-        // Use a for...of loop to process sessions sequentially.
-        for (const session of allSessions) {
-            // Determine flag image
-            let countryKey = session.country_name;
-            if (countryKey === 'United States') countryKey = 'USA';
-            if (countryKey === 'United Arab Emirates') countryKey = 'UAE';
-            
-            const countryFlag = flagImages[countryKey];
+        let currentSessionIndex = 0;
+        let isProcessing = false;
 
-            // Create the HTML for a new card.
-            const card = document.createElement('article');
-            card.className = 'card';
+        async function loadBatch(batchSize) {
+            if (isProcessing) return;
+            isProcessing = true;
 
-            // Fetch weather data for this specific session if not already cached
-            let weatherCondition = session.weatherCondition;
-            if (!weatherCondition) {
-                const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
-                weatherCondition = 'N/A'; // Default to N/A
+            if (loadMoreBtn) {
+                loadMoreBtn.textContent = 'Loading...';
+                loadMoreBtn.disabled = true;
+            }
 
-                // Check if the response is valid JSON before parsing.
-                const contentType = weatherResponse.headers.get("content-type");
-                if (contentType && contentType.indexOf("application/json") !== -1) {
-                    const weatherData = await weatherResponse.json();
-                    
-                    // If we got valid data, determine if it was wet or dry.
-                    if (Array.isArray(weatherData)) {
-                        const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
-                        weatherCondition = hadRain ? 'Wet' : 'Dry';
+            let itemsRendered = 0;
+
+            // Process sessions until we render enough or run out
+            while (currentSessionIndex < allSessions.length && itemsRendered < batchSize) {
+                // Stop if the grid container is no longer in the DOM (page changed)
+                if (!document.body.contains(gridContainer)) return;
+
+                const session = allSessions[currentSessionIndex];
+                currentSessionIndex++;
+
+                // Determine flag image
+                let countryKey = session.country_name;
+                if (countryKey === 'United States') countryKey = 'USA';
+                if (countryKey === 'United Arab Emirates') countryKey = 'UAE';
+                
+                const countryFlag = flagImages[countryKey];
+
+                // Fetch weather data for this specific session if not already cached
+                let weatherCondition = session.weatherCondition;
+                if (!weatherCondition) {
+                    try {
+                        const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
+                        weatherCondition = 'N/A'; // Default to N/A
+
+                        // Check if the response is valid JSON before parsing.
+                        const contentType = weatherResponse.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            const weatherData = await weatherResponse.json();
+                            
+                            // If we got valid data, determine if it was wet or dry.
+                            if (Array.isArray(weatherData)) {
+                                const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
+                                weatherCondition = hadRain ? 'Wet' : 'Dry';
+                            }
+                        }
+                    } catch (e) {
+                        weatherCondition = 'N/A';
                     }
+                    session.weatherCondition = weatherCondition; // Cache it
                 }
-                session.weatherCondition = weatherCondition; // Cache it
+
+                // Apply Weather Filter
+                if (weatherFilters.length > 0 && !weatherFilters.includes(weatherCondition)) {
+                    continue;
+                }
+
+                // Get the correct image path, or a default one if not found.
+                const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
+                
+                const card = document.createElement('article');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="image-placeholder" style="position: relative; overflow: hidden;">
+                        <img src="${imageUrl}" alt="${session.location}" style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;">
+                         ${countryFlag ? `<img src="${countryFlag}" alt="${session.country_name} Flag" style="width: 30px; position: absolute; bottom: 15px; right: 15px;">` : ''}
+                    </div>
+                    <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_name}</div>
+                    <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
+                `;
+
+                // Add the newly created card to the grid.
+                gridContainer.appendChild(card);
+                itemsRendered++;
             }
 
-            // Apply Weather Filter
-            if (weatherFilters.length > 0 && !weatherFilters.includes(weatherCondition)) {
-                continue;
+            // Update Load More Button
+            if (loadMoreBtn) {
+                loadMoreBtn.textContent = 'Load More';
+                loadMoreBtn.disabled = false;
+                
+                // Hide button if we've processed all sessions
+                if (currentSessionIndex >= allSessions.length) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'inline-block';
+                }
             }
-
-            // Get the correct image path, or a default one if not found.
-            const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
-            
-            card.innerHTML = `
-                <div class="image-placeholder" style="position: relative; overflow: hidden;">
-                    <img src="${imageUrl}" alt="${session.location}" style="width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0;">
-                     ${countryFlag ? `<img src="${countryFlag}" alt="${session.country_name} Flag" style="width: 30px; position: absolute; bottom: 15px; right: 15px;">` : ''}
-                </div>
-                <div class="card-meta-primary">${session.year} | ${session.location} | ${session.session_name}</div>
-                <div class="card-meta-secondary">${session.country_name} • ${weatherCondition}</div>
-            `;
-
-            // Add the newly created card to the grid.
-            gridContainer.appendChild(card);
+            isProcessing = false;
         }
+
+        // Attach event listener
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', () => loadBatch(LOAD_MORE_BATCH));
+        }
+
+        // Initial load
+        await loadBatch(INITIAL_BATCH);
     }
 
     function populateSidebar(sessions) {
