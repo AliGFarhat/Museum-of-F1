@@ -78,10 +78,13 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 body {
     background-color: var(--color-black);
     overflow-x: hidden;
-    overflow-y: scroll; /* Always show vertical scrollbar to prevent layout shift */
 }
 
 a {

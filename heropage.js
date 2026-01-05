@@ -12,25 +12,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Sticky Navbar Logic
     if (header && contentContainer) {
-        const headerOffsetTop = header.offsetTop;
         const headerHeight = header.offsetHeight;
+        let lastScrollY = window.scrollY;
 
-        window.addEventListener('scroll', () => {
-            if (window.scrollY >= headerOffsetTop) {
-                // When scrolled past the header's original position, make it fixed.
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Handle Fixed State
+            if (currentScrollY > 0) {
                 if (!header.classList.contains('header-fixed')) {
                     header.classList.add('header-fixed');
-                    // Add padding to the content container to prevent the layout jump.
                     contentContainer.style.paddingTop = `${headerHeight}px`;
                 }
             } else {
-                // When scrolling back up to the "magnet" point, un-fix it.
-                if (header.classList.contains('header-fixed')) {
-                    header.classList.remove('header-fixed');
-                    contentContainer.style.paddingTop = ''; // Remove the padding
+                header.classList.remove('header-fixed');
+                contentContainer.style.paddingTop = '';
+                header.classList.remove('hide-nav');
+            }
+
+            // Handle Hide/Show on Scroll
+            if (currentScrollY > headerHeight) {
+                if (currentScrollY > lastScrollY) {
+                    // Scrolling Down
+                    header.classList.add('hide-nav');
+                } else {
+                    // Scrolling Up
+                    header.classList.remove('hide-nav');
                 }
             }
-        });
+
+            lastScrollY = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        // Run once on load to set initial state
+        handleScroll();
     }
 
     if (settingsCog) {
