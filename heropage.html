@@ -247,7 +247,13 @@
             <span id="close-modal-btn" class="close-btn">&times;</span>
             <h2 id="modalTitle">Login</h2>
             <form id="login-form">
-                <label for="email">Email / Username</label>
+                <div id="register-username-container" style="display: none;">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" name="username">
+                    <small id="register-username-feedback" class="validation-text"></small>
+                </div>
+
+                <label for="email" id="email-label">Email / Username</label>
                 <input type="text" id="email" name="email" required>
                 
                 <label for="password">Password</label>
@@ -271,9 +277,15 @@
       <div id="account-modal" class="modal">
         <div class="modal-content">
             <span id="close-account-modal-btn" class="close-btn">&times;</span>
-            <h2>Account</h2>
+            <h2 id="accountModalTitle">Account</h2>
             <div class="account-actions">
                 <button id="change-username-btn" class="account-btn btn-white">Change Username</button>
+                <div id="change-username-form">
+                    <input type="text" id="new-username-input" placeholder="New Username" class="account-input">
+                    <small id="change-username-feedback" class="validation-text"></small>
+                    <button id="save-username-btn" class="account-btn btn-red">Save</button>
+                    <button id="cancel-username-btn" class="account-btn btn-white">Cancel</button>
+                </div>
                 <button id="logout-btn" class="account-btn btn-outline-red">Log Out</button>
                 <button id="delete-account-btn" class="account-btn btn-red">Delete Account</button>
             </div>

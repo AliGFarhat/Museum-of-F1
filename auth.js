@@ -9,15 +9,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleText = document.getElementById('toggleText');
     const toggleAction = document.getElementById('toggleAction');
     const emailInput = document.getElementById('email');
+    const emailLabel = document.getElementById('email-label');
+    const registerUsernameContainer = document.getElementById('register-username-container');
+    const registerUsernameInput = document.getElementById('register-username');
+    const registerUsernameFeedback = document.getElementById('register-username-feedback');
     const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
     
     // Account Modal Elements
     const accountModal = document.getElementById('account-modal');
     const closeAccountBtn = document.getElementById('close-account-modal-btn');
+    const accountModalTitle = document.getElementById('accountModalTitle');
     const logoutBtn = document.getElementById('logout-btn');
     const deleteAccountBtn = document.getElementById('delete-account-btn');
     const changeUsernameBtn = document.getElementById('change-username-btn');
+    const changeUsernameForm = document.getElementById('change-username-form');
+    const newUsernameInput = document.getElementById('new-username-input');
+    const changeUsernameFeedback = document.getElementById('change-username-feedback');
+    const saveUsernameBtn = document.getElementById('save-username-btn');
+    const cancelUsernameBtn = document.getElementById('cancel-username-btn');
 
     let isLoginMode = true;
 
@@ -34,8 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('user')) {
                 // User is logged in, open Account Modal
                 if (accountModal) {
+                    // Update modal title with username
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    if (accountModalTitle && user && user.username) {
+                        accountModalTitle.textContent = `Hello, ${user.username}`;
+                    }
                     accountModal.classList.add('show-modal');
                     document.body.classList.add('modal-open');
+
+                    // Ensure login modal is closed (fixes conflict with heropage.js)
+                    if (modal) modal.classList.remove('show-modal');
                 }
             } else {
                 // User is not logged in, open Modal
@@ -84,11 +102,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.textContent = 'Login';
                 toggleText.textContent = "Don't have an account? ";
                 toggleAction.textContent = "Register";
+                registerUsernameContainer.style.display = 'none';
+                emailLabel.textContent = 'Email / Username';
+                registerUsernameInput.required = false;
             } else {
                 modalTitle.textContent = 'Register';
                 submitBtn.textContent = 'Register';
                 toggleText.textContent = "Already have an account? ";
                 toggleAction.textContent = "Login";
+                registerUsernameContainer.style.display = 'block';
+                emailLabel.textContent = 'Email';
+                registerUsernameInput.required = true;
             }
         });
     }
@@ -100,22 +124,29 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const email = emailInput.value;
             const password = passwordInput.value;
+            const username = registerUsernameInput.value;
+
             const endpoint = isLoginMode ? '/login' : '/register';
             const url = `http://localhost:5000${endpoint}`;
+            
+            const bodyData = { email, password };
+            if (!isLoginMode) {
+                bodyData.username = username;
+            }
 
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify(bodyData)
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(data.message);
                     if (isLoginMode) {
                         // Login Success
+                        // No alert for login as requested
                         localStorage.setItem('user', JSON.stringify(data.user));
                         modal.classList.remove('show-modal');
                         document.body.classList.remove('modal-open');
@@ -124,7 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Clear inputs
                         emailInput.value = '';
                         passwordInput.value = '';
+                        registerUsernameInput.value = '';
                     } else {
+                        alert(data.message); // Keep alert for registration
                         // Registration Success - Switch to login view
                         toggleAction.click();
                     }
@@ -165,6 +198,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Username Validation Logic (Debounce) ---
+    let debounceTimer;
+    const debounce = (func, delay) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(func, delay);
+    };
+
+    const checkUsernameAvailability = async (username, feedbackElement) => {
+        if (!username) {
+            feedbackElement.textContent = '';
+            return;
+        }
+
+        // Get current user ID to exclude from check (for Change Username scenario)
+        const storedUser = localStorage.getItem('user');
+        const currentUser = storedUser ? JSON.parse(storedUser) : null;
+        const excludeId = currentUser ? currentUser.id : null;
+
+        try {
+            const response = await fetch('http://localhost:5000/check-username', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, excludeId })
+            });
+            const data = await response.json();
+            if (data.available) {
+                feedbackElement.textContent = 'Username available';
+                feedbackElement.style.color = '#00ff00'; // Green
+            } else {
+                feedbackElement.textContent = 'Username taken';
+                feedbackElement.style.color = '#e10600'; // F1 Red
+            }
+        } catch (error) {
+            console.error('Error checking username:', error);
+        }
+    };
+
+    if (registerUsernameInput) {
+        registerUsernameInput.addEventListener('input', () => {
+            registerUsernameFeedback.textContent = '...';
+            registerUsernameFeedback.style.color = '#ccc';
+            debounce(() => {
+                checkUsernameAvailability(registerUsernameInput.value, registerUsernameFeedback);
+            }, 500);
+        });
+    }
+
     // --- Account Modal Actions ---
 
     // Logout Logic
@@ -197,11 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const data = await response.json();
                         alert(data.message);
                         // Perform logout after deletion
-                        localStorage.removeItem('user');
-                        loginBtn.textContent = 'Login';
-                        accountModal.classList.remove('show-modal');
-                        document.body.classList.remove('modal-open');
-                        window.location.reload();
+                        logoutBtn.click();
                     } else {
                         // Handle errors safely (avoid SyntaxError on HTML responses)
                         try {
@@ -215,6 +291,65 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error('Error deleting account:', error);
                     alert('Server error occurred while deleting account.');
                 }
+            }
+        });
+    }
+
+    // Change Username Logic
+    if (changeUsernameBtn) {
+        changeUsernameBtn.addEventListener('click', () => {
+            changeUsernameForm.classList.add('show');
+            changeUsernameBtn.style.display = 'none';
+        });
+    }
+
+    if (cancelUsernameBtn) {
+        cancelUsernameBtn.addEventListener('click', () => {
+            changeUsernameForm.classList.remove('show');
+            changeUsernameBtn.style.display = 'block';
+            newUsernameInput.value = '';
+            changeUsernameFeedback.textContent = '';
+        });
+    }
+
+    if (newUsernameInput) {
+        newUsernameInput.addEventListener('input', () => {
+            changeUsernameFeedback.textContent = '...';
+            changeUsernameFeedback.style.color = '#ccc';
+            debounce(() => {
+                checkUsernameAvailability(newUsernameInput.value, changeUsernameFeedback);
+            }, 500);
+        });
+    }
+
+    if (saveUsernameBtn) {
+        saveUsernameBtn.addEventListener('click', async () => {
+            const newUsername = newUsernameInput.value;
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!newUsername || !user || !user.id) return;
+
+            try {
+                const response = await fetch('http://localhost:5000/change-username', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: user.id, newUsername })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    // Update local storage with new username
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    if (accountModalTitle) {
+                        accountModalTitle.textContent = `Hello, ${data.user.username}`;
+                    }
+                    cancelUsernameBtn.click(); // Close form
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error changing username:', error);
             }
         });
     }
