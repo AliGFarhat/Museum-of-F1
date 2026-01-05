@@ -385,8 +385,16 @@ a {
 	}
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Formula Font', sans-serif;
+}
+
+button, input, textarea, select {
+    font-family: inherit;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Titillium Web', sans-serif;
     color: #333;
     background-color: var(--color-black);
     line-height: 1.5;
@@ -419,6 +427,7 @@ body {
     font-weight: 700;
     color: var(--color-white);
     margin-bottom: 30px;
+    font-family: 'Formula Font', sans-serif;
 }
 
 .filter-group {
@@ -431,6 +440,7 @@ body {
     color: var(--color-white);
     margin-bottom: 12px;
     display: block;
+    font-family: 'Formula Font', sans-serif;
 }
 
 .checkbox-item {
@@ -527,6 +537,7 @@ body {
     font-size: 14px;
     color: var(--color-white);
     margin-bottom: 4px;
+    font-family: 'Formula Font', sans-serif;
 }
 
 .card-meta-secondary {

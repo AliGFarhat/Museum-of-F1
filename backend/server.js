@@ -1,4 +1,5 @@
-require('dotenv').config({ path: './credentials.env' });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, 'credentials.env') });
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
@@ -6,7 +7,7 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://127.0.0.1:5500' })); // Allow requests from your frontend's origin
+app.use(cors({ origin: ['http://127.0.0.1:5500', 'http://localhost:5500'] })); // Allow requests from your frontend's origin
 app.use(express.json()); // To parse JSON bodies
 
 // Nodemailer Transporter Setup
@@ -16,6 +17,15 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+});
+
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.log('Error connecting to email server:', error);
+    } else {
+        console.log('Server is ready to take our messages');
+    }
 });
 
 // API Endpoint to handle feedback

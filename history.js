@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </header>
             <div class="grid"></div>
             <div class="load-more-container" style="text-align: center; padding: 2rem;">
-                <button id="load-more-btn" class="btn-red" style="display: none; margin: 0 auto; padding: 10px 20px; cursor: pointer; border-radius: 4px; background-color: #e10600; color: white; border: none;">Load More</button>
+                <button id="load-more-btn" class="btn-red" style="display: none; margin: 0 auto; padding: 10px 20px; cursor: pointer; border-radius: 4px; background-color: #e10600; color: white; border: none; font-family: 'Formula Font', sans-serif;">Load More</button>
             </div>
         `;
 
@@ -127,18 +127,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 let weatherCondition = session.weatherCondition;
                 if (!weatherCondition) {
                     try {
+                        // Add a small delay to prevent hitting API rate limits (429 Too Many Requests)
+                        await new Promise(resolve => setTimeout(resolve, 200));
+
                         const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
                         weatherCondition = 'N/A'; // Default to N/A
 
-                        // Check if the response is valid JSON before parsing.
-                        const contentType = weatherResponse.headers.get("content-type");
-                        if (contentType && contentType.indexOf("application/json") !== -1) {
-                            const weatherData = await weatherResponse.json();
-                            
-                            // If we got valid data, determine if it was wet or dry.
-                            if (Array.isArray(weatherData)) {
-                                const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
-                                weatherCondition = hadRain ? 'Wet' : 'Dry';
+                        if (weatherResponse.ok) {
+                            // Check if the response is valid JSON before parsing.
+                            const contentType = weatherResponse.headers.get("content-type");
+                            if (contentType && contentType.indexOf("application/json") !== -1) {
+                                const weatherData = await weatherResponse.json();
+                                
+                                // If we got valid data, determine if it was wet or dry.
+                                if (Array.isArray(weatherData)) {
+                                    const hadRain = weatherData.some(dataPoint => dataPoint.rainfall > 0);
+                                    weatherCondition = hadRain ? 'Wet' : 'Dry';
+                                }
                             }
                         }
                     } catch (e) {

@@ -176,11 +176,20 @@ html {
 body {
     background-color: var(--color-black);
     overflow-x: hidden;
+    font-family: 'Titillium Web', sans-serif;
 }
 
 a {
     text-decoration: none;
     color: var(--color-text-link);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Formula Font', sans-serif;
+}
+
+button, input, textarea, select {
+    font-family: inherit;
 }
 
 /* Top Section (Nav Bar) */
@@ -673,7 +682,7 @@ a {
     padding: 1.5rem;
     color: var(--color-white);
     font-size: 2.2rem;
-    font-weight: Regular;
+    font-weight: 400;
     z-index: 2;
     font-family: 'Formula Font';
     text-shadow: var(--color-black);
