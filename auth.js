@@ -115,6 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 registerUsernameContainer.style.display = 'none';
                 emailLabel.textContent = 'Email / Username';
                 registerUsernameInput.required = false;
+                registerUsernameInput.value = '';
+                registerUsernameFeedback.textContent = '';
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
             } else {
                 modalTitle.textContent = 'Register';
                 submitBtn.textContent = 'Register';
@@ -132,9 +137,25 @@ document.addEventListener('DOMContentLoaded', () => {
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = emailInput.value;
-            const password = passwordInput.value;
-            const username = registerUsernameInput.value;
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            const username = registerUsernameInput.value.trim();
+
+            if (email.includes(' ') || password.includes(' ')) {
+                alert('Spaces are not allowed in email or password.');
+                return;
+            }
+
+            if (!isLoginMode) {
+                if (username.includes(' ')) {
+                    alert('Spaces are not allowed in username.');
+                    return;
+                }
+                if (!/^[a-zA-Z0-9]+$/.test(username)) {
+                    alert('Username must not contain special characters.');
+                    return;
+                }
+            }
 
             const endpoint = isLoginMode ? '/login' : '/register';
             const url = `http://localhost:5000${endpoint}`;
@@ -215,9 +236,21 @@ document.addEventListener('DOMContentLoaded', () => {
         debounceTimer = setTimeout(func, delay);
     };
 
-    const checkUsernameAvailability = async (username, feedbackElement) => {
+    const checkUsernameAvailability = async (username, feedbackElement, buttonElement) => {
+        username = username.trim();
         if (!username) {
             feedbackElement.textContent = '';
+            return;
+        }
+
+        if (username.includes(' ') || !/^[a-zA-Z0-9]+$/.test(username)) {
+            feedbackElement.textContent = 'No spaces or special characters allowed';
+            feedbackElement.style.color = '#e10600';
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.style.opacity = '0.5';
+                buttonElement.style.cursor = 'not-allowed';
+            }
             return;
         }
 
@@ -230,15 +263,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('http://localhost:5000/check-username', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, excludeId })
+                body: JSON.stringify({ username: username.toLowerCase(), excludeId })
             });
             const data = await response.json();
             if (data.available) {
                 feedbackElement.textContent = 'Username available';
                 feedbackElement.style.color = '#00ff00'; // Green
+                if (buttonElement) {
+                    buttonElement.disabled = false;
+                    buttonElement.style.opacity = '1';
+                    buttonElement.style.cursor = 'pointer';
+                }
             } else {
                 feedbackElement.textContent = 'Username taken';
                 feedbackElement.style.color = '#e10600'; // F1 Red
+                if (buttonElement) {
+                    buttonElement.disabled = true;
+                    buttonElement.style.opacity = '0.5';
+                    buttonElement.style.cursor = 'not-allowed';
+                }
             }
         } catch (error) {
             console.error('Error checking username:', error);
@@ -250,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             registerUsernameFeedback.textContent = '...';
             registerUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(registerUsernameInput.value, registerUsernameFeedback);
+                checkUsernameAvailability(registerUsernameInput.value, registerUsernameFeedback, submitBtn);
             }, 500);
         });
     }
@@ -324,17 +367,26 @@ document.addEventListener('DOMContentLoaded', () => {
             changeUsernameFeedback.textContent = '...';
             changeUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(newUsernameInput.value, changeUsernameFeedback);
+                checkUsernameAvailability(newUsernameInput.value, changeUsernameFeedback, saveUsernameBtn);
             }, 500);
         });
     }
 
     if (saveUsernameBtn) {
         saveUsernameBtn.addEventListener('click', async () => {
-            const newUsername = newUsernameInput.value;
+            const newUsername = newUsernameInput.value.trim();
             const user = JSON.parse(localStorage.getItem('user'));
             
             if (!newUsername || !user || !user.id) return;
+
+            if (newUsername.includes(' ')) {
+                alert('Spaces are not allowed in username.');
+                return;
+            }
+            if (!/^[a-zA-Z0-9]+$/.test(newUsername)) {
+                alert('Username must not contain special characters.');
+                return;
+            }
 
             try {
                 const response = await fetch('http://localhost:5000/change-username', {
