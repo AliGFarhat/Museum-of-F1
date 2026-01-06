@@ -93,6 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (registerUsernameContainer) registerUsernameContainer.style.display = 'none';
         if (emailLabel) emailLabel.textContent = 'Email / Username';
         if (registerUsernameInput) registerUsernameInput.required = false;
+
+        // Reset loader overlay
+        if (modal) {
+            const loaderOverlay = modal.querySelector('.modal-loading-overlay');
+            if (loaderOverlay) loaderOverlay.classList.remove('show');
+        }
     };
 
     // Close Modal (X button)
@@ -139,30 +145,81 @@ document.addEventListener('DOMContentLoaded', () => {
     if (toggleAction) {
         toggleAction.addEventListener('click', (e) => {
             e.preventDefault();
-            isLoginMode = !isLoginMode;
             
-            if (isLoginMode) {
-                modalTitle.textContent = 'Login';
-                submitBtn.textContent = 'Login';
-                toggleText.textContent = "Don't have an account? ";
-                toggleAction.textContent = "Register";
-                registerUsernameContainer.style.display = 'none';
-                emailLabel.textContent = 'Email / Username';
-                registerUsernameInput.required = false;
-                registerUsernameInput.value = '';
-                registerUsernameFeedback.textContent = '';
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.cursor = 'pointer';
-            } else {
-                modalTitle.textContent = 'Register';
-                submitBtn.textContent = 'Register';
-                toggleText.textContent = "Already have an account? ";
-                toggleAction.textContent = "Login";
-                registerUsernameContainer.style.display = 'block';
-                emailLabel.textContent = 'Email';
-                registerUsernameInput.required = true;
+            const modalContent = modal.querySelector('.modal-content');
+            
+            // 1. Lock current height and prevent overflow
+            const startHeight = modalContent.offsetHeight;
+            modalContent.style.height = `${startHeight}px`;
+            modalContent.style.overflow = 'hidden';
+
+            // Create loader if it doesn't exist
+            let loaderOverlay = modal.querySelector('.modal-loading-overlay');
+            if (!loaderOverlay) {
+                if (modalContent) {
+                    loaderOverlay = document.createElement('div');
+                    loaderOverlay.className = 'modal-loading-overlay';
+                    loaderOverlay.innerHTML = '<div class="loader"></div>';
+                    modalContent.appendChild(loaderOverlay);
+                }
             }
+
+            // Show loader
+            if (loaderOverlay) loaderOverlay.classList.add('show');
+
+            requestAnimationFrame(() => {
+                isLoginMode = !isLoginMode;
+                
+                if (isLoginMode) {
+                    modalTitle.textContent = 'Login';
+                    submitBtn.textContent = 'Login';
+                    toggleText.textContent = "Don't have an account? ";
+                    toggleAction.textContent = "Register";
+                    registerUsernameContainer.style.display = 'none';
+                    emailLabel.textContent = 'Email / Username';
+                    registerUsernameInput.required = false;
+                    registerUsernameInput.value = '';
+                    registerUsernameFeedback.textContent = '';
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
+                } else {
+                    modalTitle.textContent = 'Register';
+                    submitBtn.textContent = 'Register';
+                    toggleText.textContent = "Already have an account? ";
+                    toggleAction.textContent = "Login";
+                    registerUsernameContainer.style.display = 'block';
+                    emailLabel.textContent = 'Email';
+                    registerUsernameInput.required = true;
+                }
+
+                // 2. Calculate new height
+                // Temporarily disable transition to measure natural height
+                modalContent.style.transition = 'none';
+                modalContent.style.height = 'auto';
+                const targetHeight = modalContent.offsetHeight;
+
+                // 3. Reset to start height
+                modalContent.style.height = `${startHeight}px`;
+                
+                // Force reflow
+                modalContent.offsetHeight;
+
+                // 4. Animate to target height
+                modalContent.style.transition = 'height 0.3s ease';
+                modalContent.style.height = `${targetHeight}px`;
+
+                // 5. Cleanup and Hide Loader
+                // Animation takes 300ms. Loader stays 200ms extra. Total 500ms.
+                setTimeout(() => {
+                    // Hide loader
+                    if (loaderOverlay) loaderOverlay.classList.remove('show');
+
+                    modalContent.style.height = 'auto';
+                    modalContent.style.overflow = '';
+                    modalContent.style.transition = '';
+                }, 500);
+            });
         });
     }
 
