@@ -71,11 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Helper to reset change username section
+    const resetChangeUsernameSection = () => {
+        if (changeUsernameForm) changeUsernameForm.classList.remove('show');
+        if (changeUsernameBtn) changeUsernameBtn.style.display = 'block';
+        if (newUsernameInput) newUsernameInput.value = '';
+        if (changeUsernameFeedback) changeUsernameFeedback.textContent = '';
+    };
+
     // Close Account Modal (X button)
     if (closeAccountBtn) {
         closeAccountBtn.addEventListener('click', () => {
             accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
+            resetChangeUsernameSection();
         });
     }
 
@@ -88,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === accountModal) {
             accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
+            resetChangeUsernameSection();
         }
     });
 
@@ -305,10 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (cancelUsernameBtn) {
         cancelUsernameBtn.addEventListener('click', () => {
-            changeUsernameForm.classList.remove('show');
-            changeUsernameBtn.style.display = 'block';
-            newUsernameInput.value = '';
-            changeUsernameFeedback.textContent = '';
+            resetChangeUsernameSection();
         });
     }
 
