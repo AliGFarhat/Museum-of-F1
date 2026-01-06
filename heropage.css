@@ -380,7 +380,7 @@ button, input, textarea, select {
     /* display: none; Hidden by default */
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 1s ease, -webkit-backdrop-filter 1s ease;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -388,6 +388,8 @@ button, input, textarea, select {
     width: 100vw;
     height: 100vh;
     background-color: var(--overlay-dark-60);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
     display: flex; /* Use flexbox for centering */
     align-items: center; /* Vertical center */
     justify-content: center; /* Horizontal center */
@@ -396,6 +398,8 @@ button, input, textarea, select {
 .modal.show-modal {
     opacity: 1;
     visibility: visible;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .modal.show-modal .modal-content {

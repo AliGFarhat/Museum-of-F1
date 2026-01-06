@@ -63,11 +63,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Helper to reset login modal
+    const resetLoginModal = () => {
+        if (emailInput) emailInput.value = '';
+        if (passwordInput) {
+            passwordInput.value = '';
+            passwordInput.setAttribute('type', 'password');
+        }
+        if (registerUsernameInput) registerUsernameInput.value = '';
+        if (registerUsernameFeedback) registerUsernameFeedback.textContent = '';
+        
+        // Reset password toggle
+        if (togglePassword) {
+            togglePassword.style.display = 'none';
+            togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+        }
+
+        // Reset to Login Mode
+        isLoginMode = true;
+        if (modalTitle) modalTitle.textContent = 'Login';
+        if (submitBtn) {
+            submitBtn.textContent = 'Login';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        }
+        if (toggleText) toggleText.textContent = "Don't have an account? ";
+        if (toggleAction) toggleAction.textContent = "Register";
+        if (registerUsernameContainer) registerUsernameContainer.style.display = 'none';
+        if (emailLabel) emailLabel.textContent = 'Email / Username';
+        if (registerUsernameInput) registerUsernameInput.required = false;
+    };
+
     // Close Modal (X button)
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
             modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
+            resetLoginModal();
         });
     }
 
@@ -93,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modal) {
             modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
+            resetLoginModal();
         }
         if (e.target === accountModal) {
             accountModal.classList.remove('show-modal');
