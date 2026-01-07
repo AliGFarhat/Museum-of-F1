@@ -127,14 +127,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Track mousedown target to prevent closing when dragging from content to overlay
+    let mouseDownTarget = null;
+    window.addEventListener('mousedown', (e) => {
+        mouseDownTarget = e.target;
+    });
+
     // Close Modal (Click outside)
     window.addEventListener('click', (e) => {
-        if (e.target === modal) {
+        if (e.target === modal && mouseDownTarget === modal) {
             modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
             resetLoginModal();
         }
-        if (e.target === accountModal) {
+        if (e.target === accountModal && mouseDownTarget === accountModal) {
             accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
             resetChangeUsernameSection();

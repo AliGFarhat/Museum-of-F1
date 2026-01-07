@@ -77,9 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Track mousedown target to prevent closing when dragging from content to overlay
+    let mouseDownTarget = null;
+    window.addEventListener('mousedown', (e) => {
+        mouseDownTarget = e.target;
+    });
+
     // Hide modal if user clicks outside of the modal content
     window.addEventListener('click', (event) => {
-        if (event.target == loginModal) {
+        if (event.target == loginModal && mouseDownTarget == loginModal) {
             loginModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open'); // Allow body scroll
         }
