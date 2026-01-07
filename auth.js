@@ -685,14 +685,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Change Username Logic
     if (changeUsernameBtn) {
         changeUsernameBtn.addEventListener('click', () => {
-            changeUsernameForm.classList.add('show');
-            changeUsernameBtn.style.display = 'none';
+            animateModalTransition(accountModal, () => {
+                changeUsernameForm.classList.add('show');
+                changeUsernameBtn.style.display = 'none';
+            });
         });
     }
 
     if (cancelUsernameBtn) {
         cancelUsernameBtn.addEventListener('click', () => {
-            resetChangeUsernameSection();
+            animateModalTransition(accountModal, () => {
+                resetChangeUsernameSection();
+            });
         });
     }
 
