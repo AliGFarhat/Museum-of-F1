@@ -1294,11 +1294,13 @@ button, input, textarea, select {
     background-color: #555; /* Dark grey hover for options */
 }
 
-#login-form #register-username {
+#login-form #register-username,
+#login-form #email {
     margin-bottom: 0.25rem;
 }
 
-#login-form #register-username:has(+ .validation-text:empty) {
+#login-form #register-username:has(+ .validation-text:empty),
+#login-form #email:has(+ .validation-text:empty) {
     margin-bottom: 1rem;
 }
 
@@ -1309,6 +1311,11 @@ button, input, textarea, select {
     margin-bottom: 0.75rem;
     font-weight: bold;
     min-height: 0;
+}
+
+#login-form .validation-text {
+    text-align: left;
+    margin-top: 0;
 }
 
 .validation-text:empty {
@@ -1350,4 +1357,26 @@ button, input, textarea, select {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Modal Message & Confirmation Views */
+.modal-message-view {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.modal-btn-group button {
+    min-width: 100px;
 }

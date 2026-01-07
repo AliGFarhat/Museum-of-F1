@@ -10,6 +10,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleAction = document.getElementById('toggleAction');
     const emailInput = document.getElementById('email');
     const emailLabel = document.getElementById('email-label');
+    
+    // Dynamically create email feedback element if it doesn't exist
+    const emailFeedback = document.getElementById('email-feedback') || (() => {
+        if (emailInput) {
+            const el = document.createElement('div');
+            el.id = 'email-feedback';
+            el.className = 'validation-text';
+            emailInput.insertAdjacentElement('afterend', el);
+            return el;
+        }
+        return null;
+    })();
+
     const registerUsernameContainer = document.getElementById('register-username-container');
     const registerUsernameInput = document.getElementById('register-username');
     const registerUsernameFeedback = document.getElementById('register-username-feedback');
@@ -72,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (registerUsernameInput) registerUsernameInput.value = '';
         if (registerUsernameFeedback) registerUsernameFeedback.textContent = '';
+        if (emailFeedback) emailFeedback.textContent = '';
         
         // Reset password toggle
         if (togglePassword) {
@@ -93,6 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (registerUsernameContainer) registerUsernameContainer.style.display = 'none';
         if (emailLabel) emailLabel.textContent = 'Email / Username';
         if (registerUsernameInput) registerUsernameInput.required = false;
+
+        // Reset any custom message views
+        if (modal) {
+            const messageViews = modal.querySelectorAll('.modal-message-view');
+            messageViews.forEach(view => view.remove());
+            const modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                Array.from(modalContent.children).forEach(child => {
+                    if (!child.classList.contains('modal-loading-overlay')) {
+                        child.style.display = '';
+                    }
+                });
+            }
+        }
 
         // Reset loader overlay
         if (modal) {
@@ -116,6 +144,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (changeUsernameBtn) changeUsernameBtn.style.display = 'block';
         if (newUsernameInput) newUsernameInput.value = '';
         if (changeUsernameFeedback) changeUsernameFeedback.textContent = '';
+        
+        // Reset any custom message views in account modal
+        if (accountModal) {
+            const messageViews = accountModal.querySelectorAll('.modal-message-view');
+            messageViews.forEach(view => view.remove());
+            const modalContent = accountModal.querySelector('.modal-content');
+            if (modalContent) {
+                Array.from(modalContent.children).forEach(child => {
+                    if (!child.classList.contains('modal-loading-overlay')) {
+                        child.style.display = '';
+                    }
+                });
+            }
+        }
     };
 
     // Close Account Modal (X button)
@@ -146,6 +188,111 @@ document.addEventListener('DOMContentLoaded', () => {
             resetChangeUsernameSection();
         }
     });
+
+    // --- Modal Animation & Message Helpers ---
+
+    const animateModalTransition = (modal, updateContentFn, callback) => {
+        const modalContent = modal.querySelector('.modal-content');
+        
+        // 1. Lock Height
+        const startHeight = modalContent.offsetHeight;
+        modalContent.style.height = `${startHeight}px`;
+        modalContent.style.overflow = 'hidden';
+
+        // 2. Show Loader
+        let loaderOverlay = modal.querySelector('.modal-loading-overlay');
+        if (!loaderOverlay) {
+            loaderOverlay = document.createElement('div');
+            loaderOverlay.className = 'modal-loading-overlay';
+            loaderOverlay.innerHTML = '<div class="loader"></div>';
+            modalContent.appendChild(loaderOverlay);
+        }
+        loaderOverlay.classList.add('show');
+
+        // 3. Wait for loader fade in
+        setTimeout(() => {
+            // 4. Update Content
+            updateContentFn(modalContent);
+
+            // 5. Calculate new height
+            modalContent.style.transition = 'none';
+            modalContent.style.height = 'auto';
+            const targetHeight = modalContent.offsetHeight;
+
+            // 6. Reset to start height
+            modalContent.style.height = `${startHeight}px`;
+            modalContent.offsetHeight; // Force reflow
+
+            // 7. Animate to target
+            modalContent.style.transition = 'height 0.3s ease';
+            modalContent.style.height = `${targetHeight}px`;
+
+            // 8. Cleanup & Hide Loader
+            setTimeout(() => {
+                // Hide Loader after resize is complete
+                loaderOverlay.classList.remove('show');
+
+                modalContent.style.height = 'auto';
+                modalContent.style.overflow = '';
+                modalContent.style.transition = '';
+                if (callback) callback();
+            }, 300);
+        }, 500);
+    };
+
+    const showStatusMessage = (modal, title, message, type = 'success', duration = 2000, onClose = null) => {
+        animateModalTransition(modal, (modalContent) => {
+            // Hide original content
+            Array.from(modalContent.children).forEach(child => {
+                if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
+            });
+
+            // Create Message View
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'modal-message-view';
+            
+            let icon = type === 'success' 
+                ? `<svg style="width: 48px; height: 48px; color: #00ff00; margin-bottom: 1rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`
+                : `<svg style="width: 48px; height: 48px; color: #e10600; margin-bottom: 1rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`;
+
+            messageContainer.innerHTML = `
+                ${icon}
+                <h2 style="margin-bottom: 1rem; font-family: 'Formula Font';">${title}</h2>
+                <p style="margin-bottom: 0;">${message}</p>
+            `;
+            modalContent.appendChild(messageContainer);
+        }, () => {
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (onClose) onClose();
+                }, duration);
+            }
+        });
+    };
+
+    const showConfirmation = (modal, title, message, onConfirm, onCancel) => {
+        animateModalTransition(modal, (modalContent) => {
+            // Hide original content
+            Array.from(modalContent.children).forEach(child => {
+                if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
+            });
+
+            const confirmContainer = document.createElement('div');
+            confirmContainer.className = 'modal-message-view';
+            confirmContainer.innerHTML = `
+                <h2 style="margin-bottom: 1rem; font-family: 'Formula Font';">${title}</h2>
+                <p>${message}</p>
+                <div class="modal-btn-group">
+                    <button id="confirm-yes" class="account-btn btn-red">Yes</button>
+                    <button id="confirm-no" class="account-btn btn-white">No</button>
+                </div>
+            `;
+            modalContent.appendChild(confirmContainer);
+
+            confirmContainer.querySelector('#confirm-yes').addEventListener('click', onConfirm);
+            confirmContainer.querySelector('#confirm-no').addEventListener('click', onCancel);
+        });
+    };
 
     // Toggle between Login and Register views
     if (toggleAction) {
@@ -186,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     registerUsernameInput.required = false;
                     registerUsernameInput.value = '';
                     registerUsernameFeedback.textContent = '';
+                    if (emailFeedback) emailFeedback.textContent = '';
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
                     submitBtn.style.cursor = 'pointer';
@@ -197,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     registerUsernameContainer.style.display = 'block';
                     emailLabel.textContent = 'Email';
                     registerUsernameInput.required = true;
+                    if (emailFeedback) emailFeedback.textContent = '';
                 }
 
                 // 2. Calculate new height
@@ -239,17 +388,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const username = registerUsernameInput.value.trim();
 
             if (email.includes(' ') || password.includes(' ')) {
-                alert('Spaces are not allowed in email or password.');
+                showStatusMessage(modal, 'Error', 'Spaces are not allowed in email or password.', 'error', 2000, () => resetLoginModal());
                 return;
             }
 
             if (!isLoginMode) {
                 if (username.includes(' ')) {
-                    alert('Spaces are not allowed in username.');
+                    showStatusMessage(modal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetLoginModal());
                     return;
                 }
                 if (!/^[a-zA-Z0-9]+$/.test(username)) {
-                    alert('Username must not contain special characters.');
+                    showStatusMessage(modal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetLoginModal());
                     return;
                 }
             }
@@ -274,28 +423,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     if (isLoginMode) {
                         // Login Success
-                        // No alert for login as requested
-                        localStorage.setItem('user', JSON.stringify(data.user));
-                        modal.classList.remove('show-modal');
-                        document.body.classList.remove('modal-open');
-                        loginBtn.textContent = 'Account';
-                        
-                        // Clear inputs
-                        emailInput.value = '';
-                        passwordInput.value = '';
-                        registerUsernameInput.value = '';
+                        showStatusMessage(modal, 'Success', 'Login Successful', 'success', 1500, () => {
+                            localStorage.setItem('user', JSON.stringify(data.user));
+                            modal.classList.remove('show-modal');
+                            document.body.classList.remove('modal-open');
+                            loginBtn.textContent = 'Account';
+                            resetLoginModal();
+                        });
                     } else {
-                        alert(data.message); // Keep alert for registration
-                        // Registration Success - Switch to login view
-                        toggleAction.click();
+                        // Registration Success - Auto Login
+                        showStatusMessage(modal, 'Success', 'Registration Complete', 'success', 1500, () => {
+                            if (data.user) {
+                                localStorage.setItem('user', JSON.stringify(data.user));
+                                if (loginBtn) loginBtn.textContent = 'Account';
+                            }
+                            modal.classList.remove('show-modal');
+                            document.body.classList.remove('modal-open');
+                            resetLoginModal();
+                        });
                     }
                 } else {
                     // Server returned an error (e.g., "User already exists")
-                    alert(data.message);
+                    showStatusMessage(modal, 'Error', data.message, 'error', 2000, () => {
+                        // Restore form
+                        const messageView = modal.querySelector('.modal-message-view');
+                        if (messageView) messageView.remove();
+                        const modalContent = modal.querySelector('.modal-content');
+                        Array.from(modalContent.children).forEach(child => {
+                            if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                        });
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to connect to the server. Ensure backend is running on port 5000.');
+                showStatusMessage(modal, 'Error', 'Failed to connect to server.', 'error', 2000, () => resetLoginModal());
             }
         });
     }
@@ -333,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         debounceTimer = setTimeout(func, delay);
     };
 
-    const checkUsernameAvailability = async (username, feedbackElement, buttonElement) => {
+    const checkUsernameAvailability = async (username, feedbackElement, buttonElement, excludeId = null) => {
         username = username.trim();
         if (!username) {
             feedbackElement.textContent = '';
@@ -350,11 +511,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return;
         }
-
-        // Get current user ID to exclude from check (for Change Username scenario)
-        const storedUser = localStorage.getItem('user');
-        const currentUser = storedUser ? JSON.parse(storedUser) : null;
-        const excludeId = currentUser ? currentUser.id : null;
 
         try {
             const response = await fetch('http://localhost:5000/check-username', {
@@ -390,7 +546,78 @@ document.addEventListener('DOMContentLoaded', () => {
             registerUsernameFeedback.textContent = '...';
             registerUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(registerUsernameInput.value, registerUsernameFeedback, submitBtn);
+                checkUsernameAvailability(registerUsernameInput.value, registerUsernameFeedback, submitBtn, null);
+            }, 500);
+        });
+    }
+
+    // Email Validation Logic
+    const validateEmail = (email, feedbackElement, buttonElement) => {
+        // Only validate in Register mode
+        if (isLoginMode) {
+            if (feedbackElement) feedbackElement.textContent = '';
+            if (buttonElement) {
+                buttonElement.disabled = false;
+                buttonElement.style.opacity = '1';
+                buttonElement.style.cursor = 'pointer';
+            }
+            return;
+        }
+
+        // Ignore trailing spaces
+        const trimmedEmail = email.replace(/\s+$/, '');
+        
+        if (!trimmedEmail) {
+            if (feedbackElement) feedbackElement.textContent = '';
+            return;
+        }
+
+        // Check for leading spaces or spaces in the middle
+        if (trimmedEmail.startsWith(' ') || trimmedEmail.includes(' ')) {
+            if (feedbackElement) {
+                feedbackElement.textContent = 'No spaces allowed';
+                feedbackElement.style.color = '#e10600';
+            }
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.style.opacity = '0.5';
+                buttonElement.style.cursor = 'not-allowed';
+            }
+            return;
+        }
+
+        // Email format check
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(trimmedEmail)) {
+            if (feedbackElement) {
+                feedbackElement.textContent = 'Invalid email format';
+                feedbackElement.style.color = '#e10600';
+            }
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.style.opacity = '0.5';
+                buttonElement.style.cursor = 'not-allowed';
+            }
+        } else {
+            if (feedbackElement) {
+                feedbackElement.textContent = '';
+            }
+            if (buttonElement) {
+                buttonElement.disabled = false;
+                buttonElement.style.opacity = '1';
+                buttonElement.style.cursor = 'pointer';
+            }
+        }
+    };
+
+    if (emailInput) {
+        emailInput.addEventListener('input', () => {
+            if (!isLoginMode && emailFeedback) {
+                emailFeedback.textContent = '...';
+                emailFeedback.style.color = '#ccc';
+            }
+            debounce(() => {
+                validateEmail(emailInput.value, emailFeedback, submitBtn);
             }, 500);
         });
     }
@@ -400,23 +627,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout Logic
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('user');
-            loginBtn.textContent = 'Login';
-            accountModal.classList.remove('show-modal');
-            document.body.classList.remove('modal-open');
-            alert('Logged out successfully');
-            window.location.reload();
+            showStatusMessage(accountModal, 'Success', 'Logout Successful', 'success', 1500, () => {
+                localStorage.removeItem('user');
+                loginBtn.textContent = 'Login';
+                accountModal.classList.remove('show-modal');
+                document.body.classList.remove('modal-open');
+                window.location.reload();
+            });
         });
     }
 
     // Delete Account Logic
     if (deleteAccountBtn) {
         deleteAccountBtn.addEventListener('click', async () => {
-            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            showConfirmation(accountModal, 'Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', async () => {
+                // On Confirm
                 const user = JSON.parse(localStorage.getItem('user'));
                 if (!user || !user.id) return;
 
                 try {
+                    // Show loading state implicitly via transition or explicit loading message
+                    // We can reuse showStatusMessage but with no timeout to act as a loader
+                    // But animateModalTransition handles the loader.
+                    
                     const response = await fetch('http://localhost:5000/delete-account', {
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
@@ -424,24 +657,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (response.ok) {
-                        const data = await response.json();
-                        alert(data.message);
-                        // Perform logout after deletion
-                        logoutBtn.click();
+                        showStatusMessage(accountModal, 'Deleted', 'Account Deleted', 'success', 1500, () => {
+                            localStorage.removeItem('user');
+                            window.location.reload();
+                        });
                     } else {
-                        // Handle errors safely (avoid SyntaxError on HTML responses)
-                        try {
-                            const data = await response.json();
-                            alert(data.message || 'Failed to delete account');
-                        } catch (e) {
-                            alert('Failed to delete account. Server status: ' + response.status);
-                        }
+                        const data = await response.json();
+                        showStatusMessage(accountModal, 'Error', data.message || 'Failed to delete', 'error', 2000, () => resetChangeUsernameSection());
                     }
                 } catch (error) {
                     console.error('Error deleting account:', error);
-                    alert('Server error occurred while deleting account.');
+                    showStatusMessage(accountModal, 'Error', 'Server error', 'error', 2000, () => resetChangeUsernameSection());
                 }
-            }
+            }, () => {
+                // On Cancel: Restore original view
+                animateModalTransition(accountModal, (modalContent) => {
+                    const messageView = modalContent.querySelector('.modal-message-view');
+                    if (messageView) messageView.remove();
+                    Array.from(modalContent.children).forEach(child => {
+                        if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                    });
+                });
+            });
         });
     }
 
@@ -477,11 +714,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!newUsername || !user || !user.id) return;
 
             if (newUsername.includes(' ')) {
-                alert('Spaces are not allowed in username.');
+                showStatusMessage(accountModal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetChangeUsernameSection());
                 return;
             }
             if (!/^[a-zA-Z0-9]+$/.test(newUsername)) {
-                alert('Username must not contain special characters.');
+                showStatusMessage(accountModal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetChangeUsernameSection());
                 return;
             }
 
@@ -494,15 +731,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
                 if (response.ok) {
-                    alert(data.message);
-                    // Update local storage with new username
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    if (accountModalTitle) {
-                        accountModalTitle.textContent = `Hello, ${data.user.username}`;
-                    }
-                    cancelUsernameBtn.click(); // Close form
+                    showStatusMessage(accountModal, 'Success', 'Username Updated', 'success', 1500, () => {
+                        // Update local storage with new username
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        if (accountModalTitle) {
+                            accountModalTitle.textContent = `Hello, ${data.user.username}`;
+                        }
+                        resetChangeUsernameSection();
+                    });
                 } else {
-                    alert(data.message);
+                    showStatusMessage(accountModal, 'Error', data.message, 'error', 2000, () => resetChangeUsernameSection());
                 }
             } catch (error) {
                 console.error('Error changing username:', error);
