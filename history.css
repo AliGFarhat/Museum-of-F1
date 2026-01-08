@@ -397,7 +397,6 @@ body {
     font-family: 'Titillium Web', sans-serif;
     color: #333;
     background-color: var(--color-black);
-    line-height: 1.5;
 }
 
 /* Layout Container */
@@ -562,7 +561,7 @@ body {
 }
 
 /* Loader animation for the button */
-.loader {
+#load-more-btn .loader {
     border: 3px solid rgba(255, 255, 255, 0.3); /* Lighter part of the circle */
     border-top: 3px solid #ffffff; /* The spinning part */
     border-radius: 50%;
@@ -744,4 +743,300 @@ body {
 
 .mode-option:hover {
     background-color: #555; /* Dark grey hover for options */
+}
+
+.modal-open {
+    overflow: hidden; /* Prevent background from scrolling when modal is open */
+}
+
+/* Login Modal */
+.modal {
+    /* display: none; Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, backdrop-filter 1s ease, -webkit-backdrop-filter 1s ease;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--overlay-dark-60);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Vertical center */
+    justify-content: center; /* Horizontal center */
+}
+
+.modal.show-modal {
+    opacity: 1;
+    visibility: visible;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.modal.show-modal .modal-content {
+    /* This transform will be animated on show */
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--background-content);
+    color: var(--color-white);
+    padding: 2rem;
+    border: 1px solid var(--ui-border-light);
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+    position: relative; /* For child element positioning like the close button */
+    font-family: 'Titillium Web';
+    transform: scale(0.9); /* Start slightly smaller for the animation */
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-height: 90vh; /* Prevent modal from being too tall on small screens */
+    overflow-y: auto; /* Allow scrolling within the modal if content overflows */
+}
+
+.close-btn {
+    color: var(--ui-grey-light);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: var(--color-white);
+}
+
+#modalTitle {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+#login-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--ui-grey-medium);
+    background-color: var(--ui-grey-dark);
+    color: var(--color-white);
+}
+
+#login-form .forgot-password {
+    display: block;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-grey);
+    text-align: right;
+}
+
+#login-form button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#login-form .login-btn {
+    background-color: var(--color-f1-red);
+    color: var(--color-white);
+}
+
+#login-form .register-btn {
+    background-color: var(--ui-grey-medium);
+    color: var(--color-white);
+}
+
+#login-form p {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#toggleAction {
+    color: var(--color-f1-red);
+    cursor: pointer;
+}
+
+.password-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+#login-form .password-container input {
+    margin-bottom: 0;
+    padding-right: 40px; /* Make space for the eye icon */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    width: 24px;
+    height: 24px;
+}
+
+/* Account Modal Actions */
+.account-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.account-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Titillium Web';
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-white {
+    background-color: var(--color-white);
+    color: var(--color-black);
+    border: 1px solid var(--ui-grey-medium);
+}
+.btn-white:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-outline-red {
+    background-color: transparent;
+    color: var(--color-f1-red);
+    border: 2px solid var(--color-f1-red);
+}
+.btn-outline-red:hover {
+    background-color: rgba(225, 6, 0, 0.1);
+}
+
+.btn-red {
+    background-color: var(--color-f1-red);
+    color: var(--color-white);
+    border: none;
+}
+.btn-red:hover {
+    background-color: #b40500;
+}
+
+/* Change Username Form Styles */
+#change-username-form {
+    display: none;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+#change-username-form.show {
+    display: flex;
+}
+
+.account-input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 0.25rem; /* Small gap to validation text */
+    border-radius: 4px;
+    border: 1px solid var(--ui-grey-medium);
+    background-color: var(--ui-grey-dark);
+    color: var(--color-white);
+    font-family: 'Titillium Web';
+}
+
+#save-username-btn {
+    margin-bottom: 1rem; /* Gap between Save and Cancel matching Logout and Delete */
+    margin-top: 0.5rem; /* Gap between validation text and Save */
+}
+
+#login-form #register-username,
+#login-form #email {
+    margin-bottom: 0.25rem;
+}
+
+#login-form #register-username:has(+ .validation-text:empty),
+#login-form #email:has(+ .validation-text:empty) {
+    margin-bottom: 1rem;
+}
+
+.validation-text {
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-weight: bold;
+    min-height: 0;
+}
+
+#login-form .validation-text {
+    text-align: left;
+    margin-top: 0;
+}
+
+.validation-text:empty {
+    display: none;
+}
+
+/* Modal Loading Overlay */
+.modal-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-content);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+}
+
+.modal-loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Message & Confirmation Views */
+.modal-message-view {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.modal-btn-group button {
+    min-width: 100px;
 }

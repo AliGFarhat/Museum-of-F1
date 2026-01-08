@@ -4,9 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentContainer = document.querySelector('.main-content') || document.querySelector('.main');
     const settingsCog = document.getElementById('settings-cog');
     const dropdown = document.getElementById('settings-dropdown');
-    const loginModal = document.getElementById('login-modal');
-    const loginRegisterBtn = document.getElementById('login-register-btn');
-    const closeModalBtn = document.getElementById('close-modal-btn');
 
     let currentRotation = 0; // Variable to track rotation
 
@@ -59,37 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdown.classList.toggle('show');
         });
     }
-
-    // Show modal when login/register button is clicked
-    if (loginRegisterBtn) {
-        loginRegisterBtn.addEventListener('click', () => {
-            loginModal.classList.add('show-modal');
-            document.body.classList.add('modal-open'); // Prevent body scroll
-            dropdown.classList.remove('show'); // Hide dropdown after opening modal
-        });
-    }
-
-    // Hide modal when close button is clicked
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', () => {
-            loginModal.classList.remove('show-modal');
-            document.body.classList.remove('modal-open'); // Allow body scroll
-        });
-    }
-
-    // Track mousedown target to prevent closing when dragging from content to overlay
-    let mouseDownTarget = null;
-    window.addEventListener('mousedown', (e) => {
-        mouseDownTarget = e.target;
-    });
-
-    // Hide modal if user clicks outside of the modal content
-    window.addEventListener('click', (event) => {
-        if (event.target == loginModal && mouseDownTarget == loginModal) {
-            loginModal.classList.remove('show-modal');
-            document.body.classList.remove('modal-open'); // Allow body scroll
-        }
-    });
 
     // Handle Feedback Form Submission
     const feedbackForm = document.getElementById('feedback-form');
