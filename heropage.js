@@ -55,6 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // Toggle the dropdown
             dropdown.classList.toggle('show');
         });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            if (dropdown && dropdown.classList.contains('show') && 
+                !dropdown.contains(e.target) && 
+                !settingsCog.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
     }
 
     // Handle Feedback Form Submission
@@ -120,27 +129,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightModeBtn = document.getElementById('light-mode-btn');
     const darkModeBtn = document.getElementById('dark-mode-btn');
 
+    const updateActiveState = () => {
+        if (document.body.classList.contains('light-mode')) {
+            if (lightModeBtn) lightModeBtn.classList.add('active');
+            if (darkModeBtn) darkModeBtn.classList.remove('active');
+        } else {
+            if (lightModeBtn) lightModeBtn.classList.remove('active');
+            if (darkModeBtn) darkModeBtn.classList.add('active');
+        }
+    };
+
     // Function to enable light mode
     const enableLightMode = () => {
         document.body.classList.add('light-mode');
         localStorage.setItem('lightMode', 'enabled');
+        updateActiveState();
     };
 
     // Function to disable light mode (revert to dark mode)
     const disableLightMode = () => {
         document.body.classList.remove('light-mode');
         localStorage.setItem('lightMode', 'disabled');
+        updateActiveState();
     };
 
     // Check if light mode is enabled on page load
     if (lightMode === 'enabled') {
         enableLightMode();
-    }
-
-    if (displayModeToggle && displayModeMenu) {
-        displayModeToggle.addEventListener('click', () => {
-            displayModeMenu.classList.toggle('show');
-        });
+    } else {
+        updateActiveState();
     }
 
     // Add event listeners for the theme buttons
