@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.addEventListener('click', () => {
             modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
-            resetLoginModal();
+            setTimeout(() => resetLoginModal(), 300);
         });
     }
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modal && mouseDownTarget === modal) {
             modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
-            resetLoginModal();
+            setTimeout(() => resetLoginModal(), 300);
         }
         if (e.target === accountModal && mouseDownTarget === accountModal) {
             accountModal.classList.remove('show-modal');
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
                             loginBtn.textContent = 'Account';
-                            resetLoginModal();
+                            setTimeout(() => resetLoginModal(), 300);
                         });
                     } else {
                         // Registration Success - Auto Login
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
-                            resetLoginModal();
+                            setTimeout(() => resetLoginModal(), 300);
                         });
                     }
                 } else {
@@ -751,4 +751,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Expose helpers for other scripts (e.g., heropage.js feedback form)
+    window.f1Auth = {
+        showStatusMessage,
+        resetLoginModal
+    };
 });

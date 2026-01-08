@@ -77,9 +77,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ email, feedback }),
                 });
 
-                alert(await response.text()); // Show success/error message from server
+                const data = await response.json();
+                const modal = document.getElementById('login-modal');
+
+                // Use the custom modal if available (exposed from auth.js)
+                if (window.f1Auth && modal) {
+                    modal.classList.add('show-modal');
+                    document.body.classList.add('modal-open');
+                    
+                    window.f1Auth.showStatusMessage(
+                        modal, 
+                        response.ok ? 'Success' : 'Error', 
+                        data.message, 
+                        response.ok ? 'success' : 'error', 
+                        2500, // Duration
+                        () => {
+                            modal.classList.remove('show-modal');
+                            document.body.classList.remove('modal-open');
+                            setTimeout(() => window.f1Auth.resetLoginModal(), 300);
+                        }
+                    );
+                } else {
+                    // Fallback if modal logic isn't loaded
+                    alert(data.message);
+                }
             } catch (error) {
-                alert('An error occurred. Please try again later.');
+                console.error(error);
+                alert('An error occurred connecting to the server.');
             }
             sendButton.textContent = 'SEND';
             sendButton.disabled = false;
