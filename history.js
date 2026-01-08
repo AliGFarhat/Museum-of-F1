@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // A helper object to map meeting names from the API to your image files.
         const trackImages = {
             'Monaco': 'images/tracks/monaco.png',
+            'Monte Carlo': 'images/tracks/monaco.png',
             'Silverstone': 'images/tracks/silverstone.png',
             'Spa-Francorchamps': 'images/tracks/spa.png',
             'Monza': 'images/tracks/monza.png',
@@ -55,9 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
             'Melbourne': 'images/tracks/australia.png',
             'Baku': 'images/tracks/baku.png',
             'Miami': 'images/tracks/miami.png',
+            'Miami International Autodrome': 'images/tracks/miami.png',
+            'Miami Gardens': 'images/tracks/miami.png',
             'Imola': 'images/tracks/imola.png',
 
             'Barcelona': 'images/tracks/spain.png',
+            'Madrid': 'images/tracks/spain.png',
             'Montréal': 'images/tracks/canada.png',
             'Spielberg': 'images/tracks/austria.png',
             'Budapest': 'images/tracks/hungary.png',
@@ -304,8 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // This is the main function to get and display session data.
     async function fetchAndDisplaySessions() {
-        const cacheKey = 'f1HistoryData';
-        const cacheTimestampKey = 'f1HistoryTimestamp';
+        const cacheKey = 'f1HistoryData_v5';
+        const cacheTimestampKey = 'f1HistoryTimestamp_v5';
         const cacheDuration = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
 
         const cachedData = localStorage.getItem(cacheKey);
@@ -335,18 +339,20 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentContainer.innerHTML = '<p style="color: white; font-size: 1.2rem; padding: 2rem;">Loading race history...</p>';
 
         try {
-            const currentYear = new Date().getFullYear();
-            const startYear = 2023;
+            const yearsToFetch = [2023, 2024, 2025, 2026];
             let allSessions = [];
 
             // 1. Fetch all sessions for all years. This is more reliable than fetching all meetings at once.
-            const fetchPromises = [];
-            for (let year = startYear; year <= currentYear; year++) {
-                fetchPromises.push(
-                    fetch(`https://api.openf1.org/v1/sessions?year=${year}`)
-                        .then(response => response.ok ? response.json() : [])
-                );
-            }
+            // We use a staggered approach to avoid hitting rate limits with concurrent requests.
+            const fetchPromises = yearsToFetch.map((year, index) => 
+                new Promise(resolve => setTimeout(resolve, index * 250))
+                    .then(() => fetch(`https://api.openf1.org/v1/sessions?year=${year}`))
+                    .then(response => response.ok ? response.json() : [])
+                    .catch(err => {
+                        console.error(`Failed to fetch year ${year}:`, err);
+                        return [];
+                    })
+            );
 
             const yearlySessions = await Promise.all(fetchPromises);
             allSessions = yearlySessions.flat();
@@ -372,7 +378,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. Sort all sessions: primarily by date (descending), and secondarily by session type order.
             allSessions.sort((a, b) => {
-                const dateComparison = new Date(b.date_start) - new Date(a.date_start);
+                const dateA = new Date(a.date_start);
+                const dateB = new Date(b.date_start);
+
+                if (isNaN(dateA.getTime())) return -1;
+                if (isNaN(dateB.getTime())) return 1;
+
+                const dateComparison = dateB - dateA;
                 if (dateComparison !== 0) {
                     return dateComparison;
                 }
