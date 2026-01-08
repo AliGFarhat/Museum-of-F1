@@ -326,6 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (session.location === 'Yas Island') {
                     session.location = 'Yas Marina';
                 }
+                if (session.location === 'Miami Gardens') {
+                    session.location = 'Miami';
+                }
             });
 
             globalSessions = allSessions;
@@ -361,6 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
             allSessions.forEach(session => {
                 if (session.location === 'Yas Island') {
                     session.location = 'Yas Marina';
+                }
+                if (session.location === 'Miami Gardens') {
+                    session.location = 'Miami';
                 }
             });
 
