@@ -169,11 +169,18 @@ a {
     display: inline-block; /* Ensures transform works correctly */
     font-family: 'Formula Font';
     font-size: 0.8rem;
+    white-space: nowrap;
 }
 
 .navigation a:hover {
     color: var(--color-f1-red); /* A classic F1 red for the hover color */
     transform: translateY(-2px); /* Moves the link up slightly */
+}
+
+#login-register-btn {
+    white-space: nowrap;
+    min-width: 140px;
+    text-align: center;
 }
 
 .settings {
@@ -199,6 +206,53 @@ a {
 /* Change color on hover */
 #settings-cog:hover {
     background-color: var(--color-f1-red);
+}
+
+/* Add drop shadow to settings container in light mode */
+.light-mode .settings {
+    filter: drop-shadow(0 0 6px #000000);
+    -webkit-filter: drop-shadow(0 0 6px #000000);
+}
+
+/* Settings Dropdown Light Mode */
+.light-mode .dropdown-content-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+}
+
+.light-mode .dropdown-menu button {
+    color: #000000;
+}
+
+.light-mode .dropdown-menu:hover button {
+    color: #ffffff;
+}
+
+/* Modal Light Mode */
+.light-mode .modal-content {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #e0e0e0;
+}
+
+.light-mode .close-btn {
+    color: #666;
+}
+
+.light-mode .close-btn:hover {
+    color: #000;
+}
+
+.light-mode #login-form input[type="text"],
+.light-mode #login-form input[type="password"],
+.light-mode .account-input {
+    background-color: #f5f5f5;
+    color: #000000;
+    border-color: #ccc;
+}
+
+.light-mode #login-form .forgot-password {
+    color: #666;
 }
 
 /* Dropdown Menu */
@@ -1044,4 +1098,19 @@ body {
 
 .modal-btn-group button {
     min-width: 100px;
+}
+
+.light-mode .modal-loading-overlay {
+    background-color: #ffffff;
+}
+
+.light-mode .loader {
+    border-color: rgba(0, 0, 0, 0.1);
+    border-top-color: #000000;
+}
+
+.light-mode #change-username-btn,
+.light-mode #cancel-username-btn {
+    background-color: #000000;
+    color: #ffffff;
 }
