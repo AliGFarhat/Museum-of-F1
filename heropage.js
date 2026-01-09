@@ -1,4 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Page Loader & Theme Init ---
+    // Apply theme immediately to ensure loader has correct background
+    const savedTheme = localStorage.getItem('lightMode');
+    if (savedTheme === 'enabled') {
+        document.body.classList.add('light-mode');
+    }
+
+    const pageLoader = document.createElement('div');
+    pageLoader.id = 'page-loader';
+    pageLoader.innerHTML = '<div class="loader"></div>';
+    document.body.appendChild(pageLoader);
+
+    setTimeout(() => {
+        pageLoader.classList.add('hidden');
+        setTimeout(() => {
+            if (document.body.contains(pageLoader)) {
+                pageLoader.remove();
+            }
+        }, 500);
+    }, 300);
+    // -------------------------------
+
     const header = document.querySelector('.header');
     // Find the correct content container, whether it's .main or .main-content
     const contentContainer = document.querySelector('.main-content') || document.querySelector('.main');

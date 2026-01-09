@@ -45,6 +45,7 @@
 :root {
     --color-black: #000000;
     --color-white: #ffffff;
+    --page-background: #000000;
     --color-f1-red: #e10600;
     --color-f1-red-hover: #d6176f;
     --color-f1-logo-bg: #dc143c;
@@ -83,7 +84,7 @@ html {
 }
 
 body {
-    background-color: var(--color-black);
+    background-color: var(--page-background);
     overflow-x: hidden;
 }
 
@@ -450,7 +451,7 @@ button, input, textarea, select {
 body {
     font-family: 'Titillium Web', sans-serif;
     color: #333;
-    background-color: var(--color-black);
+    background-color: var(--page-background);
 }
 
 /* Layout Container */
@@ -494,6 +495,10 @@ body {
     margin-bottom: 12px;
     display: block;
     font-family: 'Formula Font', sans-serif;
+}
+
+.light-mode .filter-header {
+    color: #000000;
 }
 
 .checkbox-item {
@@ -617,6 +622,22 @@ body {
     background-size: cover;
     background-position: center;
 }
+
+.light-mode .image-placeholder {
+    background-color: #c9c9c9;
+}
+
+.light-mode .sidebar-title {
+    color: #000000;
+}
+
+.light-mode .page-title {
+    color: #000000;
+}
+
+.light-mode .card-meta-primary {
+    color: #000000;
+}   
 
 /* Card Text */
 .card-meta-primary {
@@ -764,11 +785,12 @@ body {
     align-items: center;
     justify-content: center;
     color: var(--color-white);
-    transition: background-color 0.15s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .social-icon:hover {
     background-color: var(--color-f1-red);
+    transform: translateY(-5px) scale(1.1);
 }
 
 .social-icon svg {
@@ -1168,4 +1190,43 @@ body {
 .light-mode #cancel-username-btn {
     background-color: #000000;
     color: #ffffff;
+}
+
+.light-mode .social-icon {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Page Loader */
+#page-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--page-background);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+#page-loader .loader {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid var(--color-white);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+.light-mode #page-loader .loader {
+    border-color: rgba(0, 0, 0, 0.1);
+    border-top-color: #000000;
 }
