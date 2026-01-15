@@ -198,4 +198,56 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Admin privileges active');
         }
     }
+
+    // --- Dynamic Content Loading ---
+    const loadDynamicContent = async () => {
+        try {
+            // 1. Featured Race
+            const featuredRes = await fetch('http://localhost:5000/content/featured');
+            const featuredData = await featuredRes.json();
+            
+            if (featuredData && featuredData.title) {
+                const heroText = document.querySelector('.hero-text');
+                const heroPic = document.querySelector('.hero-pic img');
+                
+                if (heroText) {
+                    // Preserve the structure, just update text
+                    heroText.innerHTML = `
+                        ${featuredData.title}
+                        <div style="font-size: 1rem; margin-top: 0.5rem; font-family: 'Titillium Web';">${featuredData.description}</div>
+                    `;
+                }
+                if (heroPic && featuredData.imageUrl) {
+                    heroPic.src = featuredData.imageUrl;
+                }
+            }
+
+            // 2. Spotlights
+            const spotlightRes = await fetch('http://localhost:5000/content/spotlights');
+            const spotlights = await spotlightRes.json();
+
+            // Map DB items to DOM elements (Left, Middle, Right)
+            // We assume the order of fetch (latest first) maps to Left (Large), Middle, Right
+            const containers = [
+                { container: document.querySelector('.spotlight-left'), imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' },
+                { container: document.querySelector('.spotlight-middle'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: document.querySelector('.spotlight-right'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' }
+            ];
+
+            spotlights.forEach((item, index) => {
+                if (index < containers.length && containers[index].container) {
+                    const target = containers[index];
+                    const img = containers[index].container.querySelector(target.imgClass);
+                    const txt = containers[index].container.querySelector(target.textContainer);
+
+                    if (img) img.src = item.imageUrl;
+                    if (txt) txt.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`; // Adjust h3/h4 based on existing HTML if needed, but innerHTML replace works
+                }
+            });
+        } catch (e) {
+            console.error("Failed to load dynamic content", e);
+        }
+    };
+
+    loadDynamicContent();
 });

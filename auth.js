@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelUsernameBtn = document.getElementById('cancel-username-btn');
 
     // Helper to update account modal title with admin badge
+    // Helper to update account modal title with admin badge
     const updateAccountTitle = (user) => {
         if (accountModalTitle && user && user.username) {
             accountModalTitle.innerHTML = `Hello, ${user.username}`;
@@ -51,6 +52,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 badge.className = 'admin-badge';
                 badge.textContent = 'ADMIN';
                 accountModalTitle.appendChild(badge);
+
+                // Inject Admin Panel Button if not exists
+                if (!document.getElementById('open-admin-panel-btn')) {
+                    const adminBtn = document.createElement('button');
+                    adminBtn.id = 'open-admin-panel-btn';
+                    adminBtn.className = 'account-btn btn-outline-red';
+                    adminBtn.textContent = 'Open Admin Panel';
+                    adminBtn.style.marginTop = '1rem';
+                    adminBtn.addEventListener('click', () => {
+                        accountModal.classList.remove('show-modal');
+                        openAdminPanel();
+                    });
+                    // Insert before logout button
+                    logoutBtn.parentNode.insertBefore(adminBtn, logoutBtn);
+                }
             }
         }
     };
@@ -765,5 +781,203 @@ document.addEventListener('DOMContentLoaded', () => {
     window.f1Auth = {
         showStatusMessage,
         resetLoginModal
+    };
+
+    // --- Admin Panel Logic ---
+    const openAdminPanel = () => {
+        // Create Modal HTML if not exists
+        let adminModal = document.getElementById('admin-modal');
+        if (!adminModal) {
+            adminModal = document.createElement('div');
+            adminModal.id = 'admin-modal';
+            adminModal.className = 'modal';
+            adminModal.innerHTML = `
+                <div class="modal-content admin-modal-content">
+                    <div class="admin-header">
+                        <h2>Admin Panel</h2>
+                        <span class="close-btn" id="close-admin-btn">&times;</span>
+                    </div>
+                    <div class="admin-body">
+                        <div class="admin-sidebar">
+                            <button class="admin-tab-btn active" data-tab="feedback">Feedback</button>
+                            <button class="admin-tab-btn" data-tab="featured">Featured Race</button>
+                            <button class="admin-tab-btn" data-tab="spotlights">Spotlights</button>
+                        </div>
+                        <div class="admin-content-area" id="admin-content">
+                            <!-- Content injected here -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(adminModal);
+
+            // Close Logic
+            adminModal.querySelector('#close-admin-btn').addEventListener('click', () => {
+                adminModal.classList.remove('show-modal');
+                document.body.classList.remove('modal-open');
+            });
+
+            // Close Logic (Click Outside)
+            adminModal.addEventListener('click', (e) => {
+                if (e.target === adminModal && mouseDownTarget === adminModal) {
+                    adminModal.classList.remove('show-modal');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+
+            // Tab Logic
+            const tabs = adminModal.querySelectorAll('.admin-tab-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    loadAdminTab(tab.dataset.tab);
+                });
+            });
+        }
+
+        adminModal.classList.add('show-modal');
+        document.body.classList.add('modal-open');
+        loadAdminTab('feedback'); // Default tab
+    };
+
+    const loadAdminTab = async (tabName) => {
+        const container = document.getElementById('admin-content');
+        
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(10px)';
+
+        try {
+            if (tabName === 'feedback') {
+                const res = await fetch('http://localhost:5000/admin/feedback');
+                const feedback = await res.json();
+                
+                let html = '<h3>Feedback Moderation</h3><div class="admin-item-list">';
+                if (feedback.length === 0) html += '<p>No feedback found.</p>';
+                
+                feedback.forEach(item => {
+                    html += `
+                        <div class="admin-item">
+                            <div>
+                                <strong>${item.email}</strong> <small>(${new Date(item.date).toLocaleDateString()})</small>
+                                <p>${item.feedback}</p>
+                            </div>
+                            <button class="account-btn btn-red" style="width: auto; padding: 0.5rem 1rem;" onclick="deleteFeedback('${item._id}')">Delete</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+
+                // Attach delete handlers
+                window.deleteFeedback = async (id) => {
+                    if(confirm('Delete this feedback?')) {
+                        await fetch(`http://localhost:5000/admin/feedback/${id}`, { method: 'DELETE' });
+                        loadAdminTab('feedback');
+                    }
+                };
+
+            } else if (tabName === 'featured') {
+                const res = await fetch('http://localhost:5000/content/featured');
+                const race = await res.json();
+
+                container.innerHTML = `
+                    <h3>Manage Featured Race</h3>
+                    <form class="admin-form" id="featured-form">
+                        <label>Title</label>
+                        <input type="text" name="title" value="${race.title || ''}" required>
+                        <label>Description</label>
+                        <textarea name="description" rows="4" required>${race.description || ''}</textarea>
+                        <label>Image URL</label>
+                        <input type="text" name="imageUrl" value="${race.imageUrl || ''}" required>
+                        <button type="submit" class="account-btn btn-red">Save Featured Race</button>
+                    </form>
+                `;
+
+                document.getElementById('featured-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const data = Object.fromEntries(formData.entries());
+                    await fetch('http://localhost:5000/content/featured', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    alert('Saved!');
+                });
+
+            } else if (tabName === 'spotlights') {
+                const res = await fetch('http://localhost:5000/content/spotlights');
+                const spotlights = await res.json();
+
+                let html = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h3>Manage Spotlights</h3>
+                        <button class="account-btn btn-white" style="width:auto;" onclick="renderSpotlightForm()">+ Add New</button>
+                    </div>
+                    <div class="admin-item-list">
+                `;
+
+                spotlights.forEach(item => {
+                    html += `
+                        <div class="admin-item">
+                            <div style="display:flex; gap:1rem; align-items:center;">
+                                <img src="${item.imageUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;">
+                                <div><strong>${item.title}</strong></div>
+                            </div>
+                            <button class="account-btn btn-white" style="width: auto; padding: 0.5rem 1rem;" onclick='renderSpotlightForm(${JSON.stringify(item).replace(/'/g, "&apos;")})'>Edit</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+
+                window.renderSpotlightForm = (item = null) => {
+                    const isEdit = !!item;
+                    container.innerHTML = `
+                        <h3>${isEdit ? 'Edit' : 'Create'} Spotlight</h3>
+                        <form class="admin-form" id="spotlight-form">
+                            <label>Title</label>
+                            <input type="text" name="title" value="${item ? item.title : ''}" required>
+                            <label>Description</label>
+                            <textarea name="description" rows="4" required>${item ? item.description : ''}</textarea>
+                            <label>Image URL</label>
+                            <input type="text" name="imageUrl" value="${item ? item.imageUrl : ''}" required>
+                            <div style="display:flex; gap:1rem;">
+                                <button type="submit" class="account-btn btn-red">Save</button>
+                                <button type="button" class="account-btn btn-white" onclick="loadAdminTab('spotlights')">Cancel</button>
+                            </div>
+                        </form>
+                    `;
+
+                    document.getElementById('spotlight-form').addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const data = Object.fromEntries(formData.entries());
+                        
+                        const url = isEdit 
+                            ? `http://localhost:5000/content/spotlights/${item._id}`
+                            : 'http://localhost:5000/content/spotlights';
+                        const method = isEdit ? 'PUT' : 'POST';
+
+                        await fetch(url, {
+                            method: method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                        loadAdminTab('spotlights');
+                    });
+                };
+            }
+
+            requestAnimationFrame(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            });
+        } catch (error) {
+            container.innerHTML = `<p style="color:red">Error loading data: ${error.message}</p>`;
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }
     };
 });
