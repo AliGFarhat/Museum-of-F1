@@ -42,6 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveUsernameBtn = document.getElementById('save-username-btn');
     const cancelUsernameBtn = document.getElementById('cancel-username-btn');
 
+    // Helper to update account modal title with admin badge
+    const updateAccountTitle = (user) => {
+        if (accountModalTitle && user && user.username) {
+            accountModalTitle.innerHTML = `Hello, ${user.username}`;
+            if (user.isAdmin) {
+                const badge = document.createElement('span');
+                badge.className = 'admin-badge';
+                badge.textContent = 'ADMIN';
+                accountModalTitle.appendChild(badge);
+            }
+        }
+    };
+
     let isLoginMode = true;
 
     // Check if user is already logged in (persisted session)
@@ -59,9 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (accountModal) {
                     // Update modal title with username
                     const user = JSON.parse(localStorage.getItem('user'));
-                    if (accountModalTitle && user && user.username) {
-                        accountModalTitle.textContent = `Hello, ${user.username}`;
-                    }
+                    updateAccountTitle(user);
                     accountModal.classList.add('show-modal');
                     document.body.classList.add('modal-open');
 
@@ -738,9 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showStatusMessage(accountModal, 'Success', 'Username Updated', 'success', 1500, () => {
                         // Update local storage with new username
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        if (accountModalTitle) {
-                            accountModalTitle.textContent = `Hello, ${data.user.username}`;
-                        }
+                        updateAccountTitle(data.user);
                         resetChangeUsernameSection();
                     });
                 } else {

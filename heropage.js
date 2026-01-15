@@ -186,4 +186,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lightModeBtn) lightModeBtn.addEventListener('click', enableLightMode); // Light button enables light mode
     if (darkModeBtn) darkModeBtn.addEventListener('click', disableLightMode); // Dark button disables light mode (goes to dark)
 
+    // Check for Admin Status
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    if (currentUser) {
+        if (currentUser.isAdmin === undefined) {
+            currentUser.isAdmin = false;
+            localStorage.setItem('user', JSON.stringify(currentUser));
+        }
+        if (currentUser.isAdmin) {
+            document.body.classList.add('admin-access');
+            console.log('Admin privileges active');
+        }
+    }
 });

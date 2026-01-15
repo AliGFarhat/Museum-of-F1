@@ -1573,3 +1573,16 @@ button, input, textarea, select {
     opacity: 0;
     visibility: hidden;
 }
+
+.admin-badge {
+    display: inline-block;
+    font-family: 'Formula Font';
+    font-size: 0.5em;
+    color: var(--color-f1-red);
+    border: 1px solid var(--color-f1-red);
+    padding: 2px 6px;
+    margin-left: 12px;
+    vertical-align: baseline;
+    background-color: transparent;
+    border-radius: 4px;
+}
