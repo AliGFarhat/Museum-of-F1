@@ -1653,6 +1653,19 @@ button, input, textarea, select {
     transform: translateY(0);
 }
 
+.admin-content-area::-webkit-scrollbar {
+    width: 5px;
+}
+
+.admin-content-area::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-content-area::-webkit-scrollbar-thumb {
+    background-color: var(--color-f1-red);
+    border-radius: 20px;
+}
+
 .admin-item-list {
     display: flex;
     flex-direction: column;
