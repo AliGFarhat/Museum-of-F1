@@ -336,6 +336,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const showSeparateConfirmationModal = (title, message, onConfirm) => {
+        const confirmModal = document.createElement('div');
+        confirmModal.className = 'modal'; // Start hidden for animation
+        confirmModal.style.zIndex = '2000'; // Ensure it sits above other modals
+        
+        confirmModal.innerHTML = `
+            <div class="modal-content" style="max-width: 400px; text-align: center;">
+                <h2 style="margin-bottom: 1rem; font-family: 'Formula Font';">${title}</h2>
+                <p>${message}</p>
+                <div class="modal-btn-group">
+                    <button id="sep-confirm-yes" class="account-btn btn-red">Yes</button>
+                    <button id="sep-confirm-no" class="account-btn btn-white">No</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(confirmModal);
+        
+        // Trigger animation
+        requestAnimationFrame(() => {
+            confirmModal.classList.add('show-modal');
+        });
+        
+        const close = () => {
+            confirmModal.classList.remove('show-modal');
+            setTimeout(() => {
+                confirmModal.remove();
+                if (!document.querySelector('.modal.show-modal')) {
+                    document.body.classList.remove('modal-open');
+                }
+            }, 300); // Wait for transition
+        };
+
+        confirmModal.querySelector('#sep-confirm-yes').addEventListener('click', () => {
+            onConfirm();
+            close();
+        });
+
+        confirmModal.querySelector('#sep-confirm-no').addEventListener('click', () => {
+            close();
+        });
+
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) {
+                close();
+            }
+        });
+    };
+
     // Toggle between Login and Register views
     if (toggleAction) {
         toggleAction.addEventListener('click', (e) => {
@@ -851,6 +900,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        // Reset sidebar active state to feedback
+        const tabs = adminModal.querySelectorAll('.admin-tab-btn');
+        tabs.forEach(t => {
+            if (t.dataset.tab === 'feedback') {
+                t.classList.add('active');
+            } else {
+                t.classList.remove('active');
+            }
+        });
+
         adminModal.classList.add('show-modal');
         document.body.classList.add('modal-open');
         loadAdminTab('feedback'); // Default tab
@@ -896,31 +955,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('http://localhost:5000/content/featured');
                 const race = await res.json();
 
+                // Helper to create image input with upload button
+                const createImgInput = (name, value, placeholder) => `
+                    <div class="input-with-icon">
+                        <input type="text" name="${name}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">
+                        <input type="file" accept="image/*" class="hidden-file-input" id="file-${name}" style="display: none;">
+                        <button type="button" class="icon-btn upload-btn" data-target="${name}" title="Upload Image">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </button>
+                    </div>
+                `;
+
                 let entriesHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">';
                 for (let i = 1; i <= 5; i++) {
                     entriesHtml += `
                         <div style="border: 1px solid #444; padding: 1rem; border-radius: 4px;">
-                            <h4 style="margin-top: 0; margin-bottom: 0.5rem; color: #e10600;">Featured ${i}</h4>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0; color: #e10600;">Featured ${i}</h4>
+                                <button type="button" class="account-btn btn-white undo-btn" onclick="resetSection('featured_${i}')" title="Reset this entry">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                                </button>
+                            </div>
                             <label>Header (Pink Text)</label>
                             <input type="text" name="entry_${i}_header" placeholder="${race[`entry_${i}_header`] || 'Input Header'}">
                             <label>Text</label>
                             <input type="text" name="entry_${i}_text" placeholder="${race[`entry_${i}_text`] || 'Input Text'}">
                             <label>Image URL</label>
-                            <input type="text" name="entry_${i}_image" placeholder="${race[`entry_${i}_image`] || 'Input Image URL'}">
+                            ${createImgInput(`entry_${i}_image`, race[`entry_${i}_image`], race[`entry_${i}_image`] || 'Input Image URL')}
                         </div>
                     `;
                 }
                 entriesHtml += '</div>';
 
                 container.innerHTML = `
-                    <h3 style="color: #e10600;">Hero Section</h3>
+                    <div style="display:flex; align-items:center; margin-bottom: 1rem;">
+                        <h3 style="color: #e10600; margin:0;">Hero Section</h3>
+                        <button type="button" class="account-btn btn-white undo-btn" onclick="resetSection('hero')" title="Reset Hero Section">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                        </button>
+                    </div>
                     <form class="admin-form" id="featured-form">
                         <label>Title</label>
-                        <input type="text" name="title" placeholder="${race.title || 'Current Title'}">
+                        <input type="text" name="title" placeholder="${race.title || 'Input Title'}">
                         <label>Description</label>
-                        <textarea name="description" rows="4" placeholder="${race.description || 'Current Description'}"></textarea>
+                        <textarea name="description" rows="4" placeholder="${race.description || 'Input Description'}"></textarea>
                         <label>Image URL</label>
-                        <input type="text" name="imageUrl" placeholder="${race.imageUrl || 'Input Image URL'}">
+                        ${createImgInput('imageUrl', race.imageUrl, race.imageUrl || 'Input Image URL')}
                         ${entriesHtml}
                         <div style="display:flex; gap:1rem; margin-top: 1rem;">
                             <button type="submit" class="account-btn btn-red">Save Featured Race</button>
@@ -928,6 +1008,28 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </form>
                 `;
+
+                // Handle File Uploads
+                container.querySelectorAll('.upload-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetName = btn.dataset.target;
+                        document.getElementById(`file-${targetName}`).click();
+                    });
+                });
+
+                container.querySelectorAll('.hidden-file-input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                const textInput = document.getElementById(`input-${input.id.replace('file-', '')}`);
+                                textInput.value = ev.target.result; // Set Base64 string
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
 
                 document.getElementById('featured-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
@@ -950,9 +1052,56 @@ document.addEventListener('DOMContentLoaded', () => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
-                    alert('Saved!');
-                    loadAdminTab('featured'); // Refresh to update placeholders
+                    
+                    const adminModal = document.getElementById('admin-modal');
+                    showStatusMessage(adminModal, 'Success', 'Featured Race Updated', 'success', 1500, () => {
+                        animateModalTransition(adminModal, (modalContent) => {
+                            modalContent.classList.remove('compact-view');
+                            const messageViews = modalContent.querySelectorAll('.modal-message-view');
+                            messageViews.forEach(v => v.remove());
+                            Array.from(modalContent.children).forEach(child => {
+                                if (!child.classList.contains('modal-loading-overlay')) {
+                                    child.style.display = '';
+                                }
+                            });
+                            loadAdminTab('featured');
+                        });
+                    });
                 });
+
+                // Reset Section Logic
+                window.resetSection = async (section) => {
+                    showSeparateConfirmationModal(
+                        'Reset Section',
+                        `Are you sure you want to reset ${section.replace('_', ' ')} to default?`,
+                        async () => {
+                            // Create a copy of current data
+                            const data = { ...race };
+                            delete data._id;
+                            delete data.__v;
+
+                            if (section === 'hero') {
+                                delete data.title;
+                                delete data.description;
+                                delete data.imageUrl;
+                            } else if (section.startsWith('featured_')) {
+                                const index = section.split('_')[1];
+                                delete data[`entry_${index}_header`];
+                                delete data[`entry_${index}_text`];
+                                delete data[`entry_${index}_image`];
+                            }
+
+                            // Save the modified data (effectively removing the section's data)
+                            await fetch('http://localhost:5000/content/featured', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data)
+                            });
+
+                            loadAdminTab('featured'); // Reload to show changes
+                        }
+                    );
+                };
 
                 document.getElementById('reset-featured-btn').addEventListener('click', () => {
                     const adminModal = document.getElementById('admin-modal');

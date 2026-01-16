@@ -206,11 +206,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const featuredRes = await fetch('http://localhost:5000/content/featured');
             const featuredData = await featuredRes.json();
             
-            if (featuredData && featuredData.title) {
+            if (featuredData) {
                 const heroText = document.querySelector('.hero-text');
                 const heroPic = document.querySelector('.hero-pic img');
                 
-                if (heroText) {
+                if (heroText && featuredData.title) {
                     // Preserve the structure, just update text
                     heroText.innerHTML = `
                         ${featuredData.title}
@@ -220,6 +220,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (heroPic && featuredData.imageUrl) {
                     heroPic.src = featuredData.imageUrl;
                 }
+
+                // Update Featured Entries (1-5)
+                const featuredItems = document.querySelectorAll('.hero-right .featured');
+                featuredItems.forEach((item, index) => {
+                    const i = index + 1; // 1-based index for data fields
+                    let header = item.querySelector('h3');
+                    const text = item.querySelector('p');
+                    const img = item.querySelector('.featured-image');
+                    const contentContainer = item.querySelector('.featured-content');
+
+                    // Only update if data exists for this field
+                    if (featuredData[`entry_${i}_header`]) {
+                        const headerText = featuredData[`entry_${i}_header`].toUpperCase();
+                        if (header) {
+                            header.textContent = headerText;
+                        } else if (contentContainer) {
+                            header = document.createElement('h3');
+                            header.textContent = headerText;
+                            header.style.color = '#d6176f';
+                            contentContainer.insertBefore(header, contentContainer.firstChild);
+                        }
+                    }
+                    if (featuredData[`entry_${i}_text`] && text) {
+                        text.textContent = featuredData[`entry_${i}_text`];
+                    }
+                    if (featuredData[`entry_${i}_image`] && img) {
+                        img.src = featuredData[`entry_${i}_image`];
+                    }
+                });
             }
 
             // 2. Spotlights

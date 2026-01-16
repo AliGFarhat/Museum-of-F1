@@ -1532,6 +1532,11 @@ button, input, textarea, select {
     100% { transform: rotate(360deg); }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Modal Message & Confirmation Views */
 .modal-message-view {
     text-align: center;
@@ -1694,4 +1699,46 @@ button, input, textarea, select {
     max-width: 400px;
     height: auto;
     padding: 2rem;
+}
+
+/* Input with Icon Wrapper */
+.input-with-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon input {
+    padding-right: 40px !important; /* Make space for the button */
+}
+
+.icon-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ui-grey-light);
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.icon-btn:hover {
+    color: var(--color-f1-red);
+}
+
+.undo-btn {
+    padding: 0;
+    margin-left: 10px;
+    vertical-align: middle;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
 }
