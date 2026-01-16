@@ -910,8 +910,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        adminModal.classList.add('show-modal');
-        document.body.classList.add('modal-open');
+        requestAnimationFrame(() => {
+            adminModal.classList.add('show-modal');
+            document.body.classList.add('modal-open');
+        });
         loadAdminTab('feedback'); // Default tab
     };
 
@@ -1040,6 +1042,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = { ...race };
                     delete data._id; // Remove internal fields
                     delete data.__v;
+                    delete data.updatedAt;
 
                     for (const [key, value] of Object.entries(formProps)) {
                         if (value && value.trim() !== '') {

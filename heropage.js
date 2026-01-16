@@ -225,14 +225,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const featuredItems = document.querySelectorAll('.hero-right .featured');
                 featuredItems.forEach((item, index) => {
                     const i = index + 1; // 1-based index for data fields
-                    let header = item.querySelector('h3');
                     const text = item.querySelector('p');
                     const img = item.querySelector('.featured-image');
                     const contentContainer = item.querySelector('.featured-content');
 
+                    // Try to find existing header by ID, then by tag
+                    let header = item.querySelector(`#featured-header-${i}`) || item.querySelector('h3, h4, h5, h6');
+
+                    // Fallback: if no header tag found, try the first child of content container
+                    if (!header && contentContainer && contentContainer.firstElementChild) {
+                        if (contentContainer.firstElementChild !== text) {
+                            header = contentContainer.firstElementChild;
+                        }
+                    }
+
                     // Universal pink text
                     if (header) {
                         header.style.color = '#d6176f';
+                        header.id = `featured-header-${i}`;
                     }
 
                     // Only update if data exists for this field
@@ -244,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             header = document.createElement('h3');
                             header.textContent = headerText;
                             header.style.color = '#d6176f';
+                            header.id = `featured-header-${i}`;
                             contentContainer.insertBefore(header, contentContainer.firstChild);
                         }
                     }
