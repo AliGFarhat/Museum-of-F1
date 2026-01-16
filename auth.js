@@ -1079,6 +1079,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const data = { ...race };
                             delete data._id;
                             delete data.__v;
+                            delete data.updatedAt;
 
                             if (section === 'hero') {
                                 delete data.title;

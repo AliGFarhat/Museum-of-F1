@@ -230,6 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const img = item.querySelector('.featured-image');
                     const contentContainer = item.querySelector('.featured-content');
 
+                    // Universal pink text
+                    if (header) {
+                        header.style.color = '#d6176f';
+                    }
+
                     // Only update if data exists for this field
                     if (featuredData[`entry_${i}_header`]) {
                         const headerText = featuredData[`entry_${i}_header`].toUpperCase();
