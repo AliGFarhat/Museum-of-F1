@@ -223,7 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 1. Lock Height
         const startHeight = modalContent.offsetHeight;
+        const startWidth = modalContent.offsetWidth;
         modalContent.style.height = `${startHeight}px`;
+        modalContent.style.width = `${startWidth}px`;
         modalContent.style.overflow = 'hidden';
 
         // 2. Show Loader
@@ -244,15 +246,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // 5. Calculate new height
             modalContent.style.transition = 'none';
             modalContent.style.height = 'auto';
+            modalContent.style.width = ''; // Reset width to allow CSS to dictate it
             const targetHeight = modalContent.offsetHeight;
+            const targetWidth = modalContent.offsetWidth;
 
             // 6. Reset to start height
             modalContent.style.height = `${startHeight}px`;
+            modalContent.style.width = `${startWidth}px`;
             modalContent.offsetHeight; // Force reflow
 
             // 7. Animate to target
-            modalContent.style.transition = 'height 0.3s ease';
+            modalContent.style.transition = 'all 0.3s ease';
             modalContent.style.height = `${targetHeight}px`;
+            modalContent.style.width = `${targetWidth}px`;
 
             // 8. Cleanup & Hide Loader
             setTimeout(() => {
@@ -260,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loaderOverlay.classList.remove('show');
 
                 modalContent.style.height = 'auto';
+                modalContent.style.width = '';
                 modalContent.style.overflow = '';
                 modalContent.style.transition = '';
                 if (callback) callback();
@@ -273,6 +280,10 @@ document.addEventListener('DOMContentLoaded', () => {
             Array.from(modalContent.children).forEach(child => {
                 if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
             });
+
+            if (modalContent.classList.contains('admin-modal-content')) {
+                modalContent.classList.add('compact-view');
+            }
 
             // Create Message View
             const messageContainer = document.createElement('div');
@@ -303,6 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
             Array.from(modalContent.children).forEach(child => {
                 if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
             });
+
+            if (modalContent.classList.contains('admin-modal-content')) {
+                modalContent.classList.add('compact-view');
+            }
 
             const confirmContainer = document.createElement('div');
             confirmContainer.className = 'modal-message-view';
@@ -388,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalContent.offsetHeight;
 
                 // 4. Animate to target height
-                modalContent.style.transition = 'height 0.3s ease';
+                modalContent.style.transition = 'all 0.3s ease';
                 modalContent.style.height = `${targetHeight}px`;
 
                 // 5. Cleanup and Hide Loader
@@ -881,29 +896,107 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('http://localhost:5000/content/featured');
                 const race = await res.json();
 
+                let entriesHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">';
+                for (let i = 1; i <= 5; i++) {
+                    entriesHtml += `
+                        <div style="border: 1px solid #444; padding: 1rem; border-radius: 4px;">
+                            <h4 style="margin-top: 0; margin-bottom: 0.5rem; color: #e10600;">Featured ${i}</h4>
+                            <label>Header (Pink Text)</label>
+                            <input type="text" name="entry_${i}_header" placeholder="${race[`entry_${i}_header`] || 'Input Header'}">
+                            <label>Text</label>
+                            <input type="text" name="entry_${i}_text" placeholder="${race[`entry_${i}_text`] || 'Input Text'}">
+                            <label>Image URL</label>
+                            <input type="text" name="entry_${i}_image" placeholder="${race[`entry_${i}_image`] || 'Input Image URL'}">
+                        </div>
+                    `;
+                }
+                entriesHtml += '</div>';
+
                 container.innerHTML = `
-                    <h3>Manage Featured Race</h3>
+                    <h3 style="color: #e10600;">Hero Section</h3>
                     <form class="admin-form" id="featured-form">
                         <label>Title</label>
-                        <input type="text" name="title" value="${race.title || ''}" required>
+                        <input type="text" name="title" placeholder="${race.title || 'Current Title'}">
                         <label>Description</label>
-                        <textarea name="description" rows="4" required>${race.description || ''}</textarea>
+                        <textarea name="description" rows="4" placeholder="${race.description || 'Current Description'}"></textarea>
                         <label>Image URL</label>
-                        <input type="text" name="imageUrl" value="${race.imageUrl || ''}" required>
-                        <button type="submit" class="account-btn btn-red">Save Featured Race</button>
+                        <input type="text" name="imageUrl" placeholder="${race.imageUrl || 'Input Image URL'}">
+                        ${entriesHtml}
+                        <div style="display:flex; gap:1rem; margin-top: 1rem;">
+                            <button type="submit" class="account-btn btn-red">Save Featured Race</button>
+                            <button type="button" id="reset-featured-btn" class="account-btn btn-white">Reset to Default</button>
+                        </div>
                     </form>
                 `;
 
                 document.getElementById('featured-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const formData = new FormData(e.target);
-                    const data = Object.fromEntries(formData.entries());
+                    const formProps = Object.fromEntries(formData.entries());
+
+                    // Merge with existing data: only update fields that are filled
+                    const data = { ...race };
+                    delete data._id; // Remove internal fields
+                    delete data.__v;
+
+                    for (const [key, value] of Object.entries(formProps)) {
+                        if (value && value.trim() !== '') {
+                            data[key] = value.trim();
+                        }
+                    }
+
                     await fetch('http://localhost:5000/content/featured', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
                     alert('Saved!');
+                    loadAdminTab('featured'); // Refresh to update placeholders
+                });
+
+                document.getElementById('reset-featured-btn').addEventListener('click', () => {
+                    const adminModal = document.getElementById('admin-modal');
+
+                    showConfirmation(adminModal, 'Reset Content', 'Are you sure you want to reset the featured race to default values?', async () => {
+                        const restoreView = () => {
+                            animateModalTransition(adminModal, (modalContent) => {
+                                modalContent.classList.remove('compact-view');
+                                const messageViews = modalContent.querySelectorAll('.modal-message-view');
+                                messageViews.forEach(v => v.remove());
+                                Array.from(modalContent.children).forEach(child => {
+                                    if (!child.classList.contains('modal-loading-overlay')) {
+                                        child.style.display = '';
+                                    }
+                                });
+                                loadAdminTab('featured');
+                            });
+                        };
+
+                        try {
+                            const res = await fetch('http://localhost:5000/content/featured/reset', {
+                                method: 'POST'
+                            });
+                            const data = await res.json();
+                            if (res.ok) {
+                                showStatusMessage(adminModal, 'Success', data.message, 'success', 1500, restoreView);
+                            } else {
+                                showStatusMessage(adminModal, 'Error', data.message || 'Failed to reset', 'error', 2000, restoreView);
+                            }
+                        } catch (error) {
+                            console.error('Error resetting featured race:', error);
+                            showStatusMessage(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
+                        }
+                    }, () => {
+                        // On Cancel: Restore original view
+                        animateModalTransition(adminModal, (modalContent) => {
+                            modalContent.classList.remove('compact-view');
+                            const messageView = modalContent.querySelector('.modal-message-view');
+                            if (messageView) messageView.remove();
+                            Array.from(modalContent.children).forEach(child => {
+                                if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                            });
+                        });
+                    });
                 });
 
             } else if (tabName === 'spotlights') {

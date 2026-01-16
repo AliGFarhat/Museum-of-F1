@@ -1688,3 +1688,10 @@ button, input, textarea, select {
     color: #000;
     border-color: #ccc;
 }
+
+.admin-modal-content.compact-view {
+    width: 80%;
+    max-width: 400px;
+    height: auto;
+    padding: 2rem;
+}
