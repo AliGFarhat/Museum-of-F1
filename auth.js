@@ -1058,17 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const adminModal = document.getElementById('admin-modal');
                     showStatusMessage(adminModal, 'Success', 'Featured Race Updated', 'success', 1500, () => {
-                        animateModalTransition(adminModal, (modalContent) => {
-                            modalContent.classList.remove('compact-view');
-                            const messageViews = modalContent.querySelectorAll('.modal-message-view');
-                            messageViews.forEach(v => v.remove());
-                            Array.from(modalContent.children).forEach(child => {
-                                if (!child.classList.contains('modal-loading-overlay')) {
-                                    child.style.display = '';
-                                }
-                            });
-                            loadAdminTab('featured');
-                        });
+                        window.location.reload();
                     });
                 });
 
@@ -1102,7 +1092,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 body: JSON.stringify(data)
                             });
 
-                            loadAdminTab('featured'); // Reload to show changes
+                            window.location.reload();
                         }
                     );
                 };
@@ -1112,17 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     showConfirmation(adminModal, 'Reset Content', 'Are you sure you want to reset the featured race to default values?', async () => {
                         const restoreView = () => {
-                            animateModalTransition(adminModal, (modalContent) => {
-                                modalContent.classList.remove('compact-view');
-                                const messageViews = modalContent.querySelectorAll('.modal-message-view');
-                                messageViews.forEach(v => v.remove());
-                                Array.from(modalContent.children).forEach(child => {
-                                    if (!child.classList.contains('modal-loading-overlay')) {
-                                        child.style.display = '';
-                                    }
-                                });
-                                loadAdminTab('featured');
-                            });
+                            window.location.reload();
                         };
 
                         try {
@@ -1156,12 +1136,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('http://localhost:5000/content/spotlights');
                 const spotlights = await res.json();
 
+                const spotlightLabels = [
+                    "Top Row - Left (Large)",
+                    "Top Row - Middle",
+                    "Top Row - Right",
+                    "Bottom Row - Left",
+                    "Bottom Row - Middle",
+                    "Bottom Row - Right (Large)"
+                ];
+
                 let entriesHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">';
                 for (let i = 1; i <= 6; i++) {
                     entriesHtml += `
                         <div style="border: 1px solid #444; padding: 1rem; border-radius: 4px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                                <h4 style="margin: 0; color: #e10600;">Spotlight ${i}</h4>
+                                <div>
+                                    <h4 style="margin: 0; color: #e10600;">Spotlight ${i}</h4>
+                                    <small style="color: var(--color-text-grey); font-family: 'Titillium Web';">${spotlightLabels[i-1]}</small>
+                                </div>
                                 <button type="button" class="account-btn btn-white undo-btn" onclick="resetSection('spotlight_${i}')" title="Reset this entry">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
                                 </button>
@@ -1233,17 +1225,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const adminModal = document.getElementById('admin-modal');
                     showStatusMessage(adminModal, 'Success', 'Spotlights Updated', 'success', 1500, () => {
-                        animateModalTransition(adminModal, (modalContent) => {
-                            modalContent.classList.remove('compact-view');
-                            const messageViews = modalContent.querySelectorAll('.modal-message-view');
-                            messageViews.forEach(v => v.remove());
-                            Array.from(modalContent.children).forEach(child => {
-                                if (!child.classList.contains('modal-loading-overlay')) {
-                                    child.style.display = '';
-                                }
-                            });
-                            loadAdminTab('spotlights');
-                        });
+                        window.location.reload();
                     });
                 });
 
@@ -1269,7 +1251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(data)
                                 });
-                                loadAdminTab('spotlights');
+                                window.location.reload();
                             }
                         );
                     }
@@ -1279,17 +1261,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const adminModal = document.getElementById('admin-modal');
                     showConfirmation(adminModal, 'Reset All', 'Are you sure you want to reset all spotlights?', async () => {
                         const restoreView = () => {
-                            animateModalTransition(adminModal, (modalContent) => {
-                                modalContent.classList.remove('compact-view');
-                                const messageViews = modalContent.querySelectorAll('.modal-message-view');
-                                messageViews.forEach(v => v.remove());
-                                Array.from(modalContent.children).forEach(child => {
-                                    if (!child.classList.contains('modal-loading-overlay')) {
-                                        child.style.display = '';
-                                    }
-                                });
-                                loadAdminTab('spotlights');
-                            });
+                            window.location.reload();
                         };
 
                         try {

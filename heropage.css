@@ -1707,6 +1707,15 @@ button, input, textarea, select {
     border-color: #ccc;
 }
 
+.light-mode .admin-tab-btn {
+    color: #000000;
+}
+
+.light-mode .admin-tab-btn:hover,
+.light-mode .admin-tab-btn.active {
+    color: #ffffff;
+}
+
 .admin-modal-content.compact-view {
     width: 80%;
     max-width: 400px;
