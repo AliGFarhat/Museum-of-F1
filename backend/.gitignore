@@ -1,0 +1,4 @@
+node_modules/
+.env
+mongoatlas.env
+credentials.env
