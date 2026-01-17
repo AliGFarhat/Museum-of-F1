@@ -1765,3 +1765,160 @@ button, input, textarea, select {
     height: 32px;
     min-width: 32px;
 }
+
+/* Responsive Breakpoint */
+@media (max-width: 768px) {
+    .main {
+        padding: 1rem;
+    }
+
+    /* Header Adjustments */
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .navigation ul {
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .navigation ul li:nth-child(1),
+    .navigation ul li:nth-child(2),
+    .navigation ul li:nth-child(3) {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .settings {
+        margin-left: 0;
+        position: absolute;
+        right: 1rem;
+        top: 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        grid-template-columns: 1fr;
+        height: auto;
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .hero-left {
+        height: 300px;
+    }
+
+    .hero-right {
+        height: auto;
+    }
+
+    /* Spotlight Section */
+    .spotlight-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .spotlight-grid-flipped {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    /* Reset paddings and heights */
+    .spotlight-left,
+    .spotlight-middle,
+    .spotlight-right,
+    .spotlight-grid-flipped .spotlight-middle,
+    .spotlight-grid-flipped .spotlight-right {
+        padding: 0;
+        height: auto;
+    }
+
+    /* Normal Grid: Large Image Top */
+    .spotlight-grid .spotlight-left {
+        grid-column: 1 / -1;
+        margin-bottom: 1rem;
+    }
+
+    /* Reset spotlight-left for flipped grid */
+    .spotlight-grid-flipped .spotlight-left {
+        grid-column: auto;
+        margin-bottom: 0;
+    }
+
+    /* Flipped Grid: Large Image Top */
+    .spotlight-grid-flipped .spotlight-right {
+        grid-column: 1 / -1;
+        margin-bottom: 1rem;
+        order: -1;
+    }
+
+    .spotlight-large-image {
+        height: 250px;
+    }
+
+    .spotlight-small-image {
+        height: 200px;
+    }
+
+    .spotlight-text {
+        height: auto;
+        min-height: 160px;
+    }
+
+    /* Quick Links Section */
+    .links-items {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    /* Feedback Section */
+    .feedback-section {
+        grid-template-columns: 1fr;
+    }
+
+    .send-feedback-btn {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .app-store-buttons {
+        position: static;
+        margin-top: 1rem;
+    }
+
+    /* Admin Panel Responsive */
+    .admin-modal-content {
+        width: 95%;
+        height: 90vh;
+    }
+
+    .admin-body {
+        flex-direction: column;
+    }
+
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--ui-border-light);
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0.5rem;
+    }
+
+    .admin-tab-btn {
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+    }
+}

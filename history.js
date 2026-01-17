@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Create overlay for mobile sidebar
+    const overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    document.body.appendChild(overlay);
     let globalSessions = []; // Store sessions globally for filtering
 
     // This function handles rendering the page content from the session data.
@@ -22,7 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear the main content area and rebuild its structure.
         mainContentContainer.innerHTML = `
             <header class="page-header">
-                <h1 class="page-title">Formula 1 History</h1>
+                <   <h1 class="page-title">Formula 1 History</h1>
+                    <button id="mobile-filter-btn" class="mobile-filter-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
                 <p class="page-subtitle">Explore races from the history of Formula 1</p>
             </header>
             <div class="grid"></div>
@@ -34,6 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Now, select the newly created grid container.
         const gridContainer = mainContentContainer.querySelector('.grid');
         const loadMoreBtn = mainContentContainer.querySelector('#load-more-btn');
+        const mobileFilterBtn = mainContentContainer.querySelector('#mobile-filter-btn');
+
+        if (mobileFilterBtn) {
+            mobileFilterBtn.addEventListener('click', () => {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            });
+        }
         
         if (!allSessions || allSessions.length === 0) {
             gridContainer.innerHTML = '<p style="color: white;">No sessions found.</p>';
@@ -248,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeSessionConfig = sessionConfig.filter(item => availableSessionNames.has(item.key));
 
         sidebar.innerHTML = `
+            <button id="sidebar-close-btn" class="sidebar-close-btn">&times;</button>
             <div class="sidebar-title">Filters</div>
             
             <div class="filter-group">
@@ -287,6 +309,21 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.querySelectorAll('input[type="checkbox"]').forEach(cb => {
             cb.addEventListener('change', handleFilterChange);
         });
+
+        const closeBtn = sidebar.querySelector('#sidebar-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidebar);
+        }
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
     }
 
     async function handleFilterChange() {

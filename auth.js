@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 accountModalTitle.appendChild(badge);
 
                 // Inject Admin Panel Button if not exists
-                if (!document.getElementById('open-admin-panel-btn')) {
+                // Only allow on Hero Page (identified by .hero-section)
+                if (document.querySelector('.hero-section') && !document.getElementById('open-admin-panel-btn')) {
                     const adminBtn = document.createElement('button');
                     adminBtn.id = 'open-admin-panel-btn';
                     adminBtn.className = 'account-btn btn-outline-red';
