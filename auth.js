@@ -923,6 +923,9 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.opacity = '0';
         container.style.transform = 'translateY(10px)';
 
+        // Wait for transition to complete
+        await new Promise(resolve => setTimeout(resolve, 200));
+
         // Helper to create image input with upload button
         const createImgInput = (name, value, placeholder) => `
             <div class="input-with-icon">
