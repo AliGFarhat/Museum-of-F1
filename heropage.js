@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Page Loader & Theme Init ---
-    // Apply theme immediately to ensure loader has correct background
-    const savedTheme = localStorage.getItem('lightMode');
-    if (savedTheme === 'enabled') {
+    const initThemeAndLoader = () => {
+        if (localStorage.getItem('lightMode') === 'enabled') {
         document.body.classList.add('light-mode');
     }
 
@@ -14,22 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         pageLoader.classList.add('hidden');
         setTimeout(() => {
-            if (document.body.contains(pageLoader)) {
-                pageLoader.remove();
-            }
-        }, 500);
-    }, 300);
-    // -------------------------------
+                if (document.body.contains(pageLoader)) pageLoader.remove();
+            }, 500);
+        }, 300);
+    };
+    initThemeAndLoader();
 
+    // --- DOM Elements ---
     const header = document.querySelector('.header');
-    // Find the correct content container, whether it's .main or .main-content
     const contentContainer = document.querySelector('.main-content') || document.querySelector('.main');
     const settingsCog = document.getElementById('settings-cog');
     const dropdown = document.getElementById('settings-dropdown');
 
-    let currentRotation = 0; // Variable to track rotation
+    let currentRotation = 0;
 
-    // Sticky Navbar Logic
+    // --- Sticky Navbar Logic ---
     if (header && contentContainer) {
         const headerHeight = header.offsetHeight;
         let lastScrollY = window.scrollY;
@@ -37,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
 
-            // Handle Fixed State
             if (currentScrollY > 0) {
                 if (!header.classList.contains('header-fixed')) {
                     header.classList.add('header-fixed');
@@ -49,36 +46,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 header.classList.remove('hide-nav');
             }
 
-            // Handle Hide/Show on Scroll
             if (currentScrollY > headerHeight) {
-                if (currentScrollY > lastScrollY) {
-                    // Scrolling Down
-                    header.classList.add('hide-nav');
-                } else {
-                    // Scrolling Up
-                    header.classList.remove('hide-nav');
-                }
+                header.classList.toggle('hide-nav', currentScrollY > lastScrollY);
             }
 
             lastScrollY = currentScrollY;
         };
 
         window.addEventListener('scroll', handleScroll);
-        // Run once on load to set initial state
-        handleScroll();
+        handleScroll(); // Initial check
     }
 
+    // --- Settings Menu Logic ---
     if (settingsCog) {
         settingsCog.addEventListener('click', () => {
-            // Increment rotation and apply it
             currentRotation += 180;
             settingsCog.style.transform = `rotate(${currentRotation}deg)`;
-            
-            // Toggle the dropdown
             dropdown.classList.toggle('show');
         });
 
-        // Close dropdown when clicking outside
         window.addEventListener('click', (e) => {
             if (dropdown && dropdown.classList.contains('show') && 
                 !dropdown.contains(e.target) && 
@@ -88,11 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Feedback Form Submission
+    // --- Feedback Form Logic ---
     const feedbackForm = document.getElementById('feedback-form');
     if (feedbackForm) {
         feedbackForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent the default form submission (page reload)
+            event.preventDefault();
 
             const email = event.target.email.value;
             const feedback = event.target.feedback.value;
@@ -111,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 const modal = document.getElementById('login-modal');
 
-                // Use the custom modal if available (exposed from auth.js)
                 if (window.f1Auth && modal) {
                     modal.classList.add('show-modal');
                     document.body.classList.add('modal-open');
@@ -121,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         response.ok ? 'Success' : 'Error', 
                         data.message, 
                         response.ok ? 'success' : 'error', 
-                        2500, // Duration
+                        2500,
                         () => {
                             modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
@@ -129,64 +114,46 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     );
                 } else {
-                    // Fallback if modal logic isn't loaded
                     alert(data.message);
                 }
             } catch (error) {
                 console.error(error);
                 alert('An error occurred connecting to the server.');
             }
+            
             sendButton.textContent = 'SEND';
             sendButton.disabled = false;
-            feedbackForm.reset(); // Clear the form
+            feedbackForm.reset();
         });
     }
 
-    // Handle Display Mode Menu
-    // Get the state from localStorage
-    let lightMode = localStorage.getItem('lightMode'); 
-
-    const displayModeToggle = document.getElementById('display-mode-toggle');
-    const displayModeMenu = document.getElementById('display-mode-menu');
+    // --- Display Mode Logic ---
     const lightModeBtn = document.getElementById('light-mode-btn');
     const darkModeBtn = document.getElementById('dark-mode-btn');
 
     const updateActiveState = () => {
-        if (document.body.classList.contains('light-mode')) {
-            if (lightModeBtn) lightModeBtn.classList.add('active');
-            if (darkModeBtn) darkModeBtn.classList.remove('active');
-        } else {
-            if (lightModeBtn) lightModeBtn.classList.remove('active');
-            if (darkModeBtn) darkModeBtn.classList.add('active');
-        }
+        const isLight = document.body.classList.contains('light-mode');
+        if (lightModeBtn) lightModeBtn.classList.toggle('active', isLight);
+        if (darkModeBtn) darkModeBtn.classList.toggle('active', !isLight);
     };
 
-    // Function to enable light mode
     const enableLightMode = () => {
         document.body.classList.add('light-mode');
         localStorage.setItem('lightMode', 'enabled');
         updateActiveState();
     };
 
-    // Function to disable light mode (revert to dark mode)
     const disableLightMode = () => {
         document.body.classList.remove('light-mode');
         localStorage.setItem('lightMode', 'disabled');
         updateActiveState();
     };
 
-    // Check if light mode is enabled on page load
-    if (lightMode === 'enabled') {
-        enableLightMode();
-    } else {
-        updateActiveState();
-    }
+    updateActiveState();
+    if (lightModeBtn) lightModeBtn.addEventListener('click', enableLightMode);
+    if (darkModeBtn) darkModeBtn.addEventListener('click', disableLightMode);
 
-    // Add event listeners for the theme buttons
-    if (lightModeBtn) lightModeBtn.addEventListener('click', enableLightMode); // Light button enables light mode
-    if (darkModeBtn) darkModeBtn.addEventListener('click', disableLightMode); // Dark button disables light mode (goes to dark)
-
-    // Check for Admin Status
+    // --- Admin Status Check ---
     const currentUser = JSON.parse(localStorage.getItem('user'));
     if (currentUser) {
         if (currentUser.isAdmin === undefined) {
@@ -211,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const heroPic = document.querySelector('.hero-pic img');
                 
                 if (heroText && featuredData.title) {
-                    // Preserve the structure, just update text
                     heroText.innerHTML = `
                         ${featuredData.title}
                         <div style="font-size: 1rem; margin-top: 0.5rem; font-family: 'Titillium Web';">${featuredData.description}</div>
@@ -221,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     heroPic.src = featuredData.imageUrl;
                 }
 
-                // Update Featured Entries (1-5)
                 const featuredItems = document.querySelectorAll('.hero-right .featured');
                 featuredItems.forEach((item, index) => {
                     const i = index + 1; // 1-based index for data fields
@@ -229,23 +194,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const img = item.querySelector('.featured-image');
                     const contentContainer = item.querySelector('.featured-content');
 
-                    // Try to find existing header by ID, then by tag
                     let header = item.querySelector(`#featured-header-${i}`) || item.querySelector('h3, h4, h5, h6');
-
-                    // Fallback: if no header tag found, try the first child of content container
                     if (!header && contentContainer && contentContainer.firstElementChild) {
                         if (contentContainer.firstElementChild !== text) {
                             header = contentContainer.firstElementChild;
                         }
                     }
 
-                    // Universal pink text
                     if (header) {
                         header.style.color = '#d6176f';
                         header.id = `featured-header-${i}`;
                     }
 
-                    // Only update if data exists for this field
                     if (featuredData[`entry_${i}_header`]) {
                         const headerText = featuredData[`entry_${i}_header`].toUpperCase();
                         if (header) {
@@ -270,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. Spotlights
             const spotlightRes = await fetch('http://localhost:5000/content/spotlights');
             const spotlightsData = await spotlightRes.json();
+            
             const spotlights = [];
             for (let i = 1; i <= 6; i++) {
                 if (spotlightsData[`spotlight_${i}_image`] || spotlightsData[`spotlight_${i}_title`]) {
@@ -280,19 +241,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Map DB items to DOM elements (Left, Middle, Right)
-            // We assume the order of fetch (latest first) maps to Left (Large), Middle, Right
             const grid1 = document.querySelector('.spotlight-grid');
             const grid2 = document.querySelector('.spotlight-grid-flipped');
+            
+            const getContainer = (grid, selector) => grid ? grid.querySelector(selector) : null;
+            
             const containers = [
                 // Row 1
-                { container: grid1 ? grid1.querySelector('.spotlight-left') : null, imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' },
-                { container: grid1 ? grid1.querySelector('.spotlight-middle') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: grid1 ? grid1.querySelector('.spotlight-right') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid1, '.spotlight-left'), imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' },
+                { container: getContainer(grid1, '.spotlight-middle'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid1, '.spotlight-right'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
                 // Row 2 (Flipped: Left=Small, Middle=Small, Right=Large)
-                { container: grid2 ? grid2.querySelector('.spotlight-left') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: grid2 ? grid2.querySelector('.spotlight-middle') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: grid2 ? grid2.querySelector('.spotlight-right') : null, imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' }
+                { container: getContainer(grid2, '.spotlight-left'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid2, '.spotlight-middle'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid2, '.spotlight-right'), imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' }
             ];
 
             spotlights.forEach((item, index) => {

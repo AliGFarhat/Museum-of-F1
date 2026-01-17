@@ -580,6 +580,12 @@ body {
     margin-bottom: 40px;
 }
 
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 .page-title {
     font-size: 32px;
     font-weight: 700;
@@ -689,6 +695,10 @@ body {
     }
 
     .sidebar-close-btn {
+        display: block;
+    }
+
+    .mobile-filter-btn {
         display: block;
     }
 

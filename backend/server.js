@@ -6,11 +6,11 @@ const cors = require('cors');
 
 const app = express();
 
-// Middleware
+// Setup middleware
 app.use(cors({ origin: ['http://127.0.0.1:5500', 'http://localhost:5500'] })); // Allow requests from your frontend's origin
 app.use(express.json()); // To parse JSON bodies
 
-// Nodemailer Transporter Setup
+// Setup email sender
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Verify connection configuration
+// Check email connection
 transporter.verify(function (error, success) {
     if (error) {
         console.log('Error connecting to email server:', error);
@@ -28,7 +28,7 @@ transporter.verify(function (error, success) {
     }
 });
 
-// API Endpoint to handle feedback
+// Feedback route
 app.post('/send-feedback', (req, res) => {
     const { email, feedback } = req.body;
 

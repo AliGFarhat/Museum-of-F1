@@ -1,60 +1,57 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Select DOM elements
-    const loginBtn = document.getElementById('login-register-btn'); // Updated to match HTML
-    const modal = document.getElementById('login-modal'); // Updated to match HTML
-    const closeBtn = document.getElementById('close-modal-btn'); // Updated to match HTML
-    const authForm = document.getElementById('login-form'); // Updated to match HTML
-    const modalTitle = document.getElementById('modalTitle');
-    const submitBtn = document.getElementById('submitBtn');
-    const toggleText = document.getElementById('toggleText');
-    const toggleAction = document.getElementById('toggleAction');
-    const emailInput = document.getElementById('email');
-    const emailLabel = document.getElementById('email-label');
+    // Get all the elements we need from the HTML
+    const els = {
+        loginBtn: document.getElementById('login-register-btn'),
+        modal: document.getElementById('login-modal'),
+        closeBtn: document.getElementById('close-modal-btn'),
+        authForm: document.getElementById('login-form'),
+        modalTitle: document.getElementById('modalTitle'),
+        submitBtn: document.getElementById('submitBtn'),
+        toggleText: document.getElementById('toggleText'),
+        toggleAction: document.getElementById('toggleAction'),
+        emailInput: document.getElementById('email'),
+        emailLabel: document.getElementById('email-label'),
+        registerUsernameContainer: document.getElementById('register-username-container'),
+        registerUsernameInput: document.getElementById('register-username'),
+        registerUsernameFeedback: document.getElementById('register-username-feedback'),
+        passwordInput: document.getElementById('password'),
+        togglePassword: document.getElementById('togglePassword'),
+        accountModal: document.getElementById('account-modal'),
+        closeAccountBtn: document.getElementById('close-account-modal-btn'),
+        accountModalTitle: document.getElementById('accountModalTitle'),
+        logoutBtn: document.getElementById('logout-btn'),
+        deleteAccountBtn: document.getElementById('delete-account-btn'),
+        changeUsernameBtn: document.getElementById('change-username-btn'),
+        changeUsernameForm: document.getElementById('change-username-form'),
+        newUsernameInput: document.getElementById('new-username-input'),
+        changeUsernameFeedback: document.getElementById('change-username-feedback'),
+        saveUsernameBtn: document.getElementById('save-username-btn'),
+        cancelUsernameBtn: document.getElementById('cancel-username-btn')
+    };
     
-    // Dynamically create email feedback element if it doesn't exist
+    // Create the email feedback text if it's not there
     const emailFeedback = document.getElementById('email-feedback') || (() => {
-        if (emailInput) {
+        if (els.emailInput) {
             const el = document.createElement('div');
             el.id = 'email-feedback';
             el.className = 'validation-text';
-            emailInput.insertAdjacentElement('afterend', el);
+            els.emailInput.insertAdjacentElement('afterend', el);
             return el;
         }
         return null;
     })();
 
-    const registerUsernameContainer = document.getElementById('register-username-container');
-    const registerUsernameInput = document.getElementById('register-username');
-    const registerUsernameFeedback = document.getElementById('register-username-feedback');
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    
-    // Account Modal Elements
-    const accountModal = document.getElementById('account-modal');
-    const closeAccountBtn = document.getElementById('close-account-modal-btn');
-    const accountModalTitle = document.getElementById('accountModalTitle');
-    const logoutBtn = document.getElementById('logout-btn');
-    const deleteAccountBtn = document.getElementById('delete-account-btn');
-    const changeUsernameBtn = document.getElementById('change-username-btn');
-    const changeUsernameForm = document.getElementById('change-username-form');
-    const newUsernameInput = document.getElementById('new-username-input');
-    const changeUsernameFeedback = document.getElementById('change-username-feedback');
-    const saveUsernameBtn = document.getElementById('save-username-btn');
-    const cancelUsernameBtn = document.getElementById('cancel-username-btn');
-
-    // Helper to update account modal title with admin badge
-    // Helper to update account modal title with admin badge
+    // Helper functions
     const updateAccountTitle = (user) => {
-        if (accountModalTitle && user && user.username) {
-            accountModalTitle.innerHTML = `Hello, ${user.username}`;
+        if (els.accountModalTitle && user && user.username) {
+            els.accountModalTitle.innerHTML = `Hello, ${user.username}`;
             if (user.isAdmin) {
                 const badge = document.createElement('span');
                 badge.className = 'admin-badge';
                 badge.textContent = 'ADMIN';
-                accountModalTitle.appendChild(badge);
+                els.accountModalTitle.appendChild(badge);
 
                 // Inject Admin Panel Button if not exists
-                // Only allow on Hero Page (identified by .hero-section)
                 if (document.querySelector('.hero-section') && !document.getElementById('open-admin-panel-btn')) {
                     const adminBtn = document.createElement('button');
                     adminBtn.id = 'open-admin-panel-btn';
@@ -62,11 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     adminBtn.textContent = 'Open Admin Panel';
                     adminBtn.style.marginTop = '1rem';
                     adminBtn.addEventListener('click', () => {
-                        accountModal.classList.remove('show-modal');
+                        els.accountModal.classList.remove('show-modal');
                         openAdminPanel();
                     });
-                    // Insert before logout button
-                    logoutBtn.parentNode.insertBefore(adminBtn, logoutBtn);
+                    els.logoutBtn.parentNode.insertBefore(adminBtn, els.logoutBtn);
                 }
             }
         }
@@ -74,73 +70,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isLoginMode = true;
 
-    // Check if user is already logged in (persisted session)
+    // Check if user is already logged in
     const storedUser = localStorage.getItem('user');
-    if (storedUser && loginBtn) {
-        loginBtn.textContent = 'Account';
+    if (storedUser && els.loginBtn) {
+        els.loginBtn.textContent = 'Account';
     }
 
-    // Handle Navbar Button Click (Login / Logout)
-    if (loginBtn) {
-        loginBtn.addEventListener('click', (e) => {
+    // Handle the login/account button click
+    if (els.loginBtn) {
+        els.loginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             if (localStorage.getItem('user')) {
                 // User is logged in, open Account Modal
-                if (accountModal) {
+                if (els.accountModal) {
                     // Update modal title with username
                     const user = JSON.parse(localStorage.getItem('user'));
                     updateAccountTitle(user);
-                    accountModal.classList.add('show-modal');
+                    els.accountModal.classList.add('show-modal');
                     document.body.classList.add('modal-open');
 
                     // Ensure login modal is closed (fixes conflict with heropage.js)
-                    if (modal) modal.classList.remove('show-modal');
+                    if (els.modal) els.modal.classList.remove('show-modal');
                 }
             } else {
                 // User is not logged in, open Modal
-                if (modal) modal.classList.add('show-modal');
+                if (els.modal) els.modal.classList.add('show-modal');
                 document.body.classList.add('modal-open');
             }
         });
     }
 
-    // Helper to reset login modal
     const resetLoginModal = () => {
-        if (emailInput) emailInput.value = '';
-        if (passwordInput) {
-            passwordInput.value = '';
-            passwordInput.setAttribute('type', 'password');
+        if (els.emailInput) els.emailInput.value = '';
+        if (els.passwordInput) {
+            els.passwordInput.value = '';
+            els.passwordInput.setAttribute('type', 'password');
         }
-        if (registerUsernameInput) registerUsernameInput.value = '';
-        if (registerUsernameFeedback) registerUsernameFeedback.textContent = '';
+        if (els.registerUsernameInput) els.registerUsernameInput.value = '';
+        if (els.registerUsernameFeedback) els.registerUsernameFeedback.textContent = '';
         if (emailFeedback) emailFeedback.textContent = '';
         
         // Reset password toggle
-        if (togglePassword) {
-            togglePassword.style.display = 'none';
-            togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+        if (els.togglePassword) {
+            els.togglePassword.style.display = 'none';
+            els.togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
         }
 
-        // Reset to Login Mode
+        // Go back to login mode
         isLoginMode = true;
-        if (modalTitle) modalTitle.textContent = 'Login';
-        if (submitBtn) {
-            submitBtn.textContent = 'Login';
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-            submitBtn.style.cursor = 'pointer';
+        if (els.modalTitle) els.modalTitle.textContent = 'Login';
+        if (els.submitBtn) {
+            els.submitBtn.textContent = 'Login';
+            els.submitBtn.disabled = false;
+            els.submitBtn.style.opacity = '1';
+            els.submitBtn.style.cursor = 'pointer';
         }
-        if (toggleText) toggleText.textContent = "Don't have an account? ";
-        if (toggleAction) toggleAction.textContent = "Register";
-        if (registerUsernameContainer) registerUsernameContainer.style.display = 'none';
-        if (emailLabel) emailLabel.textContent = 'Email / Username';
-        if (registerUsernameInput) registerUsernameInput.required = false;
+        if (els.toggleText) els.toggleText.textContent = "Don't have an account? ";
+        if (els.toggleAction) els.toggleAction.textContent = "Register";
+        if (els.registerUsernameContainer) els.registerUsernameContainer.style.display = 'none';
+        if (els.emailLabel) els.emailLabel.textContent = 'Email / Username';
+        if (els.registerUsernameInput) els.registerUsernameInput.required = false;
 
-        // Reset any custom message views
-        if (modal) {
-            const messageViews = modal.querySelectorAll('.modal-message-view');
+        // Remove any messages
+        if (els.modal) {
+            const messageViews = els.modal.querySelectorAll('.modal-message-view');
             messageViews.forEach(view => view.remove());
-            const modalContent = modal.querySelector('.modal-content');
+            const modalContent = els.modal.querySelector('.modal-content');
             if (modalContent) {
                 Array.from(modalContent.children).forEach(child => {
                     if (!child.classList.contains('modal-loading-overlay')) {
@@ -150,34 +145,33 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Reset loader overlay
-        if (modal) {
-            const loaderOverlay = modal.querySelector('.modal-loading-overlay');
+        // Hide the loader
+        if (els.modal) {
+            const loaderOverlay = els.modal.querySelector('.modal-loading-overlay');
             if (loaderOverlay) loaderOverlay.classList.remove('show');
         }
     };
 
-    // Close Modal (X button)
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('show-modal');
+    // Close modal when clicking X
+    if (els.closeBtn) {
+        els.closeBtn.addEventListener('click', () => {
+            els.modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
             setTimeout(() => resetLoginModal(), 300);
         });
     }
 
-    // Helper to reset change username section
     const resetChangeUsernameSection = () => {
-        if (changeUsernameForm) changeUsernameForm.classList.remove('show');
-        if (changeUsernameBtn) changeUsernameBtn.style.display = 'block';
-        if (newUsernameInput) newUsernameInput.value = '';
-        if (changeUsernameFeedback) changeUsernameFeedback.textContent = '';
+        if (els.changeUsernameForm) els.changeUsernameForm.classList.remove('show');
+        if (els.changeUsernameBtn) els.changeUsernameBtn.style.display = 'block';
+        if (els.newUsernameInput) els.newUsernameInput.value = '';
+        if (els.changeUsernameFeedback) els.changeUsernameFeedback.textContent = '';
         
         // Reset any custom message views in account modal
-        if (accountModal) {
-            const messageViews = accountModal.querySelectorAll('.modal-message-view');
+        if (els.accountModal) {
+            const messageViews = els.accountModal.querySelectorAll('.modal-message-view');
             messageViews.forEach(view => view.remove());
-            const modalContent = accountModal.querySelector('.modal-content');
+            const modalContent = els.accountModal.querySelector('.modal-content');
             if (modalContent) {
                 Array.from(modalContent.children).forEach(child => {
                     if (!child.classList.contains('modal-loading-overlay')) {
@@ -188,48 +182,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Close Account Modal (X button)
-    if (closeAccountBtn) {
-        closeAccountBtn.addEventListener('click', () => {
-            accountModal.classList.remove('show-modal');
+    // Close account modal when clicking X
+    if (els.closeAccountBtn) {
+        els.closeAccountBtn.addEventListener('click', () => {
+            els.accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
             resetChangeUsernameSection();
         });
     }
 
-    // Track mousedown target to prevent closing when dragging from content to overlay
     let mouseDownTarget = null;
     window.addEventListener('mousedown', (e) => {
         mouseDownTarget = e.target;
     });
 
-    // Close Modal (Click outside)
+    // Close modal if clicking outside
     window.addEventListener('click', (e) => {
-        if (e.target === modal && mouseDownTarget === modal) {
-            modal.classList.remove('show-modal');
+        if (e.target === els.modal && mouseDownTarget === els.modal) {
+            els.modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
             setTimeout(() => resetLoginModal(), 300);
         }
-        if (e.target === accountModal && mouseDownTarget === accountModal) {
-            accountModal.classList.remove('show-modal');
+        if (e.target === els.accountModal && mouseDownTarget === els.accountModal) {
+            els.accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
             resetChangeUsernameSection();
         }
     });
 
-    // --- Modal Animation & Message Helpers ---
-
+    // Functions for modal animations and messages
     const animateModalTransition = (modal, updateContentFn, callback) => {
         const modalContent = modal.querySelector('.modal-content');
         
-        // 1. Lock Height
         const startHeight = modalContent.offsetHeight;
         const startWidth = modalContent.offsetWidth;
         modalContent.style.height = `${startHeight}px`;
         modalContent.style.width = `${startWidth}px`;
         modalContent.style.overflow = 'hidden';
 
-        // 2. Show Loader
         let loaderOverlay = modal.querySelector('.modal-loading-overlay');
         if (!loaderOverlay) {
             loaderOverlay = document.createElement('div');
@@ -239,31 +229,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         loaderOverlay.classList.add('show');
 
-        // 3. Wait for loader fade in
         setTimeout(() => {
-            // 4. Update Content
             updateContentFn(modalContent);
 
-            // 5. Calculate new height
             modalContent.style.transition = 'none';
             modalContent.style.height = 'auto';
             modalContent.style.width = ''; // Reset width to allow CSS to dictate it
             const targetHeight = modalContent.offsetHeight;
             const targetWidth = modalContent.offsetWidth;
 
-            // 6. Reset to start height
             modalContent.style.height = `${startHeight}px`;
             modalContent.style.width = `${startWidth}px`;
             modalContent.offsetHeight; // Force reflow
 
-            // 7. Animate to target
             modalContent.style.transition = 'all 0.3s ease';
             modalContent.style.height = `${targetHeight}px`;
             modalContent.style.width = `${targetWidth}px`;
 
-            // 8. Cleanup & Hide Loader
             setTimeout(() => {
-                // Hide Loader after resize is complete
                 loaderOverlay.classList.remove('show');
 
                 modalContent.style.height = 'auto';
@@ -277,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showStatusMessage = (modal, title, message, type = 'success', duration = 2000, onClose = null) => {
         animateModalTransition(modal, (modalContent) => {
-            // Hide original content
             Array.from(modalContent.children).forEach(child => {
                 if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
             });
@@ -286,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalContent.classList.add('compact-view');
             }
 
-            // Create Message View
             const messageContainer = document.createElement('div');
             messageContainer.className = 'modal-message-view';
             
@@ -311,7 +292,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showConfirmation = (modal, title, message, onConfirm, onCancel) => {
         animateModalTransition(modal, (modalContent) => {
-            // Hide original content
             Array.from(modalContent.children).forEach(child => {
                 if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
             });
@@ -355,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.body.appendChild(confirmModal);
         
-        // Trigger animation
         requestAnimationFrame(() => {
             confirmModal.classList.add('show-modal');
         });
@@ -386,20 +365,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Toggle between Login and Register views
-    if (toggleAction) {
-        toggleAction.addEventListener('click', (e) => {
+    // Switch between Login and Register
+    if (els.toggleAction) {
+        els.toggleAction.addEventListener('click', (e) => {
             e.preventDefault();
             
-            const modalContent = modal.querySelector('.modal-content');
+            const modalContent = els.modal.querySelector('.modal-content');
             
-            // 1. Lock current height and prevent overflow
             const startHeight = modalContent.offsetHeight;
             modalContent.style.height = `${startHeight}px`;
             modalContent.style.overflow = 'hidden';
 
-            // Create loader if it doesn't exist
-            let loaderOverlay = modal.querySelector('.modal-loading-overlay');
+            let loaderOverlay = els.modal.querySelector('.modal-loading-overlay');
             if (!loaderOverlay) {
                 if (modalContent) {
                     loaderOverlay = document.createElement('div');
@@ -409,57 +386,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Show loader
             if (loaderOverlay) loaderOverlay.classList.add('show');
 
             requestAnimationFrame(() => {
                 isLoginMode = !isLoginMode;
                 
                 if (isLoginMode) {
-                    modalTitle.textContent = 'Login';
-                    submitBtn.textContent = 'Login';
-                    toggleText.textContent = "Don't have an account? ";
-                    toggleAction.textContent = "Register";
-                    registerUsernameContainer.style.display = 'none';
-                    emailLabel.textContent = 'Email / Username';
-                    registerUsernameInput.required = false;
-                    registerUsernameInput.value = '';
-                    registerUsernameFeedback.textContent = '';
+                    els.modalTitle.textContent = 'Login';
+                    els.submitBtn.textContent = 'Login';
+                    els.toggleText.textContent = "Don't have an account? ";
+                    els.toggleAction.textContent = "Register";
+                    els.registerUsernameContainer.style.display = 'none';
+                    els.emailLabel.textContent = 'Email / Username';
+                    els.registerUsernameInput.required = false;
+                    els.registerUsernameInput.value = '';
+                    els.registerUsernameFeedback.textContent = '';
                     if (emailFeedback) emailFeedback.textContent = '';
-                    submitBtn.disabled = false;
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
+                    els.submitBtn.disabled = false;
+                    els.submitBtn.style.opacity = '1';
+                    els.submitBtn.style.cursor = 'pointer';
                 } else {
-                    modalTitle.textContent = 'Register';
-                    submitBtn.textContent = 'Register';
-                    toggleText.textContent = "Already have an account? ";
-                    toggleAction.textContent = "Login";
-                    registerUsernameContainer.style.display = 'block';
-                    emailLabel.textContent = 'Email';
-                    registerUsernameInput.required = true;
+                    els.modalTitle.textContent = 'Register';
+                    els.submitBtn.textContent = 'Register';
+                    els.toggleText.textContent = "Already have an account? ";
+                    els.toggleAction.textContent = "Login";
+                    els.registerUsernameContainer.style.display = 'block';
+                    els.emailLabel.textContent = 'Email';
+                    els.registerUsernameInput.required = true;
                     if (emailFeedback) emailFeedback.textContent = '';
                 }
 
-                // 2. Calculate new height
-                // Temporarily disable transition to measure natural height
                 modalContent.style.transition = 'none';
                 modalContent.style.height = 'auto';
                 const targetHeight = modalContent.offsetHeight;
 
-                // 3. Reset to start height
                 modalContent.style.height = `${startHeight}px`;
-                
-                // Force reflow
                 modalContent.offsetHeight;
 
-                // 4. Animate to target height
                 modalContent.style.transition = 'all 0.3s ease';
                 modalContent.style.height = `${targetHeight}px`;
 
-                // 5. Cleanup and Hide Loader
-                // Animation takes 300ms. Loader stays 200ms extra. Total 500ms.
                 setTimeout(() => {
-                    // Hide loader
                     if (loaderOverlay) loaderOverlay.classList.remove('show');
 
                     modalContent.style.height = 'auto';
@@ -470,27 +437,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Form Submission
-    if (authForm) {
-        authForm.addEventListener('submit', async (e) => {
+    // Handle form submit
+    if (els.authForm) {
+        els.authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-            const username = registerUsernameInput.value.trim();
+            const email = els.emailInput.value.trim();
+            const password = els.passwordInput.value.trim();
+            const username = els.registerUsernameInput.value.trim();
 
             if (email.includes(' ') || password.includes(' ')) {
-                showStatusMessage(modal, 'Error', 'Spaces are not allowed in email or password.', 'error', 2000, () => resetLoginModal());
+                showStatusMessage(els.modal, 'Error', 'Spaces are not allowed in email or password.', 'error', 2000, () => resetLoginModal());
                 return;
             }
 
             if (!isLoginMode) {
                 if (username.includes(' ')) {
-                    showStatusMessage(modal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetLoginModal());
+                    showStatusMessage(els.modal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetLoginModal());
                     return;
                 }
                 if (!/^[a-zA-Z0-9]+$/.test(username)) {
-                    showStatusMessage(modal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetLoginModal());
+                    showStatusMessage(els.modal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetLoginModal());
                     return;
                 }
             }
@@ -515,32 +482,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     if (isLoginMode) {
                         // Login Success
-                        showStatusMessage(modal, 'Success', 'Login Successful', 'success', 1500, () => {
+                        showStatusMessage(els.modal, 'Success', 'Login Successful', 'success', 1500, () => {
                             localStorage.setItem('user', JSON.stringify(data.user));
-                            modal.classList.remove('show-modal');
+                            els.modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
-                            loginBtn.textContent = 'Account';
+                            els.loginBtn.textContent = 'Account';
                             setTimeout(() => resetLoginModal(), 300);
                         });
                     } else {
                         // Registration Success - Auto Login
-                        showStatusMessage(modal, 'Success', 'Registration Complete', 'success', 1500, () => {
+                        showStatusMessage(els.modal, 'Success', 'Registration Complete', 'success', 1500, () => {
                             if (data.user) {
                                 localStorage.setItem('user', JSON.stringify(data.user));
-                                if (loginBtn) loginBtn.textContent = 'Account';
+                                if (els.loginBtn) els.loginBtn.textContent = 'Account';
                             }
-                            modal.classList.remove('show-modal');
+                            els.modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
                             setTimeout(() => resetLoginModal(), 300);
                         });
                     }
                 } else {
                     // Server returned an error (e.g., "User already exists")
-                    showStatusMessage(modal, 'Error', data.message, 'error', 2000, () => {
+                    showStatusMessage(els.modal, 'Error', data.message, 'error', 2000, () => {
                         // Restore form
-                        const messageView = modal.querySelector('.modal-message-view');
+                        const messageView = els.modal.querySelector('.modal-message-view');
                         if (messageView) messageView.remove();
-                        const modalContent = modal.querySelector('.modal-content');
+                        const modalContent = els.modal.querySelector('.modal-content');
                         Array.from(modalContent.children).forEach(child => {
                             if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
                         });
@@ -548,38 +515,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showStatusMessage(modal, 'Error', 'Failed to connect to server.', 'error', 2000, () => resetLoginModal());
+                showStatusMessage(els.modal, 'Error', 'Failed to connect to server.', 'error', 2000, () => resetLoginModal());
             }
         });
     }
 
-    // Password Visibility Toggle Logic
-    if (passwordInput && togglePassword) {
+    // Show/Hide password logic
+    if (els.passwordInput && els.togglePassword) {
         // Show/Hide icon based on input value
-        passwordInput.addEventListener('input', () => {
-            if (passwordInput.value.length > 0) {
-                togglePassword.style.display = 'block';
+        els.passwordInput.addEventListener('input', () => {
+            if (els.passwordInput.value.length > 0) {
+                els.togglePassword.style.display = 'block';
             } else {
-                togglePassword.style.display = 'none';
+                els.togglePassword.style.display = 'none';
             }
         });
 
         // Toggle Password Type and Icon
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+        els.togglePassword.addEventListener('click', () => {
+            const type = els.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            els.passwordInput.setAttribute('type', type);
             
             if (type === 'text') {
                 // Show Slash Eye (Red) - means "Click to Hide"
-                togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e10600"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>`;
+                els.togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e10600"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>`;
             } else {
                 // Show Open Eye (White) - means "Click to Reveal"
-                togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
+                els.togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
             }
         });
     }
 
-    // --- Username Validation Logic (Debounce) ---
+    // Check if username is taken
     let debounceTimer;
     const debounce = (func, delay) => {
         clearTimeout(debounceTimer);
@@ -633,17 +600,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (registerUsernameInput) {
-        registerUsernameInput.addEventListener('input', () => {
-            registerUsernameFeedback.textContent = '...';
-            registerUsernameFeedback.style.color = '#ccc';
+    if (els.registerUsernameInput) {
+        els.registerUsernameInput.addEventListener('input', () => {
+            els.registerUsernameFeedback.textContent = '...';
+            els.registerUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(registerUsernameInput.value, registerUsernameFeedback, submitBtn, null);
+                checkUsernameAvailability(els.registerUsernameInput.value, els.registerUsernameFeedback, els.submitBtn, null);
             }, 500);
         });
     }
 
-    // Email Validation Logic
+    // Check if email is valid
     const validateEmail = (email, feedbackElement, buttonElement) => {
         // Only validate in Register mode
         if (isLoginMode) {
@@ -702,46 +669,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (emailInput) {
-        emailInput.addEventListener('input', () => {
+    if (els.emailInput) {
+        els.emailInput.addEventListener('input', () => {
             if (!isLoginMode && emailFeedback) {
                 emailFeedback.textContent = '...';
                 emailFeedback.style.color = '#ccc';
             }
             debounce(() => {
-                validateEmail(emailInput.value, emailFeedback, submitBtn);
+                validateEmail(els.emailInput.value, emailFeedback, els.submitBtn);
             }, 500);
         });
     }
 
-    // --- Account Modal Actions ---
+    // Account actions
 
-    // Logout Logic
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            showStatusMessage(accountModal, 'Success', 'Logout Successful', 'success', 1500, () => {
+    // Handle logout
+    if (els.logoutBtn) {
+        els.logoutBtn.addEventListener('click', () => {
+            showStatusMessage(els.accountModal, 'Success', 'Logout Successful', 'success', 1500, () => {
                 localStorage.removeItem('user');
-                loginBtn.textContent = 'Login';
-                accountModal.classList.remove('show-modal');
+                els.loginBtn.textContent = 'Login';
+                els.accountModal.classList.remove('show-modal');
                 document.body.classList.remove('modal-open');
                 window.location.reload();
             });
         });
     }
 
-    // Delete Account Logic
-    if (deleteAccountBtn) {
-        deleteAccountBtn.addEventListener('click', async () => {
-            showConfirmation(accountModal, 'Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', async () => {
+    // Handle delete account
+    if (els.deleteAccountBtn) {
+        els.deleteAccountBtn.addEventListener('click', async () => {
+            showConfirmation(els.accountModal, 'Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', async () => {
                 // On Confirm
                 const user = JSON.parse(localStorage.getItem('user'));
                 if (!user || !user.id) return;
 
                 try {
-                    // Show loading state implicitly via transition or explicit loading message
-                    // We can reuse showStatusMessage but with no timeout to act as a loader
-                    // But animateModalTransition handles the loader.
-                    
                     const response = await fetch('http://localhost:5000/delete-account', {
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
@@ -749,21 +712,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (response.ok) {
-                        showStatusMessage(accountModal, 'Deleted', 'Account Deleted', 'success', 1500, () => {
+                        showStatusMessage(els.accountModal, 'Deleted', 'Account Deleted', 'success', 1500, () => {
                             localStorage.removeItem('user');
                             window.location.reload();
                         });
                     } else {
                         const data = await response.json();
-                        showStatusMessage(accountModal, 'Error', data.message || 'Failed to delete', 'error', 2000, () => resetChangeUsernameSection());
+                        showStatusMessage(els.accountModal, 'Error', data.message || 'Failed to delete', 'error', 2000, () => resetChangeUsernameSection());
                     }
                 } catch (error) {
                     console.error('Error deleting account:', error);
-                    showStatusMessage(accountModal, 'Error', 'Server error', 'error', 2000, () => resetChangeUsernameSection());
+                    showStatusMessage(els.accountModal, 'Error', 'Server error', 'error', 2000, () => resetChangeUsernameSection());
                 }
             }, () => {
                 // On Cancel: Restore original view
-                animateModalTransition(accountModal, (modalContent) => {
+                animateModalTransition(els.accountModal, (modalContent) => {
                     const messageView = modalContent.querySelector('.modal-message-view');
                     if (messageView) messageView.remove();
                     Array.from(modalContent.children).forEach(child => {
@@ -774,47 +737,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Change Username Logic
-    if (changeUsernameBtn) {
-        changeUsernameBtn.addEventListener('click', () => {
-            animateModalTransition(accountModal, () => {
-                changeUsernameForm.classList.add('show');
-                changeUsernameBtn.style.display = 'none';
+    // Handle changing username
+    if (els.changeUsernameBtn) {
+        els.changeUsernameBtn.addEventListener('click', () => {
+            animateModalTransition(els.accountModal, () => {
+                els.changeUsernameForm.classList.add('show');
+                els.changeUsernameBtn.style.display = 'none';
             });
         });
     }
 
-    if (cancelUsernameBtn) {
-        cancelUsernameBtn.addEventListener('click', () => {
-            animateModalTransition(accountModal, () => {
+    if (els.cancelUsernameBtn) {
+        els.cancelUsernameBtn.addEventListener('click', () => {
+            animateModalTransition(els.accountModal, () => {
                 resetChangeUsernameSection();
             });
         });
     }
 
-    if (newUsernameInput) {
-        newUsernameInput.addEventListener('input', () => {
-            changeUsernameFeedback.textContent = '...';
-            changeUsernameFeedback.style.color = '#ccc';
+    if (els.newUsernameInput) {
+        els.newUsernameInput.addEventListener('input', () => {
+            els.changeUsernameFeedback.textContent = '...';
+            els.changeUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(newUsernameInput.value, changeUsernameFeedback, saveUsernameBtn);
+                checkUsernameAvailability(els.newUsernameInput.value, els.changeUsernameFeedback, els.saveUsernameBtn);
             }, 500);
         });
     }
 
-    if (saveUsernameBtn) {
-        saveUsernameBtn.addEventListener('click', async () => {
-            const newUsername = newUsernameInput.value.trim();
+    if (els.saveUsernameBtn) {
+        els.saveUsernameBtn.addEventListener('click', async () => {
+            const newUsername = els.newUsernameInput.value.trim();
             const user = JSON.parse(localStorage.getItem('user'));
             
             if (!newUsername || !user || !user.id) return;
 
             if (newUsername.includes(' ')) {
-                showStatusMessage(accountModal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetChangeUsernameSection());
+                showStatusMessage(els.accountModal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetChangeUsernameSection());
                 return;
             }
             if (!/^[a-zA-Z0-9]+$/.test(newUsername)) {
-                showStatusMessage(accountModal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetChangeUsernameSection());
+                showStatusMessage(els.accountModal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetChangeUsernameSection());
                 return;
             }
 
@@ -827,14 +790,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
                 if (response.ok) {
-                    showStatusMessage(accountModal, 'Success', 'Username Updated', 'success', 1500, () => {
+                    showStatusMessage(els.accountModal, 'Success', 'Username Updated', 'success', 1500, () => {
                         // Update local storage with new username
                         localStorage.setItem('user', JSON.stringify(data.user));
                         updateAccountTitle(data.user);
                         resetChangeUsernameSection();
                     });
                 } else {
-                    showStatusMessage(accountModal, 'Error', data.message, 'error', 2000, () => resetChangeUsernameSection());
+                    showStatusMessage(els.accountModal, 'Error', data.message, 'error', 2000, () => resetChangeUsernameSection());
                 }
             } catch (error) {
                 console.error('Error changing username:', error);
@@ -842,13 +805,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Expose helpers for other scripts (e.g., heropage.js feedback form)
+    // Make these functions available to other scripts
     window.f1Auth = {
         showStatusMessage,
         resetLoginModal
     };
 
-    // --- Admin Panel Logic ---
+    // Admin panel code
+    const createImgInput = (name, value, placeholder) => `
+        <div class="input-with-icon">
+            <input type="text" name="${name}" value="${value || ''}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">
+            <input type="file" accept="image/*" class="hidden-file-input" id="file-${name}" style="display: none;">
+            <button type="button" class="icon-btn upload-btn" data-target="${name}" title="Upload Image">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </button>
+        </div>
+    `;
+
     const openAdminPanel = () => {
         // Create Modal HTML if not exists
         let adminModal = document.getElementById('admin-modal');
@@ -926,17 +899,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Wait for transition to complete
         await new Promise(resolve => setTimeout(resolve, 200));
-
-        // Helper to create image input with upload button
-        const createImgInput = (name, value, placeholder) => `
-            <div class="input-with-icon">
-                <input type="text" name="${name}" value="${value || ''}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">
-                <input type="file" accept="image/*" class="hidden-file-input" id="file-${name}" style="display: none;">
-                <button type="button" class="icon-btn upload-btn" data-target="${name}" title="Upload Image">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                </button>
-            </div>
-        `;
 
         try {
             if (tabName === 'feedback') {

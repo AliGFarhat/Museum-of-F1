@@ -1,32 +1,94 @@
-// c:\Users\Ali\Desktop\Assessments\Year 3\Tomorrow's Web\Assessment 1\Museum-of-F1\history.js
+// --- Static Data ---
+const TRACK_IMAGES = {
+    'Monaco': 'images/tracks/monaco.png',
+    'Monte Carlo': 'images/tracks/monaco.png',
+    'Silverstone': 'images/tracks/silverstone.png',
+    'Spa-Francorchamps': 'images/tracks/spa.png',
+    'Monza': 'images/tracks/monza.png',
+    'Suzuka': 'images/tracks/suzuka.png',
+    'Yas Marina Circuit': 'images/tracks/abudhabi.png',
+    'Yas Marina': 'images/tracks/abudhabi.png',
+    'Sakhir': 'images/tracks/bahrain.png',
+    'Jeddah': 'images/tracks/saudi.png',
+    'Melbourne': 'images/tracks/australia.png',
+    'Baku': 'images/tracks/baku.png',
+    'Miami': 'images/tracks/miami.png',
+    'Miami International Autodrome': 'images/tracks/miami.png',
+    'Miami Gardens': 'images/tracks/miami.png',
+    'Imola': 'images/tracks/imola.png',
+    'Barcelona': 'images/tracks/spain.png',
+    'Madrid': 'images/tracks/spain.png',
+    'Montréal': 'images/tracks/canada.png',
+    'Spielberg': 'images/tracks/austria.png',
+    'Budapest': 'images/tracks/hungary.png',
+    'Zandvoort': 'images/tracks/dutch.png',
+    'Marina Bay': 'images/tracks/singapore.png',
+    'Lusail': 'images/tracks/qatar.png',
+    'Austin': 'images/tracks/usa.png',
+    'Mexico City': 'images/tracks/mexico.png',
+    'São Paulo': 'images/tracks/brazil.png',
+    'Las Vegas': 'images/tracks/lasvegas.png',
+    'Shanghai': 'images/tracks/china.png'
+};
+
+const FLAG_IMAGES = {
+    'UAE': 'images/flags/uae.png',
+    'Bahrain': 'images/flags/bhr.png',
+    'Saudi Arabia': 'images/flags/sau.png',
+    'Australia': 'images/flags/aus.png',
+    'Azerbaijan': 'images/flags/aze.png',
+    'USA': 'images/flags/usa.png',
+    'Italy': 'images/flags/ita.png',
+    'Spain': 'images/flags/esp.png',
+    'Canada': 'images/flags/can.png',
+    'Austria': 'images/flags/aut.png',
+    'Hungary': 'images/flags/hun.png',
+    'Netherlands': 'images/flags/nld.png',
+    'Singapore': 'images/flags/sgp.png',
+    'Qatar': 'images/flags/qat.png',
+    'Mexico': 'images/flags/mex.png',
+    'Brazil': 'images/flags/bra.png',
+    'China': 'images/flags/chn.png',
+    'Belgium': 'images/flags/bel.png',
+    'Japan': 'images/flags/jpn.png',
+    'Monaco': 'images/flags/mco.png'
+};
+
+const SESSION_ORDER = { 
+    'Race': 1, 
+    'Qualifying': 2, 
+    'Sprint': 3, 
+    'Sprint Shootout': 4,
+    'Sprint Qualifying': 4,
+    'Practice 3': 5, 
+    'Practice 2': 6, 
+    'Practice 1': 7 
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Select the main content area that will hold the page header and the grid.
+    // --- Initialization ---
     const mainContentContainer = document.querySelector('.main-content');
     const sidebar = document.querySelector('.sidebar');
 
-    // If the container doesn't exist, stop the script to avoid errors.
     if (!mainContentContainer) {
         console.error('Main content container (.main-content) not found.');
         return;
     }
 
-    // Create overlay for mobile sidebar
     const overlay = document.createElement('div');
     overlay.className = 'sidebar-overlay';
     document.body.appendChild(overlay);
-    let globalSessions = []; // Store sessions globally for filtering
+    
+    let globalSessions = [];
 
-    // This function handles rendering the page content from the session data.
+    // --- Render Logic ---
     async function renderPage(allSessions, weatherFilters = []) {
-        // Pagination settings: 2 rows (approx 6 items) initially, then 6 rows (approx 18 items)
         const INITIAL_BATCH = 6;
         const LOAD_MORE_BATCH = 18;
 
-        // Clear the main content area and rebuild its structure.
         mainContentContainer.innerHTML = `
             <header class="page-header">
-                <   <h1 class="page-title">Formula 1 History</h1>
+                <div class="header-title-row">
                     <button id="mobile-filter-btn" class="mobile-filter-btn">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -34,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
+                    <h1 class="page-title">Formula 1 History</h1>
                 </div>
                 <p class="page-subtitle">Explore races from the history of Formula 1</p>
             </header>
@@ -43,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Now, select the newly created grid container.
         const gridContainer = mainContentContainer.querySelector('.grid');
         const loadMoreBtn = mainContentContainer.querySelector('#load-more-btn');
         const mobileFilterBtn = mainContentContainer.querySelector('#mobile-filter-btn');
@@ -52,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mobileFilterBtn.addEventListener('click', () => {
                 sidebar.classList.add('active');
                 overlay.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+                document.body.style.overflow = 'hidden';
             });
         }
         
@@ -61,82 +123,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // A helper object to map meeting names from the API to your image files.
-        const trackImages = {
-            'Monaco': 'images/tracks/monaco.png',
-            'Monte Carlo': 'images/tracks/monaco.png',
-            'Silverstone': 'images/tracks/silverstone.png',
-            'Spa-Francorchamps': 'images/tracks/spa.png',
-            'Monza': 'images/tracks/monza.png',
-
-            'Suzuka': 'images/tracks/suzuka.png',
-            'Yas Marina Circuit': 'images/tracks/abudhabi.png',
-            'Yas Marina': 'images/tracks/abudhabi.png',
-            'Sakhir': 'images/tracks/bahrain.png',
-            'Jeddah': 'images/tracks/saudi.png',
-            'Melbourne': 'images/tracks/australia.png',
-            'Baku': 'images/tracks/baku.png',
-            'Miami': 'images/tracks/miami.png',
-            'Miami International Autodrome': 'images/tracks/miami.png',
-            'Miami Gardens': 'images/tracks/miami.png',
-            'Imola': 'images/tracks/imola.png',
-
-            'Barcelona': 'images/tracks/spain.png',
-            'Madrid': 'images/tracks/spain.png',
-            'Montréal': 'images/tracks/canada.png',
-            'Spielberg': 'images/tracks/austria.png',
-            'Budapest': 'images/tracks/hungary.png',
-            'Zandvoort': 'images/tracks/dutch.png',
-            'Marina Bay': 'images/tracks/singapore.png',
-            'Lusail': 'images/tracks/qatar.png',
-            'Austin': 'images/tracks/usa.png',
-            'Mexico City': 'images/tracks/mexico.png',
-            'São Paulo': 'images/tracks/brazil.png',
-            'Las Vegas': 'images/tracks/lasvegas.png',
-            'Shanghai': 'images/tracks/china.png'
-        };
-
-        const flagImages = {
-            'UAE': 'images/flags/uae.png',
-            'Bahrain': 'images/flags/bhr.png',
-            'Saudi Arabia': 'images/flags/sau.png',
-            'Australia': 'images/flags/aus.png',
-            'Azerbaijan': 'images/flags/aze.png',
-            'USA': 'images/flags/usa.png',
-            'Italy': 'images/flags/ita.png',
-            'Spain': 'images/flags/esp.png',
-            'Canada': 'images/flags/can.png',
-            'Austria': 'images/flags/aut.png',
-            'Hungary': 'images/flags/hun.png',
-            'Netherlands': 'images/flags/nld.png',
-            'Singapore': 'images/flags/sgp.png',
-            'Qatar': 'images/flags/qat.png',
-            'Mexico': 'images/flags/mex.png',
-            'Brazil': 'images/flags/bra.png',
-            'China': 'images/flags/chn.png',
-            'Belgium': 'images/flags/bel.png',
-            'Japan': 'images/flags/jpn.png',
-            'Monaco': 'images/flags/mco.png'
-        };
-
         let currentSessionIndex = 0;
         let isProcessing = false;
 
-        // Helper function to process a session and return a card (or null if filtered)
         async function createSessionCard(session) {
-            // Determine flag image
             let countryKey = session.country_name;
             if (countryKey === 'United States') countryKey = 'USA';
             if (countryKey === 'United Arab Emirates') countryKey = 'UAE';
             
-            const countryFlag = flagImages[countryKey];
+            const countryFlag = FLAG_IMAGES[countryKey];
 
             // Fetch weather data for this specific session if not already cached
             let weatherCondition = session.weatherCondition;
             if (!weatherCondition) {
                 try {
                     const weatherResponse = await fetch(`https://api.openf1.org/v1/weather?session_key=${session.session_key}`);
-                    weatherCondition = 'N/A'; // Default to N/A
+                    weatherCondition = 'N/A';
 
                     if (weatherResponse.ok) {
                         const contentType = weatherResponse.headers.get("content-type");
@@ -151,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (e) {
                     weatherCondition = 'N/A';
                 }
-                session.weatherCondition = weatherCondition; // Cache it
+                session.weatherCondition = weatherCondition;
             }
 
             // Apply Weather Filter
@@ -159,8 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
 
-            // Get the correct image path, or a default one if not found.
-            const imageUrl = trackImages[session.location] || 'images/tracks/default.png';
+            const imageUrl = TRACK_IMAGES[session.location] || 'images/tracks/default.png';
             
             const card = document.createElement('article');
             card.className = 'card';
@@ -184,23 +185,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadMoreBtn.disabled = true;
             }
 
-            const cardsToAppend = []; // Array to hold finished card elements
+            const cardsToAppend = [];
 
-            // Loop until we find enough cards or run out of sessions
             while (currentSessionIndex < allSessions.length && cardsToAppend.length < batchSize) {
-                // Stop if the grid container is no longer in the DOM (page changed)
                 if (!document.body.contains(gridContainer)) return;
 
-                // Determine how many items to fetch in this chunk
                 const needed = batchSize - cardsToAppend.length;
                 const chunk = allSessions.slice(currentSessionIndex, currentSessionIndex + needed);
                 
-                // Create promises with staggered start to avoid rate limits
                 const promises = chunk.map((session, index) => {
                     return new Promise(resolve => {
                         setTimeout(() => {
                             resolve(createSessionCard(session));
-                        }, index * 150); // 150ms delay between starts
+                        }, index * 150);
                     });
                 });
 
@@ -213,17 +210,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentSessionIndex += chunk.length;
             }
 
-            // Now, append all collected cards at once
             const fragment = document.createDocumentFragment();
             cardsToAppend.forEach(card => fragment.appendChild(card));
             gridContainer.appendChild(fragment);
 
-            // Update Load More Button
             if (loadMoreBtn) {
                 loadMoreBtn.innerHTML = 'Load More';
                 loadMoreBtn.disabled = false;
                 
-                // Hide button if we've processed all sessions
                 if (currentSessionIndex >= allSessions.length) {
                     loadMoreBtn.style.display = 'none';
                 } else {
@@ -233,15 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
             isProcessing = false;
         }
 
-        // Attach event listener
         if (loadMoreBtn) {
             loadMoreBtn.addEventListener('click', () => loadBatch(LOAD_MORE_BATCH));
         }
 
-        // Initial load
         await loadBatch(INITIAL_BATCH);
     }
 
+    // --- Sidebar Logic ---
     function populateSidebar(sessions) {
         if (!sidebar) return;
 
@@ -249,23 +242,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const years = getUniqueValues(sessions, 'year').sort((a, b) => b - a);
         const tracks = getUniqueValues(sessions, 'location');
-        
-        // Get all available session names from data
         const availableSessionNames = new Set(sessions.map(s => s.session_name));
 
-        // Define the desired order and labels for sessions
         const sessionConfig = [
             { key: 'Practice 1', label: 'Practice 1' },
             { key: 'Practice 2', label: 'Practice 2' },
             { key: 'Practice 3', label: 'Practice 3' },
             { key: 'Sprint Qualifying', label: 'Sprint Qualifying' },
-            { key: 'Sprint Shootout', label: 'Sprint Qualifying' }, // Map 2023 name to desired label
+            { key: 'Sprint Shootout', label: 'Sprint Qualifying' },
             { key: 'Sprint', label: 'Sprint Race' },
             { key: 'Qualifying', label: 'Qualifying' },
             { key: 'Race', label: 'Race' }
         ];
 
-        // Filter config to only include sessions present in data (removes "Day 1", etc.)
         const activeSessionConfig = sessionConfig.filter(item => availableSessionNames.has(item.key));
 
         sidebar.innerHTML = `
@@ -343,38 +332,31 @@ document.addEventListener('DOMContentLoaded', () => {
         await renderPage(filtered, activeWeather);
     }
 
-    // This is the main function to get and display session data.
+    // --- Data Fetching ---
     async function fetchAndDisplaySessions() {
         const cacheKey = 'f1HistoryData_v5';
         const cacheTimestampKey = 'f1HistoryTimestamp_v5';
-        const cacheDuration = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+        const cacheDuration = 6 * 60 * 60 * 1000;
 
         const cachedData = localStorage.getItem(cacheKey);
         const cachedTimestamp = localStorage.getItem(cacheTimestampKey);
         const now = new Date().getTime();
 
-        // If we have fresh data in the cache, use it.
+        const normalizeSession = (session) => {
+            if (session.location === 'Yas Island') session.location = 'Yas Marina';
+            if (session.location === 'Miami Gardens') session.location = 'Miami';
+        };
+
         if (cachedData && cachedTimestamp && (now - cachedTimestamp < cacheDuration)) {
             console.log("Loading F1 history from cache.");
             const allSessions = JSON.parse(cachedData);
-
-            // Normalize data immediately for cached data
-            allSessions.forEach(session => {
-                if (session.location === 'Yas Island') {
-                    session.location = 'Yas Marina';
-                }
-                if (session.location === 'Miami Gardens') {
-                    session.location = 'Miami';
-                }
-            });
-
+            allSessions.forEach(normalizeSession);
             globalSessions = allSessions;
             populateSidebar(allSessions);
             await renderPage(allSessions);
-            return; // Exit the function
+            return;
         }
 
-        // If cache is old or doesn't exist, fetch from API.
         console.log("Fetching fresh F1 history from API.");
         mainContentContainer.innerHTML = '<p style="color: white; font-size: 1.2rem; padding: 2rem;">Loading race history...</p>';
 
@@ -382,8 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const yearsToFetch = [2023, 2024, 2025, 2026];
             let allSessions = [];
 
-            // 1. Fetch all sessions for all years. This is more reliable than fetching all meetings at once.
-            // We use a staggered approach to avoid hitting rate limits with concurrent requests.
             const fetchPromises = yearsToFetch.map((year, index) => 
                 new Promise(resolve => setTimeout(resolve, index * 250))
                     .then(() => fetch(`https://api.openf1.org/v1/sessions?year=${year}`))
@@ -396,30 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const yearlySessions = await Promise.all(fetchPromises);
             allSessions = yearlySessions.flat();
+            allSessions.forEach(normalizeSession);
 
-            // Normalize data immediately
-            allSessions.forEach(session => {
-                if (session.location === 'Yas Island') {
-                    session.location = 'Yas Marina';
-                }
-                if (session.location === 'Miami Gardens') {
-                    session.location = 'Miami';
-                }
-            });
-
-            // 2. Define the desired sort order for sessions within a weekend.
-            const sessionOrder = { 
-                'Race': 1, 
-                'Qualifying': 2, 
-                'Sprint': 3, 
-                'Sprint Shootout': 4,
-                'Sprint Qualifying': 4,
-                'Practice 3': 5, 
-                'Practice 2': 6, 
-                'Practice 1': 7 
-            };
-
-            // 3. Sort all sessions: primarily by date (descending), and secondarily by session type order.
             allSessions.sort((a, b) => {
                 const dateA = new Date(a.date_start);
                 const dateB = new Date(b.date_start);
@@ -431,18 +389,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (dateComparison !== 0) {
                     return dateComparison;
                 }
-                // If in the same weekend, sort by the defined session order.
-                return (sessionOrder[a.session_name] || 99) - (sessionOrder[b.session_name] || 99);
+                return (SESSION_ORDER[a.session_name] || 99) - (SESSION_ORDER[b.session_name] || 99);
             });
 
-            // Save the freshly fetched and sorted data to the cache.
             localStorage.setItem(cacheKey, JSON.stringify(allSessions));
             localStorage.setItem(cacheTimestampKey, now.toString());
             console.log("F1 history has been cached.");
 
             globalSessions = allSessions;
             populateSidebar(allSessions);
-            // Now render the page with the new data.
             await renderPage(allSessions);
 
         } catch (error) {
@@ -451,6 +406,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Call the function to fetch and display the data when the page loads.
     fetchAndDisplaySessions();
 });
