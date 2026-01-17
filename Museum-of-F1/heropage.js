@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sendButton.disabled = true;
 
             try {
-                const response = await fetch('https://museum-of-f1.onrender.com/:5000/send-feedback', {
+                const response = await fetch('https://museum-of-f1.onrender.com/send-feedback', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, feedback }),
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadContent = async () => {
         try {
             // 1. Featured Race
-            const featuredRes = await fetch('https://museum-of-f1.onrender.com/:5000/content/featured');
+            const featuredRes = await fetch('https://museum-of-f1.onrender.com/content/featured');
             const featuredData = await featuredRes.json();
             
             if (featuredData) {
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 2. Spotlights
-            const spotlightRes = await fetch('https://museum-of-f1.onrender.com/:5000/content/spotlights');
+            const spotlightRes = await fetch('https://museum-of-f1.onrender.com/content/spotlights');
             const spotlightsData = await spotlightRes.json();
             
             const spotlights = [];

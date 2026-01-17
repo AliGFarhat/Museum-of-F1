@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const endpoint = isLoginMode ? '/login' : '/register';
-            const url = `http://https://museum-of-f1.onrender.com/${endpoint}`;
+            const url = `https://museum-of-f1.onrender.com${endpoint}`;
             
             const bodyData = { email, password };
             if (!isLoginMode) {
@@ -572,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('https://museum-of-f1.onrender.com/:5000/check-username', {
+            const response = await fetch('https://museum-of-f1.onrender.com/check-username', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username.toLowerCase(), excludeId })
@@ -705,7 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!user || !user.id) return;
 
                 try {
-                    const response = await fetch('https://museum-of-f1.onrender.com/:5000/delete-account', {
+                    const response = await fetch('https://museum-of-f1.onrender.com/delete-account', {
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: user.id })
@@ -782,7 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await fetch('https://museum-of-f1.onrender.com/:5000/change-username', {
+                const response = await fetch('https://museum-of-f1.onrender.com/change-username', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: user.id, newUsername })
@@ -902,7 +902,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             if (tabName === 'feedback') {
-                const res = await fetch('https://museum-of-f1.onrender.com/:5000/admin/feedback');
+                const res = await fetch('https://museum-of-f1.onrender.com/admin/feedback');
                 const feedback = await res.json();
                 
                 let html = '<h3>Feedback Moderation</h3><div class="admin-item-list">';
@@ -925,13 +925,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Attach delete handlers
                 window.deleteFeedback = async (id) => {
                     if(confirm('Delete this feedback?')) {
-                        await fetch(`https://museum-of-f1.onrender.com/:5000/admin/feedback/${id}`, { method: 'DELETE' });
+                        await fetch(`https://museum-of-f1.onrender.com/admin/feedback/${id}`, { method: 'DELETE' });
                         loadTab('feedback');
                     }
                 };
 
             } else if (tabName === 'featured') {
-                const res = await fetch('https://museum-of-f1.onrender.com/:5000/content/featured');
+                const res = await fetch('https://museum-of-f1.onrender.com/content/featured');
                 const race = await res.json();
 
                 let entriesHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">';
@@ -1016,7 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    await fetch('https://museum-of-f1.onrender.com/:5000/content/featured', {
+                    await fetch('https://museum-of-f1.onrender.com/content/featured', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
@@ -1052,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
 
                             // Save the modified data (effectively removing the section's data)
-                            await fetch('https://museum-of-f1.onrender.com/:5000/content/featured', {
+                            await fetch('https://museum-of-f1.onrender.com/content/featured', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(data)
@@ -1072,7 +1072,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
 
                         try {
-                            const res = await fetch('https://museum-of-f1.onrender.com/:5000/content/featured/reset', {
+                            const res = await fetch('https://museum-of-f1.onrender.com/content/featured/reset', {
                                 method: 'POST'
                             });
                             const data = await res.json();
@@ -1099,7 +1099,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
             } else if (tabName === 'spotlights') {
-                const res = await fetch('https://museum-of-f1.onrender.com/:5000/content/spotlights');
+                const res = await fetch('https://museum-of-f1.onrender.com/content/spotlights');
                 const spotlights = await res.json();
 
                 const spotlightLabels = [
@@ -1183,7 +1183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    await fetch('https://museum-of-f1.onrender.com/:5000/content/spotlights', {
+                    await fetch('https://museum-of-f1.onrender.com/content/spotlights', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
@@ -1212,7 +1212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 delete data[`spotlight_${index}_image`];
                                 delete data[`spotlight_${index}_text`];
 
-                                await fetch('https://museum-of-f1.onrender.com/:5000/content/spotlights', {
+                                await fetch('https://museum-of-f1.onrender.com/content/spotlights', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(data)
@@ -1231,7 +1231,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
 
                         try {
-                            const res = await fetch('https://museum-of-f1.onrender.com/:5000/content/spotlights/reset', { method: 'POST' });
+                            const res = await fetch('https://museum-of-f1.onrender.com/content/spotlights/reset', { method: 'POST' });
                             const data = await res.json();
                             if (res.ok) {
                                 showMsg(adminModal, 'Success', data.message, 'success', 1500, restoreView);
