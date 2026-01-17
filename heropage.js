@@ -269,14 +269,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. Spotlights
             const spotlightRes = await fetch('http://localhost:5000/content/spotlights');
-            const spotlights = await spotlightRes.json();
+            const spotlightsData = await spotlightRes.json();
+            const spotlights = [];
+            for (let i = 1; i <= 6; i++) {
+                if (spotlightsData[`spotlight_${i}_image`] || spotlightsData[`spotlight_${i}_title`]) {
+                    spotlights.push({
+                        title: spotlightsData[`spotlight_${i}_title`] || '',
+                        imageUrl: spotlightsData[`spotlight_${i}_image`] || ''
+                    });
+                }
+            }
 
             // Map DB items to DOM elements (Left, Middle, Right)
             // We assume the order of fetch (latest first) maps to Left (Large), Middle, Right
+            const grid1 = document.querySelector('.spotlight-grid');
+            const grid2 = document.querySelector('.spotlight-grid-flipped');
             const containers = [
-                { container: document.querySelector('.spotlight-left'), imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' },
-                { container: document.querySelector('.spotlight-middle'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: document.querySelector('.spotlight-right'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' }
+                // Row 1
+                { container: grid1 ? grid1.querySelector('.spotlight-left') : null, imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' },
+                { container: grid1 ? grid1.querySelector('.spotlight-middle') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: grid1 ? grid1.querySelector('.spotlight-right') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                // Row 2 (Flipped: Left=Small, Middle=Small, Right=Large)
+                { container: grid2 ? grid2.querySelector('.spotlight-left') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: grid2 ? grid2.querySelector('.spotlight-middle') : null, imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: grid2 ? grid2.querySelector('.spotlight-right') : null, imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' }
             ];
 
             spotlights.forEach((item, index) => {
@@ -285,8 +301,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     const img = containers[index].container.querySelector(target.imgClass);
                     const txt = containers[index].container.querySelector(target.textContainer);
 
-                    if (img) img.src = item.imageUrl;
-                    if (txt) txt.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`; // Adjust h3/h4 based on existing HTML if needed, but innerHTML replace works
+                    if (img && item.imageUrl) img.src = item.imageUrl;
+                    if (txt) {
+                        const headerTag = target.textContainer === '.spotlight-left-text' ? 'h3' : 'h4';
+                        const header = txt.querySelector(headerTag);
+                        if (header) {
+                            header.textContent = item.title;
+                        } else {
+                            txt.innerHTML = `<${headerTag}>${item.title}</${headerTag}>`;
+                        }
+                    }
                 }
             });
         } catch (e) {

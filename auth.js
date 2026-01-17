@@ -923,6 +923,17 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.opacity = '0';
         container.style.transform = 'translateY(10px)';
 
+        // Helper to create image input with upload button
+        const createImgInput = (name, value, placeholder) => `
+            <div class="input-with-icon">
+                <input type="text" name="${name}" value="${value || ''}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">
+                <input type="file" accept="image/*" class="hidden-file-input" id="file-${name}" style="display: none;">
+                <button type="button" class="icon-btn upload-btn" data-target="${name}" title="Upload Image">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                </button>
+            </div>
+        `;
+
         try {
             if (tabName === 'feedback') {
                 const res = await fetch('http://localhost:5000/admin/feedback');
@@ -956,17 +967,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (tabName === 'featured') {
                 const res = await fetch('http://localhost:5000/content/featured');
                 const race = await res.json();
-
-                // Helper to create image input with upload button
-                const createImgInput = (name, value, placeholder) => `
-                    <div class="input-with-icon">
-                        <input type="text" name="${name}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">
-                        <input type="file" accept="image/*" class="hidden-file-input" id="file-${name}" style="display: none;">
-                        <button type="button" class="icon-btn upload-btn" data-target="${name}" title="Upload Image">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                        </button>
-                    </div>
-                `;
 
                 let entriesHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">';
                 for (let i = 1; i <= 5; i++) {
@@ -1156,64 +1156,166 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('http://localhost:5000/content/spotlights');
                 const spotlights = await res.json();
 
-                let html = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                        <h3>Manage Spotlights</h3>
-                        <button class="account-btn btn-white" style="width:auto;" onclick="renderSpotlightForm()">+ Add New</button>
-                    </div>
-                    <div class="admin-item-list">
-                `;
-
-                spotlights.forEach(item => {
-                    html += `
-                        <div class="admin-item">
-                            <div style="display:flex; gap:1rem; align-items:center;">
-                                <img src="${item.imageUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;">
-                                <div><strong>${item.title}</strong></div>
+                let entriesHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">';
+                for (let i = 1; i <= 6; i++) {
+                    entriesHtml += `
+                        <div style="border: 1px solid #444; padding: 1rem; border-radius: 4px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0; color: #e10600;">Spotlight ${i}</h4>
+                                <button type="button" class="account-btn btn-white undo-btn" onclick="resetSection('spotlight_${i}')" title="Reset this entry">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                                </button>
                             </div>
-                            <button class="account-btn btn-white" style="width: auto; padding: 0.5rem 1rem;" onclick='renderSpotlightForm(${JSON.stringify(item).replace(/'/g, "&apos;")})'>Edit</button>
+                            <label>Title</label>
+                            <input type="text" name="spotlight_${i}_title" placeholder="${spotlights[`spotlight_${i}_title`] || 'Input Title'}">
+                            <label>Image URL</label>
+                            ${createImgInput(`spotlight_${i}_image`, spotlights[`spotlight_${i}_image`], spotlights[`spotlight_${i}_image`] || 'Input Image URL')}
                         </div>
                     `;
-                });
-                html += '</div>';
-                container.innerHTML = html;
+                }
+                entriesHtml += '</div>';
 
-                window.renderSpotlightForm = (item = null) => {
-                    const isEdit = !!item;
-                    container.innerHTML = `
-                        <h3>${isEdit ? 'Edit' : 'Create'} Spotlight</h3>
-                        <form class="admin-form" id="spotlight-form">
-                            <label>Title</label>
-                            <input type="text" name="title" value="${item ? item.title : ''}" required>
-                            <label>Description</label>
-                            <textarea name="description" rows="4" required>${item ? item.description : ''}</textarea>
-                            <label>Image URL</label>
-                            <input type="text" name="imageUrl" value="${item ? item.imageUrl : ''}" required>
-                            <div style="display:flex; gap:1rem;">
-                                <button type="submit" class="account-btn btn-red">Save</button>
-                                <button type="button" class="account-btn btn-white" onclick="loadAdminTab('spotlights')">Cancel</button>
-                            </div>
-                        </form>
-                    `;
+                container.innerHTML = `
+                    <h3>Manage Spotlights</h3>
+                    <form class="admin-form" id="spotlights-form">
+                        ${entriesHtml}
+                        <div style="display:flex; gap:1rem; margin-top: 1rem;">
+                            <button type="submit" class="account-btn btn-red">Save Spotlights</button>
+                            <button type="button" id="reset-spotlights-btn" class="account-btn btn-white">Reset to Default</button>
+                        </div>
+                    </form>
+                `;
 
-                    document.getElementById('spotlight-form').addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const formData = new FormData(e.target);
-                        const data = Object.fromEntries(formData.entries());
-                        
-                        const url = isEdit 
-                            ? `http://localhost:5000/content/spotlights/${item._id}`
-                            : 'http://localhost:5000/content/spotlights';
-                        const method = isEdit ? 'PUT' : 'POST';
-
-                        await fetch(url, {
-                            method: method,
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        });
-                        loadAdminTab('spotlights');
+                // Handle File Uploads
+                container.querySelectorAll('.upload-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetName = btn.dataset.target;
+                        document.getElementById(`file-${targetName}`).click();
                     });
+                });
+
+                container.querySelectorAll('.hidden-file-input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                                const textInput = document.getElementById(`input-${input.id.replace('file-', '')}`);
+                                textInput.value = ev.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+
+                document.getElementById('spotlights-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const formProps = Object.fromEntries(formData.entries());
+
+                    // Merge with existing data: only update fields that are filled
+                    const data = { ...spotlights };
+                    delete data._id;
+                    delete data.__v;
+                    delete data.updatedAt;
+
+                    for (const [key, value] of Object.entries(formProps)) {
+                        if (value && value.trim() !== '') {
+                            data[key] = value.trim();
+                        }
+                    }
+
+                    await fetch('http://localhost:5000/content/spotlights', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const adminModal = document.getElementById('admin-modal');
+                    showStatusMessage(adminModal, 'Success', 'Spotlights Updated', 'success', 1500, () => {
+                        animateModalTransition(adminModal, (modalContent) => {
+                            modalContent.classList.remove('compact-view');
+                            const messageViews = modalContent.querySelectorAll('.modal-message-view');
+                            messageViews.forEach(v => v.remove());
+                            Array.from(modalContent.children).forEach(child => {
+                                if (!child.classList.contains('modal-loading-overlay')) {
+                                    child.style.display = '';
+                                }
+                            });
+                            loadAdminTab('spotlights');
+                        });
+                    });
+                });
+
+                // Reset Section Logic for Spotlights
+                window.resetSection = async (section) => {
+                    if (section.startsWith('spotlight_')) {
+                        showSeparateConfirmationModal(
+                            'Reset Entry',
+                            `Are you sure you want to reset ${section.replace('_', ' ')}?`,
+                            async () => {
+                                const data = { ...spotlights };
+                                delete data._id;
+                                delete data.__v;
+                                delete data.updatedAt;
+
+                                const index = section.split('_')[1];
+                                delete data[`spotlight_${index}_title`];
+                                delete data[`spotlight_${index}_image`];
+                                delete data[`spotlight_${index}_text`];
+
+                                await fetch('http://localhost:5000/content/spotlights', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(data)
+                                });
+                                loadAdminTab('spotlights');
+                            }
+                        );
+                    }
                 };
+
+                document.getElementById('reset-spotlights-btn').addEventListener('click', () => {
+                    const adminModal = document.getElementById('admin-modal');
+                    showConfirmation(adminModal, 'Reset All', 'Are you sure you want to reset all spotlights?', async () => {
+                        const restoreView = () => {
+                            animateModalTransition(adminModal, (modalContent) => {
+                                modalContent.classList.remove('compact-view');
+                                const messageViews = modalContent.querySelectorAll('.modal-message-view');
+                                messageViews.forEach(v => v.remove());
+                                Array.from(modalContent.children).forEach(child => {
+                                    if (!child.classList.contains('modal-loading-overlay')) {
+                                        child.style.display = '';
+                                    }
+                                });
+                                loadAdminTab('spotlights');
+                            });
+                        };
+
+                        try {
+                            const res = await fetch('http://localhost:5000/content/spotlights/reset', { method: 'POST' });
+                            const data = await res.json();
+                            if (res.ok) {
+                                showStatusMessage(adminModal, 'Success', data.message, 'success', 1500, restoreView);
+                            } else {
+                                showStatusMessage(adminModal, 'Error', data.message || 'Failed to reset', 'error', 2000, restoreView);
+                            }
+                        } catch (error) {
+                            console.error('Error resetting spotlights:', error);
+                            showStatusMessage(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
+                        }
+                    }, () => {
+                        // On Cancel: Restore original view
+                        animateModalTransition(adminModal, (modalContent) => {
+                            modalContent.classList.remove('compact-view');
+                            const messageView = modalContent.querySelector('.modal-message-view');
+                            if (messageView) messageView.remove();
+                            Array.from(modalContent.children).forEach(child => {
+                                if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                            });
+                        });
+                    });
+                });
             }
 
             requestAnimationFrame(() => {
