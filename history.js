@@ -1,5 +1,5 @@
 // --- Static Data ---
-const TRACK_IMAGES = {
+const TRACKS = {
     'Monaco': 'images/tracks/monaco.png',
     'Monte Carlo': 'images/tracks/monaco.png',
     'Silverstone': 'images/tracks/silverstone.png',
@@ -31,7 +31,7 @@ const TRACK_IMAGES = {
     'Shanghai': 'images/tracks/china.png'
 };
 
-const FLAG_IMAGES = {
+const FLAGS = {
     'UAE': 'images/flags/uae.png',
     'Bahrain': 'images/flags/bhr.png',
     'Saudi Arabia': 'images/flags/sau.png',
@@ -54,7 +54,7 @@ const FLAG_IMAGES = {
     'Monaco': 'images/flags/mco.png'
 };
 
-const SESSION_ORDER = { 
+const SESSIONS = { 
     'Race': 1, 
     'Qualifying': 2, 
     'Sprint': 3, 
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let globalSessions = [];
 
-    async function renderPage(allSessions, weatherFilters = []) {
+    async function render(allSessions, weatherFilters = []) {
         const INITIAL_BATCH = 6;
         const LOAD_MORE_BATCH = 18;
 
@@ -124,13 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentSessionIndex = 0;
         let isProcessing = false;
 
-        async function createSessionCard(session) {
+        async function makeCard(session) {
             // Determine flag image
             let countryKey = session.country_name;
             if (countryKey === 'United States') countryKey = 'USA';
             if (countryKey === 'United Arab Emirates') countryKey = 'UAE';
             
-            const countryFlag = FLAG_IMAGES[countryKey];
+            const countryFlag = FLAGS[countryKey];
 
             // Fetch weather data for this specific session if not already cached
             let weatherCondition = session.weatherCondition;
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }
 
-            const imageUrl = TRACK_IMAGES[session.location] || 'images/tracks/default.png';
+            const imageUrl = TRACKS[session.location] || 'images/tracks/default.png';
             
             const card = document.createElement('article');
             card.className = 'card';
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const promises = chunk.map((session, index) => {
                     return new Promise(resolve => {
                         setTimeout(() => {
-                            resolve(createSessionCard(session));
+                            resolve(makeCard(session));
                         }, index * 150);
                     });
                 });
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadBatch(INITIAL_BATCH);
     }
 
-    function populateSidebar(sessions) {
+    function fillSidebar(sessions) {
         if (!sidebar) return;
 
         const getUniqueValues = (data, key) => [...new Set(data.map(item => item[key]))].sort();
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         sidebar.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', handleFilterChange);
+            cb.addEventListener('change', filter);
         });
 
         const closeBtn = sidebar.querySelector('#sidebar-close-btn');
@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('click', closeSidebar);
     }
 
-    async function handleFilterChange() {
+    async function filter() {
         const getChecked = (type) => Array.from(sidebar.querySelectorAll(`input[data-filter-type="${type}"]:checked`)).map(cb => cb.value);
         
         const activeYears = getChecked('year').map(Number);
@@ -327,10 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
                    (activeSessions.length === 0 || activeSessions.includes(session.session_name));
         });
 
-        await renderPage(filtered, activeWeather);
+        await render(filtered, activeWeather);
     }
 
-    async function fetchAndDisplaySessions() {
+    async function loadSessions() {
         const cacheKey = 'f1HistoryData_v5';
         const cacheTimestampKey = 'f1HistoryTimestamp_v5';
         const cacheDuration = 6 * 60 * 60 * 1000;
@@ -349,8 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const allSessions = JSON.parse(cachedData);
             allSessions.forEach(normalizeSession);
             globalSessions = allSessions;
-            populateSidebar(allSessions);
-            await renderPage(allSessions);
+            fillSidebar(allSessions);
+            await render(allSessions);
             return;
         }
 
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (dateComparison !== 0) {
                     return dateComparison;
                 }
-                return (SESSION_ORDER[a.session_name] || 99) - (SESSION_ORDER[b.session_name] || 99);
+                return (SESSIONS[a.session_name] || 99) - (SESSIONS[b.session_name] || 99);
             });
 
             localStorage.setItem(cacheKey, JSON.stringify(allSessions));
@@ -394,8 +394,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("F1 history has been cached.");
 
             globalSessions = allSessions;
-            populateSidebar(allSessions);
-            await renderPage(allSessions);
+            fillSidebar(allSessions);
+            await render(allSessions);
 
         } catch (error) {
             mainContentContainer.innerHTML = `<p style="color: red; padding: 2rem;">Failed to load race history: ${error.message}</p>`;
@@ -403,5 +403,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    fetchAndDisplaySessions();
+    loadSessions();
 });

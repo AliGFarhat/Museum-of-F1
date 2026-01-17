@@ -53,7 +53,7 @@
             <div class="settings">
                 <div id="settings-cog"></div>
                 <div id="settings-dropdown" class="dropdown-menu">
-                    <div class="dropdown-content-wrapper">
+                    <div class="drop-wrap">
                         <button id="login-register-btn">Login / Register</button>
                     </div>
                 </div>
@@ -201,7 +201,7 @@
             <span id="close-modal-btn" class="close-btn">&times;</span>
             <h2 id="modalTitle">Login</h2>
             <form id="login-form">
-                <div id="register-username-container" style="display: none;">
+                <div id="reg-box" style="display: none;">
                     <label for="register-username">Username</label>
                     <input type="text" id="register-username" name="username">
                     <small id="register-username-feedback" class="validation-text"></small>
@@ -233,12 +233,12 @@
             <span id="close-account-modal-btn" class="close-btn">&times;</span>
             <h2 id="accountModalTitle">Account</h2>
             <div class="account-actions">
-                <button id="change-username-btn" class="account-btn btn-white">Change Username</button>
-                <div id="change-username-form">
+                <button id="change-btn" class="account-btn btn-white">Change Username</button>
+                <div id="change-form">
                     <input type="text" id="new-username-input" placeholder="New Username" class="account-input">
                     <small id="change-username-feedback" class="validation-text"></small>
-                    <button id="save-username-btn" class="account-btn btn-red">Save</button>
-                    <button id="cancel-username-btn" class="account-btn btn-white">Cancel</button>
+                    <button id="save-btn" class="account-btn btn-red">Save</button>
+                    <button id="cancel-btn" class="account-btn btn-white">Cancel</button>
                 </div>
                 <button id="logout-btn" class="account-btn btn-outline-red">Log Out</button>
                 <button id="delete-account-btn" class="account-btn btn-red">Delete Account</button>

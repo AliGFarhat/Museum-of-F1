@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Page Loader & Theme Init ---
-    const initThemeAndLoader = () => {
+    const init = () => {
         // Apply theme immediately
         if (localStorage.getItem('lightMode') === 'enabled') {
         document.body.classList.add('light-mode');
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         }, 300);
     };
-    initThemeAndLoader();
+    init();
 
     // --- DOM Elements ---
     const header = document.querySelector('.header');
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Dynamic Content Loading ---
-    const loadDynamicContent = async () => {
+    const loadContent = async () => {
         try {
             // 1. Featured Race
             const featuredRes = await fetch('http://localhost:5000/content/featured');
@@ -258,13 +258,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const containers = [
                 // Row 1
-                { container: getContainer(grid1, '.spotlight-left'), imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' },
-                { container: getContainer(grid1, '.spotlight-middle'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: getContainer(grid1, '.spotlight-right'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid1, '.spotlight-left'), imgClass: '.spot-lg img', textContainer: '.spot-txt' },
+                { container: getContainer(grid1, '.spotlight-middle'), imgClass: '.spot-sm img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid1, '.spotlight-right'), imgClass: '.spot-sm img', textContainer: '.spotlight-text' },
                 // Row 2 (Flipped: Left=Small, Middle=Small, Right=Large)
-                { container: getContainer(grid2, '.spotlight-left'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: getContainer(grid2, '.spotlight-middle'), imgClass: '.spotlight-small-image img', textContainer: '.spotlight-text' },
-                { container: getContainer(grid2, '.spotlight-right'), imgClass: '.spotlight-large-image img', textContainer: '.spotlight-left-text' }
+                { container: getContainer(grid2, '.spotlight-left'), imgClass: '.spot-sm img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid2, '.spotlight-middle'), imgClass: '.spot-sm img', textContainer: '.spotlight-text' },
+                { container: getContainer(grid2, '.spotlight-right'), imgClass: '.spot-lg img', textContainer: '.spot-txt' }
             ];
 
             spotlights.forEach((item, index) => {
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (img && item.imageUrl) img.src = item.imageUrl;
                     if (txt) {
-                        const headerTag = target.textContainer === '.spotlight-left-text' ? 'h3' : 'h4';
+                        const headerTag = target.textContainer === '.spot-txt' ? 'h3' : 'h4';
                         const header = txt.querySelector(headerTag);
                         if (header) {
                             header.textContent = item.title;
@@ -290,5 +290,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    loadDynamicContent();
+    loadContent();
 });

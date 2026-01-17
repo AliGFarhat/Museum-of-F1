@@ -232,7 +232,7 @@ a {
 }
 
 /* Settings Dropdown Light Mode */
-.light-mode .dropdown-content-wrapper {
+.light-mode .drop-wrap {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
 }
@@ -313,7 +313,7 @@ a {
     background: conic-gradient(var(--color-black));
 }
 
-.dropdown-content-wrapper {
+.drop-wrap {
     background-color: var(--color-black);
     padding: 0.5rem;
     border-radius: 5px; /* Slightly smaller than parent to show the 'border' */
@@ -334,7 +334,7 @@ a {
     transition: transform 0.3s ease-in-out; /* Smooth transition for the pop-out effect */
 }
 
-.dropdown-menu:hover .dropdown-content-wrapper {
+.dropdown-menu:hover .drop-wrap {
     background-color: var(--color-f1-red); /* Red hover for the entire content area */
 }
 
@@ -872,7 +872,7 @@ body {
     gap: 1rem;
 }
 
-.app-download-btn {
+.app-btn {
     width: 7.625rem; /* 122px */
     height: 2.625rem; /* 42px */
     background-color: var(--color-black);
@@ -884,7 +884,7 @@ body {
     background-size: contain;
 }
 
-.app-download-btn:hover {
+.app-btn:hover {
     background-color: var(--ui-grey-medium);
 }
 
@@ -902,7 +902,7 @@ body {
     color: #000000;
 }
 
-.light-mode .display-mode-menu {
+.light-mode .mode-menu {
     background-color: #ebebeb;
     border-color: #000000;
 }
@@ -992,7 +992,7 @@ body {
     border-radius: 15px;
 }
 
-.display-mode-menu {
+.mode-menu {
     position: absolute;
     bottom: 50px; /* Position above the button */
     left: 50%;
@@ -1010,7 +1010,7 @@ body {
     width: max-content;
 }
 
-.display-mode-menu.show {
+.mode-menu.show {
     transform: translate(-50%, 0);
     opacity: 1;
     visibility: visible;
@@ -1231,13 +1231,13 @@ body {
 }
 
 /* Change Username Form Styles */
-#change-username-form {
+#change-form {
     display: none;
     flex-direction: column;
     margin-bottom: 1rem;
 }
 
-#change-username-form.show {
+#change-form.show {
     display: flex;
 }
 
@@ -1252,7 +1252,7 @@ body {
     font-family: 'Titillium Web';
 }
 
-#save-username-btn {
+#save-btn {
     margin-bottom: 1rem; /* Gap between Save and Cancel matching Logout and Delete */
     margin-top: 0.5rem; /* Gap between validation text and Save */
 }
@@ -1286,7 +1286,7 @@ body {
 }
 
 /* Modal Loading Overlay */
-.modal-loading-overlay {
+.modal-load {
     position: absolute;
     top: 0;
     left: 0;
@@ -1303,7 +1303,7 @@ body {
     transition: opacity 0.2s ease;
 }
 
-.modal-loading-overlay.show {
+.modal-load.show {
     opacity: 1;
     visibility: visible;
 }
@@ -1330,7 +1330,7 @@ body {
     min-width: 100px;
 }
 
-.light-mode .modal-loading-overlay {
+.light-mode .modal-load {
     background-color: #ffffff;
 }
 
@@ -1352,8 +1352,8 @@ body {
     }
 }
 
-.light-mode #change-username-btn,
-.light-mode #cancel-username-btn {
+.light-mode #change-btn,
+.light-mode #cancel-btn {
     background-color: #000000;
     color: #ffffff;
 }

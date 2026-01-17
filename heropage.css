@@ -120,7 +120,7 @@
 }
 
 /* Settings Dropdown Light Mode */
-.light-mode .dropdown-content-wrapper {
+.light-mode .drop-wrap {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
 }
@@ -138,7 +138,7 @@
     text-shadow: 0 0 6px #000000;
 }
 
-.light-mode .app-download-btn {
+.light-mode .app-btn {
     background-color: #000000;
 }
 
@@ -202,7 +202,7 @@
     z-index: 0;
 }
 
-.light-mode .featured-image-container,
+.light-mode .feat-box,
 .light-mode .featured-content {
     position: relative;
     z-index: 2;
@@ -241,7 +241,7 @@
     color: #000000;
 }
 
-.light-mode .display-mode-menu {
+.light-mode .mode-menu {
     background-color: #ebebeb;
     border-color: #000000;
 }
@@ -282,7 +282,7 @@
     color: #666;
 }
 
-.light-mode .modal-loading-overlay {
+.light-mode .modal-load {
     background-color: #ffffff;
 }
 
@@ -291,8 +291,8 @@
     border-top-color: #000000;
 }
 
-.light-mode #change-username-btn,
-.light-mode #cancel-username-btn {
+.light-mode #change-btn,
+.light-mode #cancel-btn {
     background-color: #000000;
     color: #ffffff;
 }
@@ -480,7 +480,7 @@ button, input, textarea, select {
     background: conic-gradient(var(--page-background));
 }
 
-.dropdown-content-wrapper {
+.drop-wrap {
     background-color: var(--color-black);
     padding: 0.5rem;
     border-radius: 5px;
@@ -501,7 +501,7 @@ button, input, textarea, select {
     transition: transform 0.3s ease-in-out;
 }
 
-.dropdown-menu:hover .dropdown-content-wrapper {
+.dropdown-menu:hover .drop-wrap {
     background-color: var(--color-f1-red);
 }
 
@@ -705,13 +705,13 @@ button, input, textarea, select {
 }
 
 /* Change Username Form Styles */
-#change-username-form {
+#change-form {
     display: none;
     flex-direction: column;
     margin-bottom: 1rem;
 }
 
-#change-username-form.show {
+#change-form.show {
     display: flex;
 }
 
@@ -726,7 +726,7 @@ button, input, textarea, select {
     font-family: 'Titillium Web';
 }
 
-#save-username-btn {
+#save-btn {
     margin-bottom: 1rem;
     margin-top: 0.5rem;
 }
@@ -875,7 +875,7 @@ button, input, textarea, select {
     transition: transform 0.2s ease-in-out;
 }
 
-.featured-image-container {
+.feat-box {
     width: 75px;
     flex-shrink: 0;
     overflow: hidden;
@@ -961,7 +961,7 @@ button, input, textarea, select {
     padding-left: 0.75rem;
 }
 
-.spotlight-large-image {
+.spot-lg {
     width: 100%;
     height: 500px;
     background-color: var(--background-spotlight-placeholder);
@@ -972,7 +972,7 @@ button, input, textarea, select {
     overflow: hidden;
 }
 
-.spotlight-large-image img {
+.spot-lg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -980,15 +980,15 @@ button, input, textarea, select {
     transition: transform 0.2s ease-in-out;
 }
 
-.spotlight-large-image:hover {
+.spot-lg:hover {
     cursor: pointer;
 }
 
-.spotlight-large-image:hover img {
+.spot-lg:hover img {
     transform: scale(1.1);
 }
 
-.spotlight-small-image {
+.spot-sm {
     width: 100%;
     height: 250px;
     background-color: var(--background-spotlight-placeholder);
@@ -997,7 +997,7 @@ button, input, textarea, select {
     overflow: hidden;
 }
 
-.spotlight-small-image img {
+.spot-sm img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1011,13 +1011,13 @@ button, input, textarea, select {
     cursor: pointer;
 }
 
-.spotlight-left:hover .spotlight-small-image img,
-.spotlight-middle:hover .spotlight-small-image img, 
-.spotlight-right:hover .spotlight-small-image img {
+.spotlight-left:hover .spot-sm img,
+.spotlight-middle:hover .spot-sm img, 
+.spotlight-right:hover .spot-sm img {
     transform: scale(1.1);
 }
 
-.spotlight-left-text {
+.spot-txt {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -1056,20 +1056,20 @@ button, input, textarea, select {
     z-index: 1;
 }
 
-.spotlight-left-text h3 {
+.spot-txt h3 {
     font-size: 1.5rem;
     color: var(--color-white);
     margin: 0;
 }
 
-.spotlight-large-image:hover .spotlight-left-text h3,
+.spot-lg:hover .spot-txt h3,
 .spotlight-left:hover .spotlight-text h4,
 .spotlight-middle:hover .spotlight-text h4, 
 .spotlight-right:hover .spotlight-text h4 {
     text-decoration: underline;
 }
 
-.spotlight-left-text p {
+.spot-txt p {
     color: var(--color-white);
     font-size: 0.9rem;
     margin: 0;
@@ -1287,7 +1287,7 @@ button, input, textarea, select {
     gap: 1rem;
 }
 
-.app-download-btn {
+.app-btn {
     width: 7.625rem;
     height: 2.625rem;
     background-color: var(--color-black);
@@ -1299,7 +1299,7 @@ button, input, textarea, select {
     background-size: contain;
 }
 
-.app-download-btn:hover {
+.app-btn:hover {
     background-color: var(--ui-grey-medium);
 }
 
@@ -1405,7 +1405,7 @@ button, input, textarea, select {
     background-color: #fff;
 }
 
-.display-mode-menu {
+.mode-menu {
     position: absolute;
     bottom: 50px;
     left: 50%;
@@ -1424,7 +1424,7 @@ button, input, textarea, select {
     width: max-content;
 }
 
-.display-mode-menu.show {
+.mode-menu.show {
     transform: translate(-50%, 0);
     opacity: 1;
     visibility: visible;
@@ -1479,7 +1479,7 @@ button, input, textarea, select {
 }
 
 /* Modal Loading Overlay */
-.modal-loading-overlay {
+.modal-load {
     position: absolute;
     top: 0;
     left: 0;
@@ -1496,7 +1496,7 @@ button, input, textarea, select {
     transition: opacity 0.2s ease;
 }
 
-.modal-loading-overlay.show {
+.modal-load.show {
     opacity: 1;
     visibility: visible;
 }

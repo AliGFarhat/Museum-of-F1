@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleAction: document.getElementById('toggleAction'),
         emailInput: document.getElementById('email'),
         emailLabel: document.getElementById('email-label'),
-        registerUsernameContainer: document.getElementById('register-username-container'),
+        registerUsernameContainer: document.getElementById('reg-box'),
         registerUsernameInput: document.getElementById('register-username'),
         registerUsernameFeedback: document.getElementById('register-username-feedback'),
         passwordInput: document.getElementById('password'),
@@ -21,12 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
         accountModalTitle: document.getElementById('accountModalTitle'),
         logoutBtn: document.getElementById('logout-btn'),
         deleteAccountBtn: document.getElementById('delete-account-btn'),
-        changeUsernameBtn: document.getElementById('change-username-btn'),
-        changeUsernameForm: document.getElementById('change-username-form'),
+        changeUsernameBtn: document.getElementById('change-btn'),
+        changeUsernameForm: document.getElementById('change-form'),
         newUsernameInput: document.getElementById('new-username-input'),
         changeUsernameFeedback: document.getElementById('change-username-feedback'),
-        saveUsernameBtn: document.getElementById('save-username-btn'),
-        cancelUsernameBtn: document.getElementById('cancel-username-btn')
+        saveUsernameBtn: document.getElementById('save-btn'),
+        cancelUsernameBtn: document.getElementById('cancel-btn')
     };
     
     // Dynamically create email feedback element if it doesn't exist
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })();
 
     // --- Helpers ---
-    const updateAccountTitle = (user) => {
+    const updateTitle = (user) => {
         if (els.accountModalTitle && user && user.username) {
             els.accountModalTitle.innerHTML = `Hello, ${user.username}`;
             if (user.isAdmin) {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     adminBtn.style.marginTop = '1rem';
                     adminBtn.addEventListener('click', () => {
                         els.accountModal.classList.remove('show-modal');
-                        openAdminPanel();
+                        openAdmin();
                     });
                     els.logoutBtn.parentNode.insertBefore(adminBtn, els.logoutBtn);
                 }
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (els.accountModal) {
                     // Update modal title with username
                     const user = JSON.parse(localStorage.getItem('user'));
-                    updateAccountTitle(user);
+                    updateTitle(user);
                     els.accountModal.classList.add('show-modal');
                     document.body.classList.add('modal-open');
 
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const resetLoginModal = () => {
+    const resetModal = () => {
         if (els.emailInput) els.emailInput.value = '';
         if (els.passwordInput) {
             els.passwordInput.value = '';
@@ -157,11 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
         els.closeBtn.addEventListener('click', () => {
             els.modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
-            setTimeout(() => resetLoginModal(), 300);
+            setTimeout(() => resetModal(), 300);
         });
     }
 
-    const resetChangeUsernameSection = () => {
+    const resetUserUI = () => {
         if (els.changeUsernameForm) els.changeUsernameForm.classList.remove('show');
         if (els.changeUsernameBtn) els.changeUsernameBtn.style.display = 'block';
         if (els.newUsernameInput) els.newUsernameInput.value = '';
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         els.closeAccountBtn.addEventListener('click', () => {
             els.accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
-            resetChangeUsernameSection();
+            resetUserUI();
         });
     }
 
@@ -201,17 +201,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === els.modal && mouseDownTarget === els.modal) {
             els.modal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
-            setTimeout(() => resetLoginModal(), 300);
+            setTimeout(() => resetModal(), 300);
         }
         if (e.target === els.accountModal && mouseDownTarget === els.accountModal) {
             els.accountModal.classList.remove('show-modal');
             document.body.classList.remove('modal-open');
-            resetChangeUsernameSection();
+            resetUserUI();
         }
     });
 
     // --- Modal Animation & Message Helpers ---
-    const animateModalTransition = (modal, updateContentFn, callback) => {
+    const animModal = (modal, updateContentFn, callback) => {
         const modalContent = modal.querySelector('.modal-content');
         
         const startHeight = modalContent.offsetHeight;
@@ -220,10 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
         modalContent.style.width = `${startWidth}px`;
         modalContent.style.overflow = 'hidden';
 
-        let loaderOverlay = modal.querySelector('.modal-loading-overlay');
+        let loaderOverlay = modal.querySelector('.modal-load');
         if (!loaderOverlay) {
             loaderOverlay = document.createElement('div');
-            loaderOverlay.className = 'modal-loading-overlay';
+            loaderOverlay.className = 'modal-load';
             loaderOverlay.innerHTML = '<div class="loader"></div>';
             modalContent.appendChild(loaderOverlay);
         }
@@ -258,10 +258,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     };
 
-    const showStatusMessage = (modal, title, message, type = 'success', duration = 2000, onClose = null) => {
-        animateModalTransition(modal, (modalContent) => {
+    const showMsg = (modal, title, message, type = 'success', duration = 2000, onClose = null) => {
+        animModal(modal, (modalContent) => {
             Array.from(modalContent.children).forEach(child => {
-                if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
+                if (!child.classList.contains('modal-load')) child.style.display = 'none';
             });
 
             if (modalContent.classList.contains('admin-modal-content')) {
@@ -290,10 +290,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const showConfirmation = (modal, title, message, onConfirm, onCancel) => {
-        animateModalTransition(modal, (modalContent) => {
+    const confirmAction = (modal, title, message, onConfirm, onCancel) => {
+        animModal(modal, (modalContent) => {
             Array.from(modalContent.children).forEach(child => {
-                if (!child.classList.contains('modal-loading-overlay')) child.style.display = 'none';
+                if (!child.classList.contains('modal-load')) child.style.display = 'none';
             });
 
             if (modalContent.classList.contains('admin-modal-content')) {
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const showSeparateConfirmationModal = (title, message, onConfirm) => {
+    const confirmModal = (title, message, onConfirm) => {
         const confirmModal = document.createElement('div');
         confirmModal.className = 'modal'; // Start hidden for animation
         confirmModal.style.zIndex = '2000'; // Ensure it sits above other modals
@@ -376,11 +376,11 @@ document.addEventListener('DOMContentLoaded', () => {
             modalContent.style.height = `${startHeight}px`;
             modalContent.style.overflow = 'hidden';
 
-            let loaderOverlay = els.modal.querySelector('.modal-loading-overlay');
+            let loaderOverlay = els.modal.querySelector('.modal-load');
             if (!loaderOverlay) {
                 if (modalContent) {
                     loaderOverlay = document.createElement('div');
-                    loaderOverlay.className = 'modal-loading-overlay';
+                    loaderOverlay.className = 'modal-load';
                     loaderOverlay.innerHTML = '<div class="loader"></div>';
                     modalContent.appendChild(loaderOverlay);
                 }
@@ -447,17 +447,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const username = els.registerUsernameInput.value.trim();
 
             if (email.includes(' ') || password.includes(' ')) {
-                showStatusMessage(els.modal, 'Error', 'Spaces are not allowed in email or password.', 'error', 2000, () => resetLoginModal());
+                showMsg(els.modal, 'Error', 'Spaces are not allowed in email or password.', 'error', 2000, () => resetModal());
                 return;
             }
 
             if (!isLoginMode) {
                 if (username.includes(' ')) {
-                    showStatusMessage(els.modal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetLoginModal());
+                    showMsg(els.modal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetModal());
                     return;
                 }
                 if (!/^[a-zA-Z0-9]+$/.test(username)) {
-                    showStatusMessage(els.modal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetLoginModal());
+                    showMsg(els.modal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetModal());
                     return;
                 }
             }
@@ -482,40 +482,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     if (isLoginMode) {
                         // Login Success
-                        showStatusMessage(els.modal, 'Success', 'Login Successful', 'success', 1500, () => {
+                        showMsg(els.modal, 'Success', 'Login Successful', 'success', 1500, () => {
                             localStorage.setItem('user', JSON.stringify(data.user));
                             els.modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
                             els.loginBtn.textContent = 'Account';
-                            setTimeout(() => resetLoginModal(), 300);
+                            setTimeout(() => resetModal(), 300);
                         });
                     } else {
                         // Registration Success - Auto Login
-                        showStatusMessage(els.modal, 'Success', 'Registration Complete', 'success', 1500, () => {
+                        showMsg(els.modal, 'Success', 'Registration Complete', 'success', 1500, () => {
                             if (data.user) {
                                 localStorage.setItem('user', JSON.stringify(data.user));
                                 if (els.loginBtn) els.loginBtn.textContent = 'Account';
                             }
                             els.modal.classList.remove('show-modal');
                             document.body.classList.remove('modal-open');
-                            setTimeout(() => resetLoginModal(), 300);
+                            setTimeout(() => resetModal(), 300);
                         });
                     }
                 } else {
                     // Server returned an error (e.g., "User already exists")
-                    showStatusMessage(els.modal, 'Error', data.message, 'error', 2000, () => {
+                    showMsg(els.modal, 'Error', data.message, 'error', 2000, () => {
                         // Restore form
                         const messageView = els.modal.querySelector('.modal-message-view');
                         if (messageView) messageView.remove();
                         const modalContent = els.modal.querySelector('.modal-content');
                         Array.from(modalContent.children).forEach(child => {
-                            if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                            if (!child.classList.contains('modal-load')) child.style.display = '';
                         });
                     });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showStatusMessage(els.modal, 'Error', 'Failed to connect to server.', 'error', 2000, () => resetLoginModal());
+                showMsg(els.modal, 'Error', 'Failed to connect to server.', 'error', 2000, () => resetModal());
             }
         });
     }
@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         debounceTimer = setTimeout(func, delay);
     };
 
-    const checkUsernameAvailability = async (username, feedbackElement, buttonElement, excludeId = null) => {
+    const checkUser = async (username, feedbackElement, buttonElement, excludeId = null) => {
         username = username.trim();
         if (!username) {
             feedbackElement.textContent = '';
@@ -605,7 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
             els.registerUsernameFeedback.textContent = '...';
             els.registerUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(els.registerUsernameInput.value, els.registerUsernameFeedback, els.submitBtn, null);
+                checkUser(els.registerUsernameInput.value, els.registerUsernameFeedback, els.submitBtn, null);
             }, 500);
         });
     }
@@ -686,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout Logic
     if (els.logoutBtn) {
         els.logoutBtn.addEventListener('click', () => {
-            showStatusMessage(els.accountModal, 'Success', 'Logout Successful', 'success', 1500, () => {
+            showMsg(els.accountModal, 'Success', 'Logout Successful', 'success', 1500, () => {
                 localStorage.removeItem('user');
                 els.loginBtn.textContent = 'Login';
                 els.accountModal.classList.remove('show-modal');
@@ -699,7 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete Account Logic
     if (els.deleteAccountBtn) {
         els.deleteAccountBtn.addEventListener('click', async () => {
-            showConfirmation(els.accountModal, 'Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', async () => {
+            confirmAction(els.accountModal, 'Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', async () => {
                 // On Confirm
                 const user = JSON.parse(localStorage.getItem('user'));
                 if (!user || !user.id) return;
@@ -712,25 +712,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     if (response.ok) {
-                        showStatusMessage(els.accountModal, 'Deleted', 'Account Deleted', 'success', 1500, () => {
+                        showMsg(els.accountModal, 'Deleted', 'Account Deleted', 'success', 1500, () => {
                             localStorage.removeItem('user');
                             window.location.reload();
                         });
                     } else {
                         const data = await response.json();
-                        showStatusMessage(els.accountModal, 'Error', data.message || 'Failed to delete', 'error', 2000, () => resetChangeUsernameSection());
+                        showMsg(els.accountModal, 'Error', data.message || 'Failed to delete', 'error', 2000, () => resetUserUI());
                     }
                 } catch (error) {
                     console.error('Error deleting account:', error);
-                    showStatusMessage(els.accountModal, 'Error', 'Server error', 'error', 2000, () => resetChangeUsernameSection());
+                    showMsg(els.accountModal, 'Error', 'Server error', 'error', 2000, () => resetUserUI());
                 }
             }, () => {
                 // On Cancel: Restore original view
-                animateModalTransition(els.accountModal, (modalContent) => {
+                animModal(els.accountModal, (modalContent) => {
                     const messageView = modalContent.querySelector('.modal-message-view');
                     if (messageView) messageView.remove();
                     Array.from(modalContent.children).forEach(child => {
-                        if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                        if (!child.classList.contains('modal-load')) child.style.display = '';
                     });
                 });
             });
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Change Username Logic
     if (els.changeUsernameBtn) {
         els.changeUsernameBtn.addEventListener('click', () => {
-            animateModalTransition(els.accountModal, () => {
+            animModal(els.accountModal, () => {
                 els.changeUsernameForm.classList.add('show');
                 els.changeUsernameBtn.style.display = 'none';
             });
@@ -749,8 +749,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (els.cancelUsernameBtn) {
         els.cancelUsernameBtn.addEventListener('click', () => {
-            animateModalTransition(els.accountModal, () => {
-                resetChangeUsernameSection();
+            animModal(els.accountModal, () => {
+                resetUserUI();
             });
         });
     }
@@ -760,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
             els.changeUsernameFeedback.textContent = '...';
             els.changeUsernameFeedback.style.color = '#ccc';
             debounce(() => {
-                checkUsernameAvailability(els.newUsernameInput.value, els.changeUsernameFeedback, els.saveUsernameBtn);
+                checkUser(els.newUsernameInput.value, els.changeUsernameFeedback, els.saveUsernameBtn);
             }, 500);
         });
     }
@@ -773,11 +773,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!newUsername || !user || !user.id) return;
 
             if (newUsername.includes(' ')) {
-                showStatusMessage(els.accountModal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetChangeUsernameSection());
+                showMsg(els.accountModal, 'Error', 'Spaces are not allowed in username.', 'error', 2000, () => resetUserUI());
                 return;
             }
             if (!/^[a-zA-Z0-9]+$/.test(newUsername)) {
-                showStatusMessage(els.accountModal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetChangeUsernameSection());
+                showMsg(els.accountModal, 'Error', 'Username must not contain special characters.', 'error', 2000, () => resetUserUI());
                 return;
             }
 
@@ -790,14 +790,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const data = await response.json();
                 if (response.ok) {
-                    showStatusMessage(els.accountModal, 'Success', 'Username Updated', 'success', 1500, () => {
+                    showMsg(els.accountModal, 'Success', 'Username Updated', 'success', 1500, () => {
                         // Update local storage with new username
                         localStorage.setItem('user', JSON.stringify(data.user));
-                        updateAccountTitle(data.user);
-                        resetChangeUsernameSection();
+                        updateTitle(data.user);
+                        resetUserUI();
                     });
                 } else {
-                    showStatusMessage(els.accountModal, 'Error', data.message, 'error', 2000, () => resetChangeUsernameSection());
+                    showMsg(els.accountModal, 'Error', data.message, 'error', 2000, () => resetUserUI());
                 }
             } catch (error) {
                 console.error('Error changing username:', error);
@@ -807,8 +807,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Expose helpers for other scripts (e.g., heropage.js feedback form)
     window.f1Auth = {
-        showStatusMessage,
-        resetLoginModal
+        showStatusMessage: showMsg,
+        resetLoginModal: resetModal
     };
 
     // --- Admin Panel Logic ---
@@ -822,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    const openAdminPanel = () => {
+    const openAdmin = () => {
         // Create Modal HTML if not exists
         let adminModal = document.getElementById('admin-modal');
         if (!adminModal) {
@@ -869,7 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    loadAdminTab(tab.dataset.tab);
+                    loadTab(tab.dataset.tab);
                 });
             });
         }
@@ -888,10 +888,10 @@ document.addEventListener('DOMContentLoaded', () => {
             adminModal.classList.add('show-modal');
             document.body.classList.add('modal-open');
         });
-        loadAdminTab('feedback'); // Default tab
+        loadTab('feedback'); // Default tab
     };
 
-    const loadAdminTab = async (tabName) => {
+    const loadTab = async (tabName) => {
         const container = document.getElementById('admin-content');
         
         container.style.opacity = '0';
@@ -926,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.deleteFeedback = async (id) => {
                     if(confirm('Delete this feedback?')) {
                         await fetch(`http://localhost:5000/admin/feedback/${id}`, { method: 'DELETE' });
-                        loadAdminTab('feedback');
+                        loadTab('feedback');
                     }
                 };
 
@@ -1023,14 +1023,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     
                     const adminModal = document.getElementById('admin-modal');
-                    showStatusMessage(adminModal, 'Success', 'Featured Race Updated', 'success', 1500, () => {
+                    showMsg(adminModal, 'Success', 'Featured Race Updated', 'success', 1500, () => {
                         window.location.reload();
                     });
                 });
 
                 // Reset Section Logic
                 window.resetSection = async (section) => {
-                    showSeparateConfirmationModal(
+                    confirmModal(
                         'Reset Section',
                         `Are you sure you want to reset ${section.replace('_', ' ')} to default?`,
                         async () => {
@@ -1066,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('reset-featured-btn').addEventListener('click', () => {
                     const adminModal = document.getElementById('admin-modal');
 
-                    showConfirmation(adminModal, 'Reset Content', 'Are you sure you want to reset the featured race to default values?', async () => {
+                    confirmAction(adminModal, 'Reset Content', 'Are you sure you want to reset the featured race to default values?', async () => {
                         const restoreView = () => {
                             window.location.reload();
                         };
@@ -1077,22 +1077,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             });
                             const data = await res.json();
                             if (res.ok) {
-                                showStatusMessage(adminModal, 'Success', data.message, 'success', 1500, restoreView);
+                                showMsg(adminModal, 'Success', data.message, 'success', 1500, restoreView);
                             } else {
-                                showStatusMessage(adminModal, 'Error', data.message || 'Failed to reset', 'error', 2000, restoreView);
+                                showMsg(adminModal, 'Error', data.message || 'Failed to reset', 'error', 2000, restoreView);
                             }
                         } catch (error) {
                             console.error('Error resetting featured race:', error);
-                            showStatusMessage(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
+                            showMsg(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
                         }
                     }, () => {
                         // On Cancel: Restore original view
-                        animateModalTransition(adminModal, (modalContent) => {
+                        animModal(adminModal, (modalContent) => {
                             modalContent.classList.remove('compact-view');
                             const messageView = modalContent.querySelector('.modal-message-view');
                             if (messageView) messageView.remove();
                             Array.from(modalContent.children).forEach(child => {
-                                if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                                if (!child.classList.contains('modal-load')) child.style.display = '';
                             });
                         });
                     });
@@ -1190,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     
                     const adminModal = document.getElementById('admin-modal');
-                    showStatusMessage(adminModal, 'Success', 'Spotlights Updated', 'success', 1500, () => {
+                    showMsg(adminModal, 'Success', 'Spotlights Updated', 'success', 1500, () => {
                         window.location.reload();
                     });
                 });
@@ -1198,7 +1198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Reset Section Logic for Spotlights
                 window.resetSection = async (section) => {
                     if (section.startsWith('spotlight_')) {
-                        showSeparateConfirmationModal(
+                        confirmModal(
                             'Reset Entry',
                             `Are you sure you want to reset ${section.replace('_', ' ')}?`,
                             async () => {
@@ -1225,7 +1225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 document.getElementById('reset-spotlights-btn').addEventListener('click', () => {
                     const adminModal = document.getElementById('admin-modal');
-                    showConfirmation(adminModal, 'Reset All', 'Are you sure you want to reset all spotlights?', async () => {
+                    confirmAction(adminModal, 'Reset All', 'Are you sure you want to reset all spotlights?', async () => {
                         const restoreView = () => {
                             window.location.reload();
                         };
@@ -1234,22 +1234,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             const res = await fetch('http://localhost:5000/content/spotlights/reset', { method: 'POST' });
                             const data = await res.json();
                             if (res.ok) {
-                                showStatusMessage(adminModal, 'Success', data.message, 'success', 1500, restoreView);
+                                showMsg(adminModal, 'Success', data.message, 'success', 1500, restoreView);
                             } else {
-                                showStatusMessage(adminModal, 'Error', data.message || 'Failed to reset', 'error', 2000, restoreView);
+                                showMsg(adminModal, 'Error', data.message || 'Failed to reset', 'error', 2000, restoreView);
                             }
                         } catch (error) {
                             console.error('Error resetting spotlights:', error);
-                            showStatusMessage(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
+                            showMsg(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
                         }
                     }, () => {
                         // On Cancel: Restore original view
-                        animateModalTransition(adminModal, (modalContent) => {
+                        animModal(adminModal, (modalContent) => {
                             modalContent.classList.remove('compact-view');
                             const messageView = modalContent.querySelector('.modal-message-view');
                             if (messageView) messageView.remove();
                             Array.from(modalContent.children).forEach(child => {
-                                if (!child.classList.contains('modal-loading-overlay')) child.style.display = '';
+                                if (!child.classList.contains('modal-load')) child.style.display = '';
                             });
                         });
                     });
