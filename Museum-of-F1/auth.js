@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const endpoint = isLoginMode ? '/login' : '/register';
-            const url = `http://localhost:5000${endpoint}`;
+            const url = `http://https://museum-of-f1.onrender.com/${endpoint}`;
             
             const bodyData = { email, password };
             if (!isLoginMode) {
