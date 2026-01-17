@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Page Loader & Theme Init ---
     const initThemeAndLoader = () => {
+        // Apply theme immediately
         if (localStorage.getItem('lightMode') === 'enabled') {
         document.body.classList.add('light-mode');
     }
 
+        // Create and manage loader
     const pageLoader = document.createElement('div');
     pageLoader.id = 'page-loader';
     pageLoader.innerHTML = '<div class="loader"></div>';
@@ -35,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
 
+            // Fixed State
             if (currentScrollY > 0) {
                 if (!header.classList.contains('header-fixed')) {
                     header.classList.add('header-fixed');
@@ -46,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 header.classList.remove('hide-nav');
             }
 
+            // Hide/Show on Scroll
             if (currentScrollY > headerHeight) {
                 header.classList.toggle('hide-nav', currentScrollY > lastScrollY);
             }
@@ -149,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateActiveState();
     };
 
+    // Init Display Mode
     updateActiveState();
     if (lightModeBtn) lightModeBtn.addEventListener('click', enableLightMode);
     if (darkModeBtn) darkModeBtn.addEventListener('click', disableLightMode);
@@ -187,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     heroPic.src = featuredData.imageUrl;
                 }
 
+                // Update Featured Entries (1-5)
                 const featuredItems = document.querySelectorAll('.hero-right .featured');
                 featuredItems.forEach((item, index) => {
                     const i = index + 1; // 1-based index for data fields
@@ -194,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const img = item.querySelector('.featured-image');
                     const contentContainer = item.querySelector('.featured-content');
 
+                    // Find or create header
                     let header = item.querySelector(`#featured-header-${i}`) || item.querySelector('h3, h4, h5, h6');
                     if (!header && contentContainer && contentContainer.firstElementChild) {
                         if (contentContainer.firstElementChild !== text) {
@@ -201,11 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
+                    // Style header
                     if (header) {
                         header.style.color = '#d6176f';
                         header.id = `featured-header-${i}`;
                     }
 
+                    // Update Content
                     if (featuredData[`entry_${i}_header`]) {
                         const headerText = featuredData[`entry_${i}_header`].toUpperCase();
                         if (header) {
@@ -241,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // Map DB items to DOM elements
             const grid1 = document.querySelector('.spotlight-grid');
             const grid2 = document.querySelector('.spotlight-grid-flipped');
             

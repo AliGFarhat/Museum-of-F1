@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Get all the elements we need from the HTML
+    // --- DOM Elements ---
     const els = {
         loginBtn: document.getElementById('login-register-btn'),
         modal: document.getElementById('login-modal'),
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelUsernameBtn: document.getElementById('cancel-username-btn')
     };
     
-    // Create the email feedback text if it's not there
+    // Dynamically create email feedback element if it doesn't exist
     const emailFeedback = document.getElementById('email-feedback') || (() => {
         if (els.emailInput) {
             const el = document.createElement('div');
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     })();
 
-    // Helper functions
+    // --- Helpers ---
     const updateAccountTitle = (user) => {
         if (els.accountModalTitle && user && user.username) {
             els.accountModalTitle.innerHTML = `Hello, ${user.username}`;
@@ -70,13 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isLoginMode = true;
 
-    // Check if user is already logged in
+    // Check if user is already logged in (persisted session)
     const storedUser = localStorage.getItem('user');
     if (storedUser && els.loginBtn) {
         els.loginBtn.textContent = 'Account';
     }
 
-    // Handle the login/account button click
+    // Handle Navbar Button Click (Login / Logout)
     if (els.loginBtn) {
         els.loginBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             els.togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
         }
 
-        // Go back to login mode
+        // Reset to Login Mode
         isLoginMode = true;
         if (els.modalTitle) els.modalTitle.textContent = 'Login';
         if (els.submitBtn) {
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (els.emailLabel) els.emailLabel.textContent = 'Email / Username';
         if (els.registerUsernameInput) els.registerUsernameInput.required = false;
 
-        // Remove any messages
+        // Reset any custom message views
         if (els.modal) {
             const messageViews = els.modal.querySelectorAll('.modal-message-view');
             messageViews.forEach(view => view.remove());
@@ -145,14 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Hide the loader
+        // Reset loader overlay
         if (els.modal) {
             const loaderOverlay = els.modal.querySelector('.modal-loading-overlay');
             if (loaderOverlay) loaderOverlay.classList.remove('show');
         }
     };
 
-    // Close modal when clicking X
+    // Close Modal (X button)
     if (els.closeBtn) {
         els.closeBtn.addEventListener('click', () => {
             els.modal.classList.remove('show-modal');
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Close account modal when clicking X
+    // Close Account Modal (X button)
     if (els.closeAccountBtn) {
         els.closeAccountBtn.addEventListener('click', () => {
             els.accountModal.classList.remove('show-modal');
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mouseDownTarget = e.target;
     });
 
-    // Close modal if clicking outside
+    // Close Modal (Click outside)
     window.addEventListener('click', (e) => {
         if (e.target === els.modal && mouseDownTarget === els.modal) {
             els.modal.classList.remove('show-modal');
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Functions for modal animations and messages
+    // --- Modal Animation & Message Helpers ---
     const animateModalTransition = (modal, updateContentFn, callback) => {
         const modalContent = modal.querySelector('.modal-content');
         
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Switch between Login and Register
+    // Toggle between Login and Register views
     if (els.toggleAction) {
         els.toggleAction.addEventListener('click', (e) => {
             e.preventDefault();
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle form submit
+    // Handle Form Submission
     if (els.authForm) {
         els.authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Show/Hide password logic
+    // Password Visibility Toggle Logic
     if (els.passwordInput && els.togglePassword) {
         // Show/Hide icon based on input value
         els.passwordInput.addEventListener('input', () => {
@@ -546,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Check if username is taken
+    // --- Username Validation Logic (Debounce) ---
     let debounceTimer;
     const debounce = (func, delay) => {
         clearTimeout(debounceTimer);
@@ -610,7 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Check if email is valid
+    // Email Validation Logic
     const validateEmail = (email, feedbackElement, buttonElement) => {
         // Only validate in Register mode
         if (isLoginMode) {
@@ -681,9 +681,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Account actions
+    // --- Account Modal Actions ---
 
-    // Handle logout
+    // Logout Logic
     if (els.logoutBtn) {
         els.logoutBtn.addEventListener('click', () => {
             showStatusMessage(els.accountModal, 'Success', 'Logout Successful', 'success', 1500, () => {
@@ -696,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle delete account
+    // Delete Account Logic
     if (els.deleteAccountBtn) {
         els.deleteAccountBtn.addEventListener('click', async () => {
             showConfirmation(els.accountModal, 'Delete Account', 'Are you sure you want to delete your account? This action cannot be undone.', async () => {
@@ -737,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle changing username
+    // Change Username Logic
     if (els.changeUsernameBtn) {
         els.changeUsernameBtn.addEventListener('click', () => {
             animateModalTransition(els.accountModal, () => {
@@ -805,13 +805,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Make these functions available to other scripts
+    // Expose helpers for other scripts (e.g., heropage.js feedback form)
     window.f1Auth = {
         showStatusMessage,
         resetLoginModal
     };
 
-    // Admin panel code
+    // --- Admin Panel Logic ---
     const createImgInput = (name, value, placeholder) => `
         <div class="input-with-icon">
             <input type="text" name="${name}" value="${value || ''}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">

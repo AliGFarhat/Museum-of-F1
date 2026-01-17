@@ -66,7 +66,6 @@ const SESSION_ORDER = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Initialization ---
     const mainContentContainer = document.querySelector('.main-content');
     const sidebar = document.querySelector('.sidebar');
 
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let globalSessions = [];
 
-    // --- Render Logic ---
     async function renderPage(allSessions, weatherFilters = []) {
         const INITIAL_BATCH = 6;
         const LOAD_MORE_BATCH = 18;
@@ -127,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let isProcessing = false;
 
         async function createSessionCard(session) {
+            // Determine flag image
             let countryKey = session.country_name;
             if (countryKey === 'United States') countryKey = 'USA';
             if (countryKey === 'United Arab Emirates') countryKey = 'UAE';
@@ -234,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadBatch(INITIAL_BATCH);
     }
 
-    // --- Sidebar Logic ---
     function populateSidebar(sessions) {
         if (!sidebar) return;
 
@@ -332,7 +330,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await renderPage(filtered, activeWeather);
     }
 
-    // --- Data Fetching ---
     async function fetchAndDisplaySessions() {
         const cacheKey = 'f1HistoryData_v5';
         const cacheTimestampKey = 'f1HistoryTimestamp_v5';
