@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 els.accountModalTitle.appendChild(badge);
 
                 // Inject Admin Panel Button if not exists
-                if (document.querySelector('.hero-section') && !document.getElementById('open-admin-panel-btn')) {
+                if (!document.getElementById('open-admin-panel-btn')) {
                     const adminBtn = document.createElement('button');
                     adminBtn.id = 'open-admin-panel-btn';
                     adminBtn.className = 'account-btn btn-outline-red';

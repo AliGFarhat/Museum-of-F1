@@ -1576,7 +1576,7 @@ button, input, textarea, select {
 }
 
 /* Admin Panel Styles */
-.admin-modal-content {
+.modal-content.admin-modal-content {
     width: 90%;
     max-width: 900px;
     height: 80vh;
