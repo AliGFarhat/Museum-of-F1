@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
+    // DOM Elements
     const els = {
         loginBtn: document.getElementById('login-register-btn'),
         modal: document.getElementById('login-modal'),
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     })();
 
-    // --- Helpers ---
+    // Helpers
     const updateTitle = (user) => {
         if (els.accountModalTitle && user && user.username) {
             els.accountModalTitle.innerHTML = `Hello, ${user.username}`;
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Close Modal (X button)
+    // Close Modal (the X button)
     if (els.closeBtn) {
         els.closeBtn.addEventListener('click', () => {
             els.modal.classList.remove('show-modal');
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (els.newUsernameInput) els.newUsernameInput.value = '';
         if (els.changeUsernameFeedback) els.changeUsernameFeedback.textContent = '';
         
-        // Reset any custom message views in account modal
+        // This Resets any custom message views in account modal
         if (els.accountModal) {
             const messageViews = els.accountModal.querySelectorAll('.modal-message-view');
             messageViews.forEach(view => view.remove());
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Modal Animation & Message Helpers ---
+    // Modal Animation & Message Helpers
     const animModal = (modal, updateContentFn, callback) => {
         const modalContent = modal.querySelector('.modal-content');
         
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Form Submission
+    // Handles Form Submission
     if (els.authForm) {
         els.authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     if (isLoginMode) {
-                        // Login Success
+                        // WhenLogin Success
                         showMsg(els.modal, 'Success', 'Login Successful', 'success', 1500, () => {
                             localStorage.setItem('user', JSON.stringify(data.user));
                             els.modal.classList.remove('show-modal');
@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             setTimeout(() => resetModal(), 300);
                         });
                     } else {
-                        // Registration Success - Auto Login
+                        // When Registration Success - Auto Login
                         showMsg(els.modal, 'Success', 'Registration Complete', 'success', 1500, () => {
                             if (data.user) {
                                 localStorage.setItem('user', JSON.stringify(data.user));
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
                 } else {
-                    // Server returned an error (e.g., "User already exists")
+                    // Server returned an error (like "User already exists")
                     showMsg(els.modal, 'Error', data.message, 'error', 2000, () => {
                         // Restore form
                         const messageView = els.modal.querySelector('.modal-message-view');
@@ -537,16 +537,16 @@ document.addEventListener('DOMContentLoaded', () => {
             els.passwordInput.setAttribute('type', type);
             
             if (type === 'text') {
-                // Show Slash Eye (Red) - means "Click to Hide"
+                // Show Slash Eye (Red)
                 els.togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#e10600"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>`;
             } else {
-                // Show Open Eye (White) - means "Click to Reveal"
+                // Show Open Eye (White)
                 els.togglePassword.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>`;
             }
         });
     }
 
-    // --- Username Validation Logic (Debounce) ---
+    // Username Validation Logic
     let debounceTimer;
     const debounce = (func, delay) => {
         clearTimeout(debounceTimer);
@@ -579,8 +579,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             if (data.available) {
-                feedbackElement.textContent = 'Username available';
-                feedbackElement.style.color = '#00ff00'; // Green
+                feedbackElement.textContent = 'Username available'; // Green Color when available
+                feedbackElement.style.color = '#00ff00';
                 if (buttonElement) {
                     buttonElement.disabled = false;
                     buttonElement.style.opacity = '1';
@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 feedbackElement.textContent = 'Username taken';
-                feedbackElement.style.color = '#e10600'; // F1 Red
+                feedbackElement.style.color = '#e10600'; // Red Color when taken
                 if (buttonElement) {
                     buttonElement.disabled = true;
                     buttonElement.style.opacity = '0.5';
@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Email Validation Logic
     const validateEmail = (email, feedbackElement, buttonElement) => {
-        // Only validate in Register mode
+        // Only validate in the Register mode
         if (isLoginMode) {
             if (feedbackElement) feedbackElement.textContent = '';
             if (buttonElement) {
@@ -623,7 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Ignore trailing spaces
+        // Ignore trailing spaces (The spaces at ends of input)
         const trimmedEmail = email.replace(/\s+$/, '');
         
         if (!trimmedEmail) {
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!emailRegex.test(trimmedEmail)) {
             if (feedbackElement) {
                 feedbackElement.textContent = 'Invalid email format';
-                feedbackElement.style.color = '#e10600';
+                feedbackElement.style.color = '#e10600'; // In red text to show invalid format
             }
             if (buttonElement) {
                 buttonElement.disabled = true;
@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
         els.emailInput.addEventListener('input', () => {
             if (!isLoginMode && emailFeedback) {
                 emailFeedback.textContent = '...';
-                emailFeedback.style.color = '#ccc';
+                emailFeedback.style.color = '#ccc'; // The Placeholder Dots before validation
             }
             debounce(() => {
                 validateEmail(els.emailInput.value, emailFeedback, els.submitBtn);
@@ -681,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Account Modal Actions ---
+    // Account Modal Actions
 
     // Logout Logic
     if (els.logoutBtn) {
@@ -725,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showMsg(els.accountModal, 'Error', 'Server error', 'error', 2000, () => resetUserUI());
                 }
             }, () => {
-                // On Cancel: Restore original view
+                // On Cancel press: It will go back
                 animModal(els.accountModal, (modalContent) => {
                     const messageView = modalContent.querySelector('.modal-message-view');
                     if (messageView) messageView.remove();
@@ -811,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetLoginModal: resetModal
     };
 
-    // --- Admin Panel Logic ---
+    // Admin Panel Logic
     const createImgInput = (name, value, placeholder) => `
         <div class="input-with-icon">
             <input type="text" name="${name}" value="${value || ''}" placeholder="${placeholder}" class="image-url-input" id="input-${name}">
@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Reset sidebar active state to feedback
+        // This resets the admin panel to Feedback tab on open
         const tabs = adminModal.querySelectorAll('.admin-tab-btn');
         tabs.forEach(t => {
             if (t.dataset.tab === 'feedback') {
@@ -897,7 +897,6 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.opacity = '0';
         container.style.transform = 'translateY(10px)';
 
-        // Wait for transition to complete
         await new Promise(resolve => setTimeout(resolve, 200));
 
         try {
@@ -1004,9 +1003,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const formData = new FormData(e.target);
                     const formProps = Object.fromEntries(formData.entries());
 
-                    // Merge with existing data: only update fields that are filled
+                    // Merge with existing data meaning that only update fields that are filled
                     const data = { ...race };
-                    delete data._id; // Remove internal fields
+                    delete data._id;
                     delete data.__v;
                     delete data.updatedAt;
 
@@ -1051,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 delete data[`entry_${index}_image`];
                             }
 
-                            // Save the modified data (effectively removing the section's data)
+                            // Save the modified data
                             await fetch('https://museum-of-f1.onrender.com/content/featured', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -1086,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             showMsg(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
                         }
                     }, () => {
-                        // On Cancel: Restore original view
+                        // On Cancel shows previous view
                         animModal(adminModal, (modalContent) => {
                             modalContent.classList.remove('compact-view');
                             const messageView = modalContent.querySelector('.modal-message-view');
@@ -1171,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const formData = new FormData(e.target);
                     const formProps = Object.fromEntries(formData.entries());
 
-                    // Merge with existing data: only update fields that are filled
+                    // Merge with existing data meaning that only update fields that are filled
                     const data = { ...spotlights };
                     delete data._id;
                     delete data.__v;
@@ -1243,7 +1242,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             showMsg(adminModal, 'Error', 'Error connecting to server.', 'error', 2000, restoreView);
                         }
                     }, () => {
-                        // On Cancel: Restore original view
+                        // On Cancel shows previous view
                         animModal(adminModal, (modalContent) => {
                             modalContent.classList.remove('compact-view');
                             const messageView = modalContent.querySelector('.modal-message-view');

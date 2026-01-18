@@ -51,7 +51,7 @@ const spotlightSchema = new mongoose.Schema({
 }, { strict: false });
 const Spotlight = mongoose.model('Spotlight', spotlightSchema);
 
-// Verify email credentials are loaded
+// Verify email credentials are loaded or not
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.error("Error: EMAIL_USER or EMAIL_PASS are missing from environment variables.");
 }
@@ -65,14 +65,13 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Verify connection configuration
+// Verify the connection configuration
 transporter.verify(function (error, success) {
     if (error) {
         console.log('Error connecting to email server:', error);
     }
 });
 
-// Helper function to escape regex characters
 function escRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
@@ -89,7 +88,7 @@ app.post('/register', async (req, res) => {
             return res.status(400).json({ message: 'Please enter all fields' });
         }
 
-        // Check if user already exists (email or username)
+        // Validate if user exists
         const existingUser = await User.findOne({ 
             $or: [{ email }, { username: { $regex: new RegExp(`^${escRegex(username)}$`, 'i') } }] 
         });
@@ -127,7 +126,7 @@ app.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'User does not exist' });
         }
 
-        // Validate password (Plain text comparison)
+        // Validate password
         if (password !== user.password) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
@@ -214,7 +213,7 @@ app.post('/send-feedback', async (req, res) => {
             subject: 'We received your feedback',
             text: `Hi,\n\nThank you for your feedback!\n\nWe received:\n"${feedback}"\n\nBest regards,\nMuseum of F1`
         };
-        // Attempt to send confirmation, log error if fails but don't stop response
+        // Attempt to send confirmation
         await transporter.sendMail(userMailOptions).catch(err => console.error("Confirmation email failed:", err));
 
         res.status(200).json({ message: 'Thank you for your feedback!' });
@@ -224,7 +223,7 @@ app.post('/send-feedback', async (req, res) => {
     }
 });
 
-// --- Admin Content Routes ---
+// Admin Content Routes
 
 // Feedback: Read & Delete
 app.get('/admin/feedback', async (req, res) => {

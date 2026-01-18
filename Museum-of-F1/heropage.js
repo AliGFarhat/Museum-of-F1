@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Page Loader & Theme Init ---
+    // Page Loader & Theme Init
     const init = () => {
         // Apply theme immediately
         if (localStorage.getItem('lightMode') === 'enabled') {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     init();
 
-    // --- DOM Elements ---
+    // DOM Elements
     const header = document.querySelector('.header');
     const contentContainer = document.querySelector('.main-content') || document.querySelector('.main');
     const settingsCog = document.getElementById('settings-cog');
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentRotation = 0;
 
-    // --- Sticky Navbar Logic ---
+    // Sticky Navbar Logic
     if (header && contentContainer) {
         const headerHeight = header.offsetHeight;
         let lastScrollY = window.scrollY;
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleScroll(); // Initial check
     }
 
-    // --- Settings Menu Logic ---
+    // Settings Menu Logic
     if (settingsCog) {
         settingsCog.addEventListener('click', () => {
             currentRotation += 180;
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Feedback Form Logic ---
+    // Feedback Form Logic
     const feedbackForm = document.getElementById('feedback-form');
     if (feedbackForm) {
         feedbackForm.addEventListener('submit', async (event) => {
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Display Mode Logic ---
+    // Display Mode Logic
     const lightModeBtn = document.getElementById('light-mode-btn');
     const darkModeBtn = document.getElementById('dark-mode-btn');
 
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lightModeBtn) lightModeBtn.addEventListener('click', enableLightMode);
     if (darkModeBtn) darkModeBtn.addEventListener('click', disableLightMode);
 
-    // --- Admin Status Check ---
+    // Admin Status Check
     const currentUser = JSON.parse(localStorage.getItem('user'));
     if (currentUser) {
         if (currentUser.isAdmin === undefined) {
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Dynamic Content Loading ---
+    // Dynamic Content Loading
     const loadContent = async () => {
         try {
             // 1. Featured Race

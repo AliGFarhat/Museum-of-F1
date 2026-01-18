@@ -1,4 +1,5 @@
-// --- Static Data ---
+// Static Data
+// These objects map names to image paths so we can show pictures
 const TRACKS = {
     'Monaco': 'images/tracks/monaco.png',
     'Monte Carlo': 'images/tracks/monaco.png',
@@ -54,6 +55,7 @@ const FLAGS = {
     'Monaco': 'images/flags/mco.png'
 };
 
+// This helps us sort sessions in a logical order (Race first, etc.)
 const SESSIONS = { 
     'Race': 1, 
     'Qualifying': 2, 
@@ -65,6 +67,7 @@ const SESSIONS = {
     'Practice 1': 7 
 };
 
+// Wait for the page to be ready
 document.addEventListener('DOMContentLoaded', () => {
     const mainContentContainer = document.querySelector('.main-content');
     const sidebar = document.querySelector('.sidebar');
@@ -74,12 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Create the dark background for when the sidebar is open
     const overlay = document.createElement('div');
     overlay.className = 'sidebar-overlay';
     document.body.appendChild(overlay);
     
     let globalSessions = [];
 
+    // This function handles showing the race cards on the screen
     async function render(allSessions, weatherFilters = []) {
         const INITIAL_BATCH = 6;
         const LOAD_MORE_BATCH = 18;
@@ -116,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
+        // If we have no data, just say so
         if (!allSessions || allSessions.length === 0) {
             gridContainer.innerHTML = '<p style="color: white;">No sessions found.</p>';
             return;
@@ -124,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentSessionIndex = 0;
         let isProcessing = false;
 
+        // This creates the HTML for a single race card
         async function makeCard(session) {
             // Determine flag image
             let countryKey = session.country_name;
@@ -133,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const countryFlag = FLAGS[countryKey];
 
             // Fetch weather data for this specific session if not already cached
+            // We check if it rained or not
             let weatherCondition = session.weatherCondition;
             if (!weatherCondition) {
                 try {
@@ -155,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 session.weatherCondition = weatherCondition;
             }
 
-            // Apply Weather Filter
+            // If the user filtered by weather, check that here
             if (weatherFilters.length > 0 && !weatherFilters.includes(weatherCondition)) {
                 return null;
             }
@@ -175,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return card;
         }
 
+        // This loads a few cards at a time so the browser doesn't freeze
         async function loadBatch(batchSize) {
             if (isProcessing) return;
             isProcessing = true;
@@ -186,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const cardsToAppend = [];
 
+            // Loop through sessions and make cards until we have enough for this batch
             while (currentSessionIndex < allSessions.length && cardsToAppend.length < batchSize) {
                 if (!document.body.contains(gridContainer)) return;
 
@@ -233,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadBatch(INITIAL_BATCH);
     }
 
+    // This puts all the filter options into the sidebar
     function fillSidebar(sessions) {
         if (!sidebar) return;
 
@@ -303,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Hides the sidebar
     function closeSidebar() {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
@@ -313,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('click', closeSidebar);
     }
 
+    // This runs when you change a filter to show only matching races
     async function filter() {
         const getChecked = (type) => Array.from(sidebar.querySelectorAll(`input[data-filter-type="${type}"]:checked`)).map(cb => cb.value);
         
@@ -330,6 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await render(filtered, activeWeather);
     }
 
+    // This gets the data from the API or local storage
     async function loadSessions() {
         const cacheKey = 'f1HistoryData_v5';
         const cacheTimestampKey = 'f1HistoryTimestamp_v5';
@@ -344,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (session.location === 'Miami Gardens') session.location = 'Miami';
         };
 
+        // Check if we have saved data that is fresh enough
         if (cachedData && cachedTimestamp && (now - cachedTimestamp < cacheDuration)) {
             console.log("Loading F1 history from cache.");
             const allSessions = JSON.parse(cachedData);
@@ -358,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentContainer.innerHTML = '<p style="color: white; font-size: 1.2rem; padding: 2rem;">Loading race history...</p>';
 
         try {
+            // We need to fetch a few years of data
             const yearsToFetch = [2023, 2024, 2025, 2026];
             let allSessions = [];
 
@@ -375,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
             allSessions = yearlySessions.flat();
             allSessions.forEach(normalizeSession);
 
+            // Sort everything by date and then by session type
             allSessions.sort((a, b) => {
                 const dateA = new Date(a.date_start);
                 const dateB = new Date(b.date_start);
@@ -389,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return (SESSIONS[a.session_name] || 99) - (SESSIONS[b.session_name] || 99);
             });
 
+            // Save to local storage so we don't have to download it again soon
             localStorage.setItem(cacheKey, JSON.stringify(allSessions));
             localStorage.setItem(cacheTimestampKey, now.toString());
             console.log("F1 history has been cached.");
